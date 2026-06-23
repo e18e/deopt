@@ -1,11 +1,8 @@
 import { spawn } from 'ispawn'
 import { tmpdir } from 'node:os'
-import { constants as fsConstants } from 'node:fs'
-import { access, mkdir, stat } from 'node:fs/promises'
+import { mkdir, stat } from 'node:fs/promises'
 import { styleText } from 'node:util'
 import semver from 'semver'
-
-const { F_OK } = fsConstants
 
 function determineArgs(args) {
   const __index = args.indexOf('--')
@@ -53,18 +50,15 @@ function determineArgs(args) {
 }
 
 async function createDirIfMissing(dir) {
-  // assumes that parent dir exists for our use case
   try {
-    await access(dir, F_OK)
+    await mkdir(dir, { recursive: true })
   } catch (err) {
-    // didn't exist (or at least we don't have access), try to create it
-    return mkdir(dir)
-  }
-
-  // It did exist, ensure it is a directory
-  const statInfo = await stat(dir)
-  if (!statInfo.isDirectory()) {
-    throw new Error(`Found ${dir}, but it wasn't a directory, please remove it.`)
+    // mkdir refuses if the path already exists as a non-directory
+    const statInfo = await stat(dir).catch(() => null)
+    if (statInfo != null && !statInfo.isDirectory()) {
+      throw new Error(`Found ${dir}, but it wasn't a directory, please remove it.`)
+    }
+    throw err
   }
 }
 
