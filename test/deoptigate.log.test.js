@@ -52,8 +52,8 @@ test('adders.v8.log', async () => {
   const fileData = result.get(addersSrcFile)
   const fileSrc = await readFile(addersSrcFile, 'utf8')
   assert.equal(fileData.fullPath, addersSrcFile, 'fullPath')
-  assert.equal(fileData.ics.size, 33, 'number of ics')
-  assert.equal(fileData.deopts.size, 7, 'number of deopts')
+  assert.equal(fileData.ics.size, 34, 'number of ics')
+  assert.equal(fileData.deopts.size, 12, 'number of deopts')
   assert.equal(fileData.codes.size, 16, 'number of codes')
   assert.equal(fileData.src, fileSrc, 'file source')
 
@@ -91,7 +91,7 @@ test('two-modules.v8.log', async () => {
   assert.equal(fileData.fullPath, srcFile, 'fullPath')
   assert.equal(fileData.ics.size, 25, 'number of ics')
   assert.equal(fileData.deopts.size, 0, 'number of deopts')
-  assert.equal(fileData.codes.size, 8, 'number of codes')
+  assert.equal(fileData.codes.size, 9, 'number of codes')
   assert.equal(fileData.src, fileSrc, 'file source')
 
   const icLocation = fileData.icLocations[0]
@@ -101,5 +101,5 @@ test('two-modules.v8.log', async () => {
   assert.equal(icData.file, srcFile, 'ics file path')
 
   const updateData = icData.updates[0]
-  assert.equal(updateData.map, '37cdf3b7a811', 'ics update map')
+  assert.equal(updateData.map, '2e3e295215a9', 'ics update map')
 })

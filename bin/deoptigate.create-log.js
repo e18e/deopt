@@ -2,7 +2,6 @@ import { spawn } from 'ispawn'
 import { tmpdir } from 'node:os'
 import { mkdir, stat } from 'node:fs/promises'
 import { styleText } from 'node:util'
-import semver from 'semver'
 
 function determineArgs(args) {
   const __index = args.indexOf('--')
@@ -69,10 +68,11 @@ export async function createLog(args, head, simpleHead) {
   await createDirIfMissing(logDir)
 
   const logFile = `${tmpdir()}/deoptigate/v8.log`
-  let inlineCacheArg = semver.gte(process.version, '16.0.0') ? '--log-ic' : '--trace-ic'
 
   const execArgv = [
-      inlineCacheArg
+      '--log-ic'
+    , '--log-deopt'
+    , '--log-code'
     , `--logfile=${logFile}`
     , '--no-logfile-per-isolate'
   ].concat(extraExecArgv)

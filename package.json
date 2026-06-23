@@ -23,7 +23,6 @@
   "dependencies": {
     "files-provider": "~0.2.0",
     "ispawn": "~0.2.0",
-    "semver": "^7.3.6",
     "tiny-open": "^1.3.0",
     "v8-tools-core": "~0.1.1"
   },

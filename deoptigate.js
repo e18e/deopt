@@ -33,7 +33,7 @@ function locationKey(file, line, column) {
 }
 
 const propertyICParser = [
-  parseInt, parseInt, parseInt, null, null, parseInt, null, null, null
+  parseInt, parseInt, parseInt, parseInt, null, null, parseInt, null, null, null
 ]
 
 class DeoptProcessor extends LogReader {
@@ -115,6 +115,7 @@ class DeoptProcessor extends LogReader {
   _processPropertyIC(
       type
     , pc
+    , timestamp
     , line
     , column
     , old_state
@@ -169,8 +170,8 @@ class DeoptProcessor extends LogReader {
       this._profile.addFuncCode(
         type, name, timestamp, start, size, funcAddr, state
       )
-      const isScript = type === 'Script'
-      const isUserFunction = type === 'LazyCompile'
+      const isScript = type === 'Eval' || type === 'Script'
+      const isUserFunction = type === 'JS' || type === 'LazyCompile'
       if (isUserFunction || isScript) {
         let { fnFile, line, column } = this.functionInfo(start)
 

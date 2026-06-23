@@ -63,7 +63,7 @@ class Object8 {
   }
 }
 
-module.exports = {
+export {
     Object1
   , Object2
   , Object3

@@ -1,6 +1,6 @@
 'use strict'
 
-const {
+import {
     Object1
   , Object2
   , Object3
@@ -9,7 +9,7 @@ const {
   , Object6
   , Object7
   , Object8
-} = require('./objects')
+} from './objects.js'
 
 // We access this object in all the functions as otherwise
 // v8 will just inline them since they are so short
