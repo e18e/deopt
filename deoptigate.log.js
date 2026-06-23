@@ -1,11 +1,9 @@
-'use strict'
+import path from 'node:path'
 
-const path = require('path')
-
-const { processLogContent, deoptigate } = require('./')
-const lineReader = require('./lib/line-reader')
-const resolveFiles = require('./lib/grouping/resolve-files')
-const groupByFile = require('./lib/grouping/group-by-file')
+import { processLogContent, deoptigate } from './deoptigate.js'
+import { lineReader } from './lib/line-reader.js'
+import { resolveFiles } from './lib/grouping/resolve-files.js'
+import { mapByFile } from './lib/grouping/group-by-file.js'
 
 async function extractDataFromLog(p, { icStateChangesOnly, root }) {
   const lines = await lineReader(p, 'utf-8')
@@ -15,26 +13,20 @@ async function extractDataFromLog(p, { icStateChangesOnly, root }) {
   return processed
 }
 
-async function processLog(p, { icStateChangesOnly = true, root } = {}) {
+export async function processLog(p, { icStateChangesOnly = true, root } = {}) {
   const extracted = await extractDataFromLog(p, { icStateChangesOnly, root })
   const data = extracted.toObject()
   const files = await resolveFiles(data)
-  const groupedByFile = groupByFile(data, files)
+  const groupedByFile = mapByFile(data, files)
   return groupedByFile
 }
 
-async function logToJSON(p, { icStateChangesOnly = true, root } = {}) {
+export async function logToJSON(p, { icStateChangesOnly = true, root } = {}) {
   const groupedByFile = await processLog(p, { icStateChangesOnly, root })
   return JSON.stringify(Array.from(groupedByFile), null, 2)
 }
 
-async function deoptigateLog(p, { icStateChangesOnly = true } = {}) {
+export async function deoptigateLog(p, { icStateChangesOnly = true } = {}) {
   const groupedByFile = await processLog(p, { icStateChangesOnly })
   return deoptigate(groupedByFile)
-}
-
-module.exports = {
-    processLog
-  , logToJSON
-  , deoptigateLog
 }

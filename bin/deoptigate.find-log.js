@@ -1,13 +1,7 @@
-'use strict'
+import { styleText } from 'node:util'
+import { createFilesProvider, RETURN, PROMPT } from 'files-provider'
 
-const { brightBlack } = require('ansicolors')
-const {
-    createFilesProvider
-  , RETURN
-  , PROMPT
-} = require('files-provider')
-
-async function findLog(head) {
+export async function findLog(head) {
   const provideFiles = createFilesProvider({
       single       : RETURN
     , multi        : PROMPT
@@ -27,8 +21,6 @@ async function findLog(head) {
   }
 
   const p = v8logFiles[0].fullPath
-  console.log(`${head} ${brightBlack('Processing logfile at ' + p)}`)
+  console.log(`${head} ${styleText('gray', 'Processing logfile at ' + p)}`)
   return p
 }
-
-module.exports = findLog

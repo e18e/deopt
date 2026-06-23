@@ -1,16 +1,11 @@
-'use strict'
+import { spawn } from 'ispawn'
+import { tmpdir } from 'node:os'
+import { constants as fsConstants } from 'node:fs'
+import { access, mkdir, stat } from 'node:fs/promises'
+import { styleText } from 'node:util'
+import semver from 'semver'
 
-const { spawn } = require('ispawn')
-const { tmpdir } = require('os')
-const fs = require('fs')
-const { F_OK } = fs.constants
-const { promisify } = require('util')
-const access = promisify(fs.access)
-const mkdir = promisify(fs.mkdir)
-const stat = promisify(fs.stat)
-const semver = require('semver')
-
-const { brightBlack } = require('ansicolors')
+const { F_OK } = fsConstants
 
 function determineArgs(args) {
   const __index = args.indexOf('--')
@@ -73,7 +68,7 @@ async function createDirIfMissing(dir) {
   }
 }
 
-async function createLog(args, head, simpleHead) {
+export async function createLog(args, head, simpleHead) {
   const { extraExecArgv, argv,  nodeExecutable } = determineArgs(args)
 
   const logDir = `${tmpdir()}/deoptigate`
@@ -97,9 +92,7 @@ async function createLog(args, head, simpleHead) {
     ? 'process was interrupted'
     : 'process completed with code ' + code
   )
-  console.log(`\n${head} ${brightBlack(terminationMsg)}`)
-  console.log(`${simpleHead} ${brightBlack('logfile written to ' + logFile)}`)
+  console.log(`\n${head} ${styleText('gray', terminationMsg)}`)
+  console.log(`${simpleHead} ${styleText('gray', 'logfile written to ' + logFile)}`)
   return logFile
 }
-
-module.exports = createLog

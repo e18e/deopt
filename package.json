@@ -4,6 +4,7 @@
   "description": "Investigates v8/Node.js function deoptimizations.",
   "bin": "./bin/deoptigate",
   "main": "deoptigate.js",
+  "type": "module",
   "files": [
     "app/build",
     "app/lib",
@@ -12,7 +13,7 @@
     "deoptigate*"
   ],
   "scripts": {
-    "test": "tape test/*.test.js"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -20,12 +21,10 @@
   },
   "homepage": "https://github.com/thlorenz/deoptigate",
   "dependencies": {
-    "ansicolors": "~0.3.2",
     "files-provider": "~0.2.0",
     "ispawn": "~0.2.0",
-    "mkdirp": "~0.5.1",
-    "opn": "~5.4.0",
     "semver": "^7.3.6",
+    "tiny-open": "^1.3.0",
     "v8-tools-core": "~0.1.1"
   },
   "keywords": [],
@@ -39,10 +38,6 @@
     "url": "https://github.com/thlorenz/deoptigate/blob/master/LICENSE"
   },
   "engine": {
-    "node": ">=8"
-  },
-  "devDependencies": {
-    "escape-string-regexp": "^4.0.0",
-    "tape": "^5.0.0"
+    "node": ">=20"
   }
 }

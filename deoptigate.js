@@ -1,16 +1,14 @@
-'use strict'
-
 /* eslint-disable camelcase */
 
-const LogReader = require('v8-tools-core/logreader')
-const { Profile } = require('v8-tools-core/profile')
+import LogReader from 'v8-tools-core/logreader.js'
+import { Profile } from 'v8-tools-core/profile.js'
 
-const IcEntry = require('./lib/log-processing/ic-entry')
-const DeoptEntry = require('./lib/log-processing/deopt-entry')
-const CodeEntry = require('./lib/log-processing/code-entry')
-const { parseOptimizationState } = require('./lib/log-processing/optimization-state')
+import { IcEntry } from './lib/log-processing/ic-entry.js'
+import { DeoptEntry } from './lib/log-processing/deopt-entry.js'
+import { CodeEntry } from './lib/log-processing/code-entry.js'
+import { parseOptimizationState } from './lib/log-processing/optimization-state.js'
 
-const groupByFileAndLocation = require('./lib/grouping/group-by-file-and-location')
+import { groupByFileAndLocation } from './lib/grouping/group-by-file-and-location.js'
 
 function maybeNumber(s) {
   if (s == null) return -1
@@ -256,7 +254,7 @@ class DeoptProcessor extends LogReader {
   }
 }
 
-async function processLogContent(lines, root) {
+export async function processLogContent(lines, root) {
   const deoptProcessor = new DeoptProcessor(root)
   for await (const line of lines) {
     deoptProcessor.processLogLine(line)
@@ -266,12 +264,7 @@ async function processLogContent(lines, root) {
   return deoptProcessor
 }
 
-function deoptigate(groupedByFile) {
+export function deoptigate(groupedByFile) {
   const groupedByFileAndLocation = groupByFileAndLocation(groupedByFile)
   return groupedByFileAndLocation
-}
-
-module.exports = {
-    processLogContent
-  , deoptigate
 }

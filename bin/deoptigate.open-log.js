@@ -1,12 +1,10 @@
-'use strict'
+import open from 'tiny-open'
+import { logToJSON } from '../deoptigate.log.js'
 
-const open = require('opn')
-const { logToJSON } = require('../deoptigate.log')
+import { createPage } from '../lib/create-page.js'
+import { savePage, saveEntry } from '../lib/save-parts.js'
 
-const createPage = require('../app/lib/create-page')
-const { savePage, saveEntry } = require('../app/lib/save-parts')
-
-async function openLog(v8log, head) {
+export async function openLog(v8log, head) {
     const json = await logToJSON(v8log, { root: process.cwd() })
     const html = createPage()
     const indexHtmlFile = savePage(html)
@@ -20,5 +18,3 @@ ${head}: Opening now in your default browser.
     `)
     open(indexHtmlFile, { wait: false })
 }
-
-module.exports = openLog

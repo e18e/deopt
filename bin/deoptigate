@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 
-const { blue, red } = require('ansicolors')
-const simpleHead = blue('deoptigate')
-const happyHead = blue('deoptigate 💪')
-const errorHead = red('deoptigate 🚫')
+import { styleText } from 'node:util'
 
-const openLog = require('./deoptigate.open-log')
-const findLog = require('./deoptigate.find-log')
-const createLog = require('./deoptigate.create-log')
+import { openLog } from './deoptigate.open-log.js'
+import { findLog } from './deoptigate.find-log.js'
+import { createLog } from './deoptigate.create-log.js'
 
-;(async () => {
-  try {
-    const log = (process.argv.length <= 2
-      ? await findLog(happyHead)
-      : await createLog(process.argv.slice(2), happyHead, simpleHead)
-    )
-    await openLog(log, happyHead)
-  } catch (err) {
-    console.error(`${errorHead}: ${err}`)
-  }
-})()
+const simpleHead = styleText('blue', 'deoptigate')
+const happyHead = styleText('blue', 'deoptigate 💪')
+const errorHead = styleText('red', 'deoptigate 🚫')
+
+try {
+  const log = (process.argv.length <= 2
+    ? await findLog(happyHead)
+    : await createLog(process.argv.slice(2), happyHead, simpleHead)
+  )
+  await openLog(log, happyHead)
+} catch (err) {
+  console.error(`${errorHead}: ${err}`)
+}
