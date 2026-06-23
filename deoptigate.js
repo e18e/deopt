@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
-import LogReader from 'v8-tools-core/logreader.js'
-import { Profile } from 'v8-tools-core/profile.js'
+import { LogReader, parseString, parseVarArgs } from './lib/vendor/v8-tools/logreader.mjs'
+import { Profile } from './lib/vendor/v8-tools/profile.mjs'
 
 import { IcEntry } from './lib/log-processing/ic-entry.js'
 import { DeoptEntry } from './lib/log-processing/deopt-entry.js'
@@ -17,7 +17,7 @@ function maybeNumber(s) {
 
 function formatName(entry) {
   if (!entry) return '<unknown>'
-  const name = entry.func.getName()
+  const name = entry.getRawName ? entry.getRawName() : entry.getName()
   const re = /(.*):([0-9]+):([0-9]+)$/
   const array = re.exec(name)
   if (!array) return { fnFile: name, line: -1, column: -1 }
@@ -33,7 +33,7 @@ function locationKey(file, line, column) {
 }
 
 const propertyICParser = [
-  parseInt, parseInt, parseInt, parseInt, null, null, parseInt, null, null, null
+  parseInt, parseInt, parseInt, parseInt, parseString, parseString, parseInt, parseString, parseString, parseString
 ]
 
 class DeoptProcessor extends LogReader {
@@ -42,14 +42,13 @@ class DeoptProcessor extends LogReader {
     this._root = root
     this._silentErrors = silentErrors
 
-    // passing dispatch table that references `this` before invoking super
-    // doesn't work, so we set it afterwards
-    this.dispatchTable_ = {
+    // LogReader requires a null-prototype dispatch table
+    this.setDispatchTable(Object.assign(Object.create(null), {
 
         // Collect info about CRUD of code
         'code-creation': {
             parsers: [
-              null, parseInt, parseInt, parseInt, parseInt, null, 'var-args'
+              parseString, parseInt, parseInt, parseInt, parseInt, parseString, parseVarArgs
             ]
           , processor: this._processCodeCreation.bind(this)
         }
@@ -69,7 +68,7 @@ class DeoptProcessor extends LogReader {
       // Collect deoptimization info
       , 'code-deopt': {
             parsers: [
-              parseInt, parseInt, parseInt, parseInt, parseInt, null, null, null
+              parseInt, parseInt, parseInt, parseInt, parseInt, parseString, parseString, parseString
             ]
           , processor: this._processCodeDeopt.bind(this)
         }
@@ -95,7 +94,7 @@ class DeoptProcessor extends LogReader {
             parsers : propertyICParser
           , processor: this._processPropertyIC.bind(this, 'StoreInArrayLiteralIC')
         }
-    }
+    }))
 
     this._deserializedEntriesNames = []
     this._profile = new Profile()
@@ -201,7 +200,7 @@ class DeoptProcessor extends LogReader {
   }
 
   _processFunctionMove(from, to) {
-    this._profile.moveFunc(from, to)
+    this._profile.moveSharedFunctionInfo(from, to)
   }
 
   // @override
@@ -211,7 +210,7 @@ class DeoptProcessor extends LogReader {
     console.error(msg)
   }
 
-  processString(string) {
+  async processString(string) {
     var end = string.length
     var current = 0
     var next = 0
@@ -221,7 +220,7 @@ class DeoptProcessor extends LogReader {
       if (next === -1) break
       line = string.substring(current, next)
       current = next + 1
-      this.processLogLine(line)
+      await this.processLogLine(line)
     }
   }
 
@@ -258,7 +257,7 @@ class DeoptProcessor extends LogReader {
 export async function processLogContent(lines, root) {
   const deoptProcessor = new DeoptProcessor(root)
   for await (const line of lines) {
-    deoptProcessor.processLogLine(line)
+    await deoptProcessor.processLogLine(line)
   }
   deoptProcessor.filterIcStateChanges()
 

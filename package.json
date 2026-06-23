@@ -13,7 +13,8 @@
     "deoptigate*"
   ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "update-v8-tools": "node scripts/update-v8-tools.mjs"
   },
   "repository": {
     "type": "git",
@@ -23,8 +24,7 @@
   "dependencies": {
     "files-provider": "~0.2.0",
     "ispawn": "~0.2.0",
-    "tiny-open": "^1.3.0",
-    "v8-tools-core": "~0.1.1"
+    "tiny-open": "^1.3.0"
   },
   "keywords": [],
   "author": {
