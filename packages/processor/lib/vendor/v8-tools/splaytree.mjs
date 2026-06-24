@@ -25,7 +25,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 /**
  * Constructs a Splay tree.  A splay tree is a self-balancing binary
  * search tree with the additional property that recently accessed
@@ -35,7 +34,6 @@
  * @constructor
  */
 export class SplayTree {
-
   /**
    * Pointer to the root node of the tree.
    *
@@ -43,7 +41,6 @@ export class SplayTree {
    * @private
    */
   root_ = null;
-
 
   /**
    * @return {boolean} Whether the tree is empty.
@@ -177,7 +174,9 @@ export class SplayTree {
    */
   exportKeysAndValues() {
     const result = [];
-    this.traverse_(function(node) { result.push([node.key, node.value]); });
+    this.traverse_(function (node) {
+      result.push([node.key, node.value]);
+    });
     return result;
   }
 
@@ -186,7 +185,9 @@ export class SplayTree {
    */
   exportValues() {
     const result = [];
-    this.traverse_(function(node) { result.push(node.value) });
+    this.traverse_(function (node) {
+      result.push(node.value);
+    });
     return result;
   }
 
@@ -288,4 +289,4 @@ class SplayTreeNode {
      */
     this.right = null;
   }
-};
+}

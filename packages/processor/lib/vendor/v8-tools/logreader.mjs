@@ -28,11 +28,12 @@
 /**
  * @fileoverview Log Reader is used to process log file produced by V8.
  */
- import { CsvParser } from "./csvparser.mjs";
-
+import { CsvParser } from './csvparser.mjs';
 
 // Parses dummy variable for readability;
-export function parseString(field) { return field };
+export function parseString(field) {
+  return field;
+}
 export const parseVarArgs = 'parse-var-args';
 
 // Checks fields for numbers that are not safe integers. Returns true if any are
@@ -40,7 +41,7 @@ export const parseVarArgs = 'parse-var-args';
 function containsUnsafeInts(fields) {
   for (let i = 0; i < fields.length; i++) {
     let field = fields[i];
-    if ('number' == typeof(field) && !Number.isSafeInteger(field)) return true;
+    if ('number' == typeof field && !Number.isSafeInteger(field)) return true;
   }
   return false;
 }
@@ -55,7 +56,10 @@ function containsUnsafeInts(fields) {
  */
 export class LogReader {
   constructor(
-        timedRange=false, pairwiseTimedRange=false, useBigIntAddresses=false) {
+    timedRange = false,
+    pairwiseTimedRange = false,
+    useBigIntAddresses = false,
+  ) {
     this.dispatchTable_ = new Map();
     this.timedRange_ = timedRange;
     this.pairwiseTimedRange_ = pairwiseTimedRange;
@@ -72,33 +76,39 @@ export class LogReader {
     this.hasSeenUnsafeIntegers = false;
   }
 
-/**
- * @param {Object} table A table used for parsing and processing
- *     log records.
- *     exampleDispatchTable = {
- *       "log-entry-XXX": {
- *          parser: [parseString, parseInt, ..., parseVarArgs],
- *          processor: this.processXXX.bind(this)
- *        },
- *        ...
- *      }
- */
+  /**
+   * @param {Object} table A table used for parsing and processing
+   *     log records.
+   *     exampleDispatchTable = {
+   *       "log-entry-XXX": {
+   *          parser: [parseString, parseInt, ..., parseVarArgs],
+   *          processor: this.processXXX.bind(this)
+   *        },
+   *        ...
+   *      }
+   */
   setDispatchTable(table) {
     if (Object.getPrototypeOf(table) !== null) {
-      throw new Error("Dispatch expected table.__proto__=null for speedup");
+      throw new Error('Dispatch expected table.__proto__=null for speedup');
     }
     for (let name in table) {
       const parser = table[name];
       if (parser === undefined) continue;
       if (!parser.isAsync) parser.isAsync = false;
       if (!Array.isArray(parser.parsers)) {
-        throw new Error(`Invalid parsers: dispatchTable['${
-            name}'].parsers should be an Array.`);
+        throw new Error(
+          `Invalid parsers: dispatchTable['${
+            name
+          }'].parsers should be an Array.`,
+        );
       }
       let type = typeof parser.processor;
       if (type !== 'function') {
-       throw new Error(`Invalid processor: typeof dispatchTable['${
-          name}'].processor is '${type}' instead of 'function'`);
+        throw new Error(
+          `Invalid processor: typeof dispatchTable['${
+            name
+          }'].processor is '${type}' instead of 'function'`,
+        );
       }
       if (!parser.processor.name.startsWith('bound ')) {
         parser.processor = parser.processor.bind(this);
@@ -106,7 +116,6 @@ export class LogReader {
       this.dispatchTable_.set(name, parser);
     }
   }
-
 
   /**
    * A thin wrapper around shell's 'read' function showing a file name on error.
@@ -140,7 +149,7 @@ export class LogReader {
     // Kept for debugging in case of parsing errors.
     let lineNumber = 0;
     while (current < end) {
-      const next = chunk.indexOf("\n", current);
+      const next = chunk.indexOf('\n', current);
       if (next === -1) break;
       lineNumber++;
       const line = chunk.substring(current, next);
@@ -159,7 +168,7 @@ export class LogReader {
       await this.processLogLine_(line);
       return;
     }
-    if (line.startsWith("current-time")) {
+    if (line.startsWith('current-time')) {
       if (this.hasSeenTimerMarker_) {
         await this.processLog_(this.logLinesSinceLastTimerMarker_);
         this.logLinesSinceLastTimerMarker_ = [];
@@ -173,7 +182,7 @@ export class LogReader {
     } else {
       if (this.hasSeenTimerMarker_) {
         this.logLinesSinceLastTimerMarker_.push(line);
-      } else if (!line.startsWith("tick")) {
+      } else if (!line.startsWith('tick')) {
         await this.processLogLine_(line);
       }
     }
@@ -198,7 +207,7 @@ export class LogReader {
         // An offset from the previous frame.
         prevFrame += this.parseFrame(frame);
         fullStack.push(prevFrame);
-      // Filter out possible 'overflow' string.
+        // Filter out possible 'overflow' string.
       } else if (firstChar !== 'o') {
         fullStack.push(this.parseFrame(frame));
       } else {
@@ -266,7 +275,9 @@ export class LogReader {
         const fields = this.csvParser_.parseLine(line);
         await this.dispatchLogRow_(fields);
       } catch (e) {
-        this.printError(`line ${this.lineNum_ + 1}: ${e.message || e}\n${e.stack}`);
+        this.printError(
+          `line ${this.lineNum_ + 1}: ${e.message || e}\n${e.stack}`,
+        );
       }
     }
     this.lineNum_++;

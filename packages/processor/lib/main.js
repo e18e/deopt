@@ -1,22 +1,19 @@
-import { DeoptProcessor } from './processor.js'
-import {
-  parseIcState,
-  severityIcState
-} from './log-processing/ic-state.js';
+import { DeoptProcessor } from './processor.js';
+import { parseIcState, severityIcState } from './log-processing/ic-state.js';
 import {
   nameOptimizationState,
   parseOptimizationState,
-  severityOfOptimizationState
+  severityOfOptimizationState,
 } from './log-processing/optimization-state.js';
 
 export async function processLogContent(lines, root) {
-  const deoptProcessor = new DeoptProcessor(root)
+  const deoptProcessor = new DeoptProcessor(root);
   for await (const line of lines) {
-    await deoptProcessor.processLogLine(line)
+    await deoptProcessor.processLogLine(line);
   }
-  deoptProcessor.filterIcStateChanges()
+  deoptProcessor.filterIcStateChanges();
 
-  return deoptProcessor
+  return deoptProcessor;
 }
 
 export {
@@ -25,5 +22,5 @@ export {
   severityIcState,
   nameOptimizationState,
   parseOptimizationState,
-  severityOfOptimizationState
+  severityOfOptimizationState,
 };

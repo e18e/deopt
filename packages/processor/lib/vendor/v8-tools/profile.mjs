@@ -25,9 +25,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import { CodeMap, CodeEntry } from "./codemap.mjs";
-import { ConsArray } from "./consarray.mjs";
-import { WebInspector } from "./sourcemap.mjs";
+import { CodeMap, CodeEntry } from './codemap.mjs';
+import { ConsArray } from './consarray.mjs';
+import { WebInspector } from './sourcemap.mjs';
 
 // Used to associate log entries with source positions in scripts.
 // TODO: move to separate modules
@@ -64,19 +64,19 @@ export class SourcePosition {
       __this__: this,
       script: this.script,
       entries: this.entries,
-    }
+    };
   }
 }
 
 export class Script {
   url;
-  source = "";
+  source = '';
   name;
   sourcePosition = undefined;
   // Map<line, Map<column, SourcePosition>>
   lineToColumn = new Map();
   _entries = [];
-  _sourceMapState = "unknown";
+  _sourceMapState = 'unknown';
 
   constructor(id) {
     this.id = id;
@@ -113,10 +113,10 @@ export class Script {
   addSourcePosition(line, column, entry) {
     let sourcePosition = this.lineToColumn.get(line)?.get(column);
     if (sourcePosition === undefined) {
-      sourcePosition = new SourcePosition(this, line, column,)
+      sourcePosition = new SourcePosition(this, line, column);
       this._addSourcePosition(line, column, sourcePosition);
     }
-    if (this.sourcePosition === undefined && entry.entry?.type === "Script") {
+    if (this.sourcePosition === undefined && entry.entry?.type === 'Script') {
       // Mark the source position of scripts, for inline scripts which don't
       // start at line 1.
       this.sourcePosition = sourcePosition;
@@ -149,13 +149,13 @@ export class Script {
       id: this.id,
       url: this.url,
       source: this.source,
-      sourcePositions: this.sourcePositions
-    }
+      sourcePositions: this.sourcePositions,
+    };
   }
 
   static getShortestUniqueName(url, script) {
     const parts = url.split('/');
-    const filename = parts[parts.length -1];
+    const filename = parts[parts.length - 1];
     const dict = this._dict ?? (this._dict = new Map());
     const matchingScripts = dict.get(filename);
     if (matchingScripts == undefined) {
@@ -165,23 +165,24 @@ export class Script {
     // TODO: find shortest unique substring
     // Update all matching scripts to have a unique filename again.
     for (let matchingScript of matchingScripts) {
-      matchingScript.name = script.url
+      matchingScript.name = script.url;
     }
     matchingScripts.push(script);
     return url;
   }
 
-  ensureSourceMapCalculated(sourceMapFetchPrefix=undefined) {
-    if (this._sourceMapState !== "unknown") return;
+  ensureSourceMapCalculated(sourceMapFetchPrefix = undefined) {
+    if (this._sourceMapState !== 'unknown') return;
 
-    const sourceMapURLMatch =
-        this.source.match(/\/\/# sourceMappingURL=(.*)\n/);
+    const sourceMapURLMatch = this.source.match(
+      /\/\/# sourceMappingURL=(.*)\n/,
+    );
     if (!sourceMapURLMatch) {
-      this._sourceMapState = "none";
+      this._sourceMapState = 'none';
       return;
     }
 
-    this._sourceMapState = "loading";
+    this._sourceMapState = 'loading';
     let sourceMapURL = sourceMapURLMatch[1];
     (async () => {
       try {
@@ -194,8 +195,10 @@ export class Script {
             // Try again with fetch prefix.
             // TODO(leszeks): Remove the retry once the prefix is
             // configurable.
-            sourceMapPayload =
-                await fetch(sourceMapFetchPrefix + sourceMapURL, options);
+            sourceMapPayload = await fetch(
+              sourceMapFetchPrefix + sourceMapURL,
+              options,
+            );
           } else {
             throw e;
           }
@@ -203,12 +206,15 @@ export class Script {
         sourceMapPayload = await sourceMapPayload.text();
 
         if (sourceMapPayload.startsWith(')]}')) {
-          sourceMapPayload =
-              sourceMapPayload.substring(sourceMapPayload.indexOf('\n'));
+          sourceMapPayload = sourceMapPayload.substring(
+            sourceMapPayload.indexOf('\n'),
+          );
         }
         sourceMapPayload = JSON.parse(sourceMapPayload);
-        const sourceMap =
-            new WebInspector.SourceMap(sourceMapURL, sourceMapPayload);
+        const sourceMap = new WebInspector.SourceMap(
+          sourceMapURL,
+          sourceMapPayload,
+        );
 
         const startLine = this.startLine;
         for (const sourcePosition of this.sourcePositions) {
@@ -219,21 +225,24 @@ export class Script {
             sourcePosition.originalPosition = {
               source: new URL(mapping[2], sourceMapURL).href,
               line: mapping[3] + 1,
-              column: mapping[4] + 1
+              column: mapping[4] + 1,
             };
           } else {
-            sourcePosition.originalPosition = {source: null, line:0, column:0};
+            sourcePosition.originalPosition = {
+              source: null,
+              line: 0,
+              column: 0,
+            };
           }
         }
-        this._sourceMapState = "loaded";
+        this._sourceMapState = 'loaded';
       } catch (e) {
         console.error(e);
-        this._sourceMapState = "failed";
+        this._sourceMapState = 'failed';
       }
     })();
   }
 }
-
 
 const kOffsetPairRegex = /C([0-9]+)O([0-9]+)/g;
 class SourcePositionTable {
@@ -245,7 +254,7 @@ class SourcePositionTable {
       const codeOffset = parseInt(regexResult[1]);
       const scriptOffset = parseInt(regexResult[2]);
       if (isNaN(codeOffset) || isNaN(scriptOffset)) continue;
-      this._offsets.push({code: codeOffset, script: scriptOffset});
+      this._offsets.push({ code: codeOffset, script: scriptOffset });
     }
   }
 
@@ -263,7 +272,6 @@ class SourcePositionTable {
   }
 }
 
-
 class SourceInfo {
   script;
   start;
@@ -274,8 +282,13 @@ class SourceInfo {
   disassemble;
 
   setSourcePositionInfo(
-        script, startPos, endPos, sourcePositionTableData, inliningPositions,
-        inlinedSFIs) {
+    script,
+    startPos,
+    endPos,
+    sourcePositionTableData,
+    inliningPositions,
+    inlinedSFIs,
+  ) {
     this.script = script;
     this.start = startPos;
     this.end = endPos;
@@ -311,21 +324,21 @@ const kProfileOperationTick = 2;
 export class Profile {
   topDownTree_ = new CallTree();
   bottomUpTree_ = new CallTree();
-  c_entries_ = {__proto__:null};
+  c_entries_ = { __proto__: null };
   scripts_ = [];
   urlToScript_ = new Map();
   warnings = new Set();
 
-  constructor(useBigIntAddresses=false) {
+  constructor(useBigIntAddresses = false) {
     this.useBigIntAddresses = useBigIntAddresses;
     this.codeMap_ = new CodeMap(useBigIntAddresses);
   }
 
   serializeVMSymbols() {
     let result = this.codeMap_.getAllStaticEntriesWithAddresses();
-    result.concat(this.codeMap_.getAllLibraryEntriesWithAddresses())
+    result.concat(this.codeMap_.getAllLibraryEntriesWithAddresses());
     return result.map(([startAddress, codeEntry]) => {
-      return [codeEntry.getName(), startAddress, startAddress + codeEntry.size]
+      return [codeEntry.getName(), startAddress, startAddress + codeEntry.size];
     });
   }
 
@@ -348,8 +361,8 @@ export class Profile {
   static Operation = {
     MOVE: kProfileOperationMove,
     DELETE: kProfileOperationDelete,
-    TICK: kProfileOperationTick
-  }
+    TICK: kProfileOperationTick,
+  };
 
   /**
    * Enum for code state regarding its dynamic optimization.
@@ -362,7 +375,7 @@ export class Profile {
     SPARKPLUG: 2,
     MAGLEV: 4,
     TURBOFAN: 5,
-  }
+  };
 
   static VMState = {
     JS: 0,
@@ -377,12 +390,12 @@ export class Profile {
     IDLE: 8,
     LOGGING: 9,
     IDLE_EXTERNAL: 10,
-  }
+  };
 
   static CodeType = {
     CPP: 0,
-    SHARED_LIB: 1
-  }
+    SHARED_LIB: 1,
+  };
 
   /**
    * Parser for dynamic code optimization state.
@@ -396,10 +409,10 @@ export class Profile {
       case '^':
         return this.CodeState.SPARKPLUG;
       case '+':
-      case '+\'':
+      case "+'":
         return this.CodeState.MAGLEV;
       case '*':
-      case '*\'':
+      case "*'":
         return this.CodeState.TURBOFAN;
     }
     throw new Error(`unknown code state: ${s}`);
@@ -407,15 +420,15 @@ export class Profile {
 
   static getKindFromState(state) {
     if (state === this.CodeState.COMPILED) {
-      return "Builtin";
+      return 'Builtin';
     } else if (state === this.CodeState.IGNITION) {
-      return "Unopt";
+      return 'Unopt';
     } else if (state === this.CodeState.SPARKPLUG) {
-      return "Sparkplug";
+      return 'Sparkplug';
     } else if (state === this.CodeState.MAGLEV) {
-      return "Maglev";
+      return 'Maglev';
     } else if (state === this.CodeState.TURBOFAN) {
-      return "Opt";
+      return 'Opt';
     }
     throw new Error(`unknown code state: ${state}`);
   }
@@ -456,7 +469,7 @@ export class Profile {
    *     during stack strace processing, specifies a position of the frame
    *     containing the address.
    */
-  handleUnknownCode(operation, addr, opt_stackPos) { }
+  handleUnknownCode(operation, addr, opt_stackPos) {}
 
   /**
    * Registers a library.
@@ -528,7 +541,7 @@ export class Profile {
     // it is safe to put them in a single code map.
     let sfi = this.codeMap_.findDynamicEntryByStartAddress(sfiAddr);
     // Overwrite any old (unused) code objects that overlap with the new SFI.
-    const new_sfi_old_code = !(sfi instanceof SharedFunctionInfoEntry)
+    const new_sfi_old_code = !(sfi instanceof SharedFunctionInfoEntry);
     if (sfi === null || new_sfi_old_code) {
       sfi = new SharedFunctionInfoEntry(name, this.useBigIntAddresses);
       this.codeMap_.addCode(sfiAddr, sfi);
@@ -567,9 +580,15 @@ export class Profile {
     }
   }
 
-  deoptCode(timestamp, code, inliningId, scriptOffset, bailoutType,
-    sourcePositionText, deoptReasonText) {
-  }
+  deoptCode(
+    timestamp,
+    code,
+    inliningId,
+    scriptOffset,
+    bailoutType,
+    sourcePositionText,
+    deoptReasonText,
+  ) {}
 
   /**
    * Reports about deletion of a dynamic code entry.
@@ -587,14 +606,21 @@ export class Profile {
   /**
    * Adds source positions for given code.
    */
-  addSourcePositions(start, scriptId, startPos, endPos, sourcePositionTable,
-        inliningPositions, inlinedSFIs) {
+  addSourcePositions(
+    start,
+    scriptId,
+    startPos,
+    endPos,
+    sourcePositionTable,
+    inliningPositions,
+    inlinedSFIs,
+  ) {
     const script = this.getOrCreateScript(scriptId);
     const entry = this.codeMap_.findDynamicEntryByStartAddress(start);
     if (entry === null) return;
     // Resolve the inlined SharedFunctionInfo list.
     if (inlinedSFIs.length > 0) {
-      inlinedSFIs = inlinedSFIs.substring(1).split("S");
+      inlinedSFIs = inlinedSFIs.substring(1).split('S');
       for (let i = 0; i < inlinedSFIs.length; i++) {
         const sfiAddr = parseInt(inlinedSFIs[i]);
         const sfi = this.codeMap_.findDynamicEntryByStartAddress(sfiAddr);
@@ -611,8 +637,13 @@ export class Profile {
     }
 
     this.getOrCreateSourceInfo(entry).setSourcePositionInfo(
-      script, startPos, endPos, sourcePositionTable, inliningPositions,
-      inlinedSFIs);
+      script,
+      startPos,
+      endPos,
+      sourcePositionTable,
+      inliningPositions,
+      inlinedSFIs,
+    );
   }
 
   addDisassemble(start, kind, disassemble) {
@@ -674,7 +705,7 @@ export class Profile {
    * @param {number[]} stack Stack sample.
    */
   recordTick(time_ns, vmState, stack) {
-    const {nameStack, entryStack} = this.resolveAndFilterFuncs_(stack);
+    const { nameStack, entryStack } = this.resolveAndFilterFuncs_(stack);
     this.bottomUpTree_.addPath(nameStack);
     nameStack.reverse();
     this.topDownTree_.addPath(nameStack);
@@ -709,20 +740,23 @@ export class Profile {
         }
       } else {
         this.handleUnknownCode(kProfileOperationTick, pc, i);
-        if (i === 0) nameStack.push("UNKNOWN");
+        if (i === 0) nameStack.push('UNKNOWN');
         entryStack.push(pc);
       }
-      if (look_for_first_c_function && i > 0 &&
-          (entry === null || entry.type !== 'CPP')
-          && last_seen_c_function !== '') {
+      if (
+        look_for_first_c_function &&
+        i > 0 &&
+        (entry === null || entry.type !== 'CPP') &&
+        last_seen_c_function !== ''
+      ) {
         if (this.c_entries_[last_seen_c_function] === undefined) {
           this.c_entries_[last_seen_c_function] = 0;
         }
         this.c_entries_[last_seen_c_function]++;
-        look_for_first_c_function = false;  // Found it, we're done.
+        look_for_first_c_function = false; // Found it, we're done.
       }
     }
-    return {nameStack, entryStack};
+    return { nameStack, entryStack };
   }
 
   /**
@@ -789,7 +823,7 @@ export class Profile {
   getFlatProfile(opt_label) {
     const counters = new CallTree();
     const rootLabel = opt_label || CallTree.ROOT_NODE_LABEL;
-    const precs = {__proto__:null};
+    const precs = { __proto__: null };
     precs[rootLabel] = 0;
     const root = counters.findOrAddChild(rootLabel);
 
@@ -819,7 +853,8 @@ export class Profile {
           precs[node.label]--;
         }
       },
-      null);
+      null,
+    );
 
     if (!opt_label) {
       // If we have created a flat profile for the whole program, we don't
@@ -835,18 +870,19 @@ export class Profile {
   }
 
   getCEntryProfile() {
-    const result = [new CEntryNode("TOTAL", 0)];
+    const result = [new CEntryNode('TOTAL', 0)];
     let total_ticks = 0;
     for (let f in this.c_entries_) {
       const ticks = this.c_entries_[f];
       total_ticks += ticks;
       result.push(new CEntryNode(f, ticks));
     }
-    result[0].ticks = total_ticks;  // Sorting will keep this at index 0.
-    result.sort((n1, n2) => n2.ticks - n1.ticks || (n2.name < n1.name ? -1 : 1));
+    result[0].ticks = total_ticks; // Sorting will keep this at index 0.
+    result.sort(
+      (n1, n2) => n2.ticks - n1.ticks || (n2.name < n1.name ? -1 : 1),
+    );
     return result;
   }
-
 
   /**
    * Cleans up function entries that are not referenced by code entries.
@@ -860,13 +896,15 @@ export class Profile {
       }
     }
     for (let i = 0, l = entries.length; i < l; ++i) {
-      if ("sfi" in entries[i][1]) {
+      if ('sfi' in entries[i][1]) {
         entries[i][1].sfi.used = true;
       }
     }
     for (let i = 0, l = entries.length; i < l; ++i) {
-      if (entries[i][1].constructor === SharedFunctionInfoEntry &&
-        !entries[i][1].used) {
+      if (
+        entries[i][1].constructor === SharedFunctionInfoEntry &&
+        !entries[i][1].used
+      ) {
         this.codeMap_.deleteCode(entries[i][0]);
       }
     }
@@ -879,7 +917,6 @@ class CEntryNode {
     this.ticks = ticks;
   }
 }
-
 
 /**
  * Creates a dynamic code entry.
@@ -914,7 +951,6 @@ class DynamicCodeEntry extends CodeEntry {
   }
 }
 
-
 /**
  * Creates a dynamic code entry.
  *
@@ -940,7 +976,7 @@ class DynamicFuncCodeEntry extends CodeEntry {
     return this.source?.getSourceCode();
   }
 
-  static STATE_PREFIX = ["", "~", "^", "-", "+", "*"];
+  static STATE_PREFIX = ['', '~', '^', '-', '+', '*'];
   getState() {
     return DynamicFuncCodeEntry.STATE_PREFIX[this.state];
   }
@@ -973,12 +1009,11 @@ class DynamicFuncCodeEntry extends CodeEntry {
  * @constructor
  */
 class SharedFunctionInfoEntry extends CodeEntry {
-
   // Contains the list of generated code for this function.
   /** @type {Set<DynamicCodeEntry>} */
   _codeEntries = new Set();
 
-  constructor(name, useBigIntAddresses=false) {
+  constructor(name, useBigIntAddresses = false) {
     super(useBigIntAddresses ? 0n : 0, name);
     const index = name.lastIndexOf(' ');
     this.functionName = 1 <= index ? name.substring(0, index) : '<anonymous>';
@@ -986,7 +1021,7 @@ class SharedFunctionInfoEntry extends CodeEntry {
 
   addDynamicCode(code) {
     if (code.sfi != this) {
-      throw new Error("Adding dynamic code to wrong function");
+      throw new Error('Adding dynamic code to wrong function');
     }
     this._codeEntries.add(code);
   }
@@ -1148,7 +1183,6 @@ class CallTree {
   }
 }
 
-
 /**
  * Constructs a call graph node.
  *
@@ -1156,18 +1190,16 @@ class CallTree {
  * @param {CallTreeNode} opt_parent Node parent.
  */
 class CallTreeNode {
-
   constructor(label, opt_parent) {
     // Node self weight (how many times this node was the last node in
     // a call path).
     this.selfWeight = 0;
     // Node total weight (includes weights of all children).
     this.totalWeight = 0;
-    this. children = { __proto__:null };
+    this.children = { __proto__: null };
     this.label = label;
     this.parent = opt_parent;
   }
-
 
   /**
    * Adds a child node.
@@ -1188,7 +1220,7 @@ class CallTreeNode {
     this.forEachChild(function (child) {
       totalWeight += child.computeTotalWeight();
     });
-    return this.totalWeight = totalWeight;
+    return (this.totalWeight = totalWeight);
   }
 
   /**
@@ -1196,7 +1228,9 @@ class CallTreeNode {
    */
   exportChildren() {
     const result = [];
-    this.forEachChild(function (node) { result.push(node); });
+    this.forEachChild(function (node) {
+      result.push(node);
+    });
     return result;
   }
 
@@ -1217,7 +1251,7 @@ class CallTreeNode {
    * @param {string} label Child node label.
    */
   findOrAddChild(label) {
-    const found = this.findChild(label)
+    const found = this.findChild(label);
     if (found === null) return this.addChild(label);
     return found;
   }
@@ -1263,7 +1297,7 @@ class CallTreeNode {
   }
 }
 
-export function JsonProfile(useBigIntAddresses=false) {
+export function JsonProfile(useBigIntAddresses = false) {
   this.codeMap_ = new CodeMap(useBigIntAddresses);
   this.codeEntries_ = [];
   this.functionEntries_ = [];
@@ -1271,10 +1305,8 @@ export function JsonProfile(useBigIntAddresses=false) {
   this.scripts_ = [];
 }
 
-JsonProfile.prototype.addLibrary = function (
-  name, startAddr, endAddr) {
-  const entry = new CodeEntry(
-    endAddr - startAddr, name, 'SHARED_LIB');
+JsonProfile.prototype.addLibrary = function (name, startAddr, endAddr) {
+  const entry = new CodeEntry(endAddr - startAddr, name, 'SHARED_LIB');
   this.codeMap_.addLibrary(startAddr, entry);
 
   entry.codeId = this.codeEntries_.length;
@@ -1282,10 +1314,8 @@ JsonProfile.prototype.addLibrary = function (
   return entry;
 };
 
-JsonProfile.prototype.addStaticCode = function (
-  name, startAddr, endAddr) {
-  const entry = new CodeEntry(
-    endAddr - startAddr, name, 'CPP');
+JsonProfile.prototype.addStaticCode = function (name, startAddr, endAddr) {
+  const entry = new CodeEntry(endAddr - startAddr, name, 'CPP');
   this.codeMap_.addStaticCode(startAddr, entry);
 
   entry.codeId = this.codeEntries_.length;
@@ -1293,8 +1323,7 @@ JsonProfile.prototype.addStaticCode = function (
   return entry;
 };
 
-JsonProfile.prototype.addCode = function (
-  kind, name, timestamp, start, size) {
+JsonProfile.prototype.addCode = function (kind, name, timestamp, start, size) {
   let codeId = this.codeEntries_.length;
   // Find out if we have a static code entry for the code. If yes, we will
   // make sure it is written to the JSON file just once.
@@ -1318,7 +1347,14 @@ JsonProfile.prototype.addCode = function (
 };
 
 JsonProfile.prototype.addFuncCode = function (
-  kind, name, timestamp, start, size, sfiAddr, state) {
+  kind,
+  name,
+  timestamp,
+  start,
+  size,
+  sfiAddr,
+  state,
+) {
   // As code and functions are in the same address space,
   // it is safe to put them in a single code map.
   let sfi = this.codeMap_.findDynamicEntryByStartAddress(sfiAddr);
@@ -1376,15 +1412,21 @@ JsonProfile.prototype.moveCode = function (from, to) {
 };
 
 JsonProfile.prototype.addSourcePositions = function (
-  start, script, startPos, endPos, sourcePositions, inliningPositions,
-  inlinedSFIs) {
+  start,
+  script,
+  startPos,
+  endPos,
+  sourcePositions,
+  inliningPositions,
+  inlinedSFIs,
+) {
   const entry = this.codeMap_.findDynamicEntryByStartAddress(start);
   if (!entry) return;
   const codeId = entry.codeId;
 
   // Resolve the inlined functions list.
   if (inlinedSFIs.length > 0) {
-    inlinedSFIs = inlinedSFIs.substring(1).split("S");
+    inlinedSFIs = inlinedSFIs.substring(1).split('S');
     for (let i = 0; i < inlinedSFIs.length; i++) {
       const sfiAddr = parseInt(inlinedSFIs[i]);
       const sfi = this.codeMap_.findDynamicEntryByStartAddress(sfiAddr);
@@ -1405,7 +1447,7 @@ JsonProfile.prototype.addSourcePositions = function (
     end: endPos,
     positions: sourcePositions,
     inlined: inliningPositions,
-    fns: inlinedSFIs
+    fns: inlinedSFIs,
   };
 };
 
@@ -1416,8 +1458,14 @@ JsonProfile.prototype.addScriptSource = function (id, url, source) {
 };
 
 JsonProfile.prototype.deoptCode = function (
-  timestamp, code, inliningId, scriptOffset, bailoutType,
-  sourcePositionText, deoptReasonText) {
+  timestamp,
+  code,
+  inliningId,
+  scriptOffset,
+  bailoutType,
+  sourcePositionText,
+  deoptReasonText,
+) {
   let entry = this.codeMap_.findDynamicEntryByStartAddress(code);
   if (entry) {
     let codeId = entry.codeId;
@@ -1477,7 +1525,7 @@ function writeJson(s) {
 JsonProfile.prototype.writeJson = function () {
   // Write out the JSON in a partially manual way to avoid creating too-large
   // strings in one JSON.stringify call when there are a lot of ticks.
-  write('{\n')
+  write('{\n');
 
   write('  "code": ');
   writeJson(this.codeEntries_);

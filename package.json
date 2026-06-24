@@ -9,6 +9,10 @@
   "type": "module",
   "scripts": {
     "copy-license": "for d in packages/*/; do cp LICENSE \"$d/LICENSE\"; done",
+    "lint:js": "oxlint packages scripts",
+    "lint:format": "oxfmt --check packages scripts",
+    "lint": "npm run lint:js && npm run lint:format",
+    "format": "oxfmt --write packages scripts",
     "update-v8-tools": "node scripts/update-v8-tools.mjs"
   },
   "repository": {
@@ -16,12 +20,14 @@
     "url": "git://github.com/e18e/deopt.git"
   },
   "homepage": "https://github.com/e18e/deopt",
-  "dependencies": {
-  },
   "keywords": [],
   "author": "James Garbutt (https://github.com/43081j)",
   "license": "MIT",
   "engine": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0"
   }
 }

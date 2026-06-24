@@ -1,25 +1,25 @@
 export function keyLocation({ functionName, line, column }) {
   // need to customize key since Objects get different key
   // per instance even if line + column are the same
-  return `${functionName}:${line}:${column}`
+  return `${functionName}:${line}:${column}`;
 }
 
 export function unkeyLocation(key) {
-  if (key == null) return null
-  const [ functionName, line, column ] = key.split(':')
-  return { functionName, line: parseInt(line), column: parseInt(column) }
+  if (key == null) return null;
+  const [functionName, line, column] = key.split(':');
+  return { functionName, line: parseInt(line), column: parseInt(column) };
 }
 
 export function byLocation(a, b) {
-  if (a.line < b.line) return -1
-  if (a.line > b.line) return 1
-  if (a.column < b.column) return -1
-  if (a.column > b.column) return 1
-  return 0
+  if (a.line < b.line) return -1;
+  if (a.line > b.line) return 1;
+  if (a.column < b.column) return -1;
+  if (a.column > b.column) return 1;
+  return 0;
 }
 
 export function byLocationKey(ka, kb) {
-  const a = unkeyLocation(ka)
-  const b = unkeyLocation(kb)
-  return byLocation(a, b)
+  const a = unkeyLocation(ka);
+  const b = unkeyLocation(kb);
+  return byLocation(a, b);
 }
