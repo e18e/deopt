@@ -45,7 +45,7 @@ class MainView extends Component {
     this._onlocationSelected = this._onlocationSelected.bind(this)
     this._onsummaryTabIdxChanged = this._onsummaryTabIdxChanged.bind(this)
     this._onincludeAllSeveritiesChanged = this._onincludeAllSeveritiesChanged.bind(this)
-    this._onfileClicked = this._onfileClicked.bind(this)
+    this._onFileClicked = this._onFileClicked.bind(this)
     this._updateUrl = this._updateUrl.bind(this)
     this._restoreStateFromHistory = this._restoreStateFromHistory.bind(this)
   }
@@ -106,7 +106,7 @@ class MainView extends Component {
         selectedFile={selectedFile}
         groups={groups}
         includeAllSeverities={includeAllSeverities}
-        onfileClicked={this._onfileClicked} />
+        onFileClicked={this._onFileClicked} />
     )
   }
 
@@ -248,7 +248,7 @@ class MainView extends Component {
     this.setState(Object.assign(this.state, { includeAllSeverities, selectedLocation: null }), this._updateUrl)
   }
 
-  _onfileClicked(file) {
+  _onFileClicked(file) {
     this.setState(Object.assign(this.state, {
         selectedFile: file
       , selectedLocation: null

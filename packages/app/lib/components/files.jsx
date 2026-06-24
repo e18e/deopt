@@ -1,17 +1,12 @@
 import { Component } from 'preact'
 
-const severityClassNames = [
-    'green i tc'
-  , 'blue tc'
-  , 'red b tc'
-]
-
 function coloredTds(arr) {
   return arr.map((x, idx) => {
-    const className = x > 0
-      ? severityClassNames[idx] + ' tr'
-      : 'tc i gray'
-    return <td key={idx} className={className}>{x}</td>
+    const tdClass = idx === 0 ? 'num group-start' : 'num'
+    const content = x > 0
+      ? <span className={`pill sev-${idx + 1}`}>{x}</span>
+      : <span className='zero'>0</span>
+    return <td key={idx} className={tdClass}>{content}</td>
   })
 }
 
@@ -58,19 +53,19 @@ export class FilesView extends Component {
       <thead>
         <tr>
           <td className={topHeaderClass}>File</td>
-          <td colSpan='3' className={topHeaderClass}>Optimizations</td>
-          <td colSpan='3' className={topHeaderClass}>Deoptimizations</td>
-          <td colSpan='3' className={topHeaderClass}>Inline Caches</td>
+          <td colSpan='3' className={`${topHeaderClass} group-start`}>Optimizations</td>
+          <td colSpan='3' className={`${topHeaderClass} group-start`}>Deoptimizations</td>
+          <td colSpan='3' className={`${topHeaderClass} group-start`}>Inline Caches</td>
         </tr>
         <tr>
           <td className={subHeaderClass} />
-          <td className={subHeaderClass}>Optimized</td>
+          <td className={`${subHeaderClass} group-start`}>Optimized</td>
           <td className={subHeaderClass}>Optimizable</td>
           <td className={subHeaderClass}>Compiled</td>
-          <td className={subHeaderClass}>Severity 1</td>
+          <td className={`${subHeaderClass} group-start`}>Severity 1</td>
           <td className={subHeaderClass}>Severity 2</td>
           <td className={subHeaderClass}>Severity 3</td>
-          <td className={subHeaderClass}>Severity 1</td>
+          <td className={`${subHeaderClass} group-start`}>Severity 1</td>
           <td className={subHeaderClass}>Severity 2</td>
           <td className={subHeaderClass}>Severity 3</td>
         </tr>
@@ -85,16 +80,12 @@ export class FilesView extends Component {
     const deoptColumns = coloredTds(deoptSeverities.slice(1))
     const icColumns = coloredTds(icSeverities.slice(1))
 
-    const onfileClicked = this._onfileClicked.bind(this, file)
+    const onFileClicked = this._onFileClicked.bind(this, file)
     const selectedClass = file === selectedFile ? 'normalrow selected' : 'normalrow'
     return (
-      <tr key={relativePath} className={selectedClass}>
+      <tr key={relativePath} className={selectedClass} onClick={onFileClicked}>
         <td>
-          <a className='file-link'
-            href='#'
-            onClick={onfileClicked}>
-            {relativePath}
-          </a>
+          <span className='file-link'>{relativePath}</span>
         </td>
         {codeColumns}
         {deoptColumns}
@@ -103,8 +94,9 @@ export class FilesView extends Component {
     )
   }
 
-  _onfileClicked(file) {
-    const { onfileClicked } = this.props
-    onfileClicked(file)
+  _onFileClicked(file, e) {
+    e.preventDefault()
+    const { onFileClicked } = this.props
+    onFileClicked(file)
   }
 }
