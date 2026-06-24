@@ -1,5 +1,3 @@
-import { Fragment } from 'preact'
-
 function processLine(line, markerResolver, next, lineno) {
   const nodes = []
   let buf = ''
@@ -61,11 +59,10 @@ export function markOnly(code, markerResolver) {
       next = res.nextLocation
     }
     rows.push(
-      <Fragment key={lineno}>
+      <div class="line" key={lineno}>
         <span>{String(lineno + 1).padStart(totalDigits)}: </span>
         <span>{nodes}</span>
-        <br />
-      </Fragment>
+      </div>
     )
   }
   return <div class="pre">{rows}</div>

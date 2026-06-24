@@ -62,15 +62,35 @@ export class MarkerResolver {
   resolve(codeLocation) {
     const insertBefore = []
     const insertAfter = []
-    for (const { before, after } of [
-        this._resolveDeopt(codeLocation)
-      , this._resolveIc(codeLocation)
-      , this._resolveCode(codeLocation)
-    ]) {
-      insertBefore.push(...before)
-      insertAfter.push(...after)
+    for (const { info, kind } of this._collect(codeLocation)) {
+      const marker = this._markerSymbol(info, kind)
+      // anonymous Node.js function wrapper
+      if (info.isScript && info.line === 1 && info.column === 1) {
+        insertBefore.push(marker)
+      } else {
+        insertAfter.push(marker)
+      }
     }
     return { insertBefore, insertAfter }
+  }
+
+  // Resolves the markers anchored at the given code location into a single
+  // descriptor for the highest-severity marker, used to underline the code
+  // range rather than insert a symbol. Returns null when nothing is anchored.
+  resolveMarker(codeLocation) {
+    let best = null
+    for (const entry of this._collect(codeLocation)) {
+      if (best == null || entry.info.severity > best.info.severity) best = entry
+    }
+    if (best == null) return null
+    const { info, kind } = best
+    return {
+        id       : info.id
+      , kind
+      , column   : info.column
+      , severity : info.severity
+      , selected : this._selectedLocation === info.id
+    }
   }
 
   nextLocation() {
@@ -86,45 +106,52 @@ export class MarkerResolver {
     }, nextIc)
   }
 
+  _collect(codeLocation) {
+    return [
+      ...this._resolveDeopt(codeLocation)
+    , ...this._resolveIc(codeLocation)
+    , ...this._resolveCode(codeLocation)
+    ]
+  }
+
   _resolveDeopt(codeLocation) {
-    if (this._deopts == null) return { before: [], after: [] }
-    const { before, after, locationIdx } = this._resolve({
+    if (this._deopts == null) return []
+    const { entries, locationIdx } = this._resolveEntries({
         codeLocation
       , map         : this._deopts
       , locationIdx : this._deoptLocationIdx
       , locations   : this._deoptLocations
     })
     this._deoptLocationIdx = locationIdx
-    return { before, after }
+    return entries
   }
 
   _resolveIc(codeLocation) {
-    if (this._ics == null) return { before: [], after: [] }
-    const { before, after, locationIdx } = this._resolve({
+    if (this._ics == null) return []
+    const { entries, locationIdx } = this._resolveEntries({
         codeLocation
       , map         : this._ics
       , locationIdx : this._icLocationIdx
       , locations   : this._icLocations
     })
     this._icLocationIdx = locationIdx
-    return { before, after }
+    return entries
   }
 
-  _resolveCode(loc) {
-    if (this._codes == null) return { before: [], after: [] }
-    const { before, after, locationIdx } = this._resolve({
-        codeLocation: loc
+  _resolveCode(codeLocation) {
+    if (this._codes == null) return []
+    const { entries, locationIdx } = this._resolveEntries({
+        codeLocation
       , map         : this._codes
       , locationIdx : this._codeLocationIdx
       , locations   : this._codeLocations
     })
     this._codeLocationIdx = locationIdx
-    return { before, after }
+    return entries
   }
 
-  _resolve({ map, codeLocation, locationIdx, locations }) {
-    const before = []
-    const after = []
+  _resolveEntries({ map, codeLocation, locationIdx, locations }) {
+    const entries = []
 
     let locationKey = locations[locationIdx]
     let currentLocation = unkeyLocation(locationKey)
@@ -133,36 +160,22 @@ export class MarkerResolver {
       currentLocation != null &&
       applyMark(codeLocation, currentLocation)
     ) {
-      const { marker, placeBefore } = this._determineMarker(map, locationKey)
-      if (marker != null) {
-        if (placeBefore) before.push(marker)
-        else after.push(marker)
+      if (map.has(locationKey)) {
+        entries.push({ info: map.get(locationKey), kind: this._kindOf(map) })
       }
       locationIdx++
       locationKey = locations[locationIdx]
       currentLocation = unkeyLocation(locationKey)
     }
-    return { before, after, locationIdx }
+    return { entries, locationIdx }
   }
 
-  _determineMarker(map, key) {
-    const kind = (
-        map === this._deopts ?  'deopt'
+  _kindOf(map) {
+    return (
+        map === this._deopts ? 'deopt'
       : map === this._ics ? 'ic'
       : 'code'
     )
-    if (map != null && map.has(key)) {
-      return this._handle(map.get(key), kind)
-    }
-    return { marker: null, placeBefore: false }
-  }
-
-  _handle(info, kind) {
-    const marker = this._markerSymbol(info, kind)
-
-    // anonymous Node.js function wrapper
-    const placeBefore = (info.isScript && info.line === 1 && info.column === 1)
-    return { marker, placeBefore }
   }
 
   _markerSymbol(info, kind) {

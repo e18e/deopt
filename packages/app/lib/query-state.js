@@ -12,8 +12,7 @@ export function stateFromUrl() {
   if (location.search == null || location.search.length < 2) return null
   const params = new URLSearchParams(location.search)
   const state = {
-      highlightCode         : parseBool(params.get('highlightCode'))
-    , includeAllSeverities  : parseBool(params.get('includeAllSeverities'))
+      includeAllSeverities  : parseBool(params.get('includeAllSeverities'))
     , selectedFileIdx       : parseNum(params.get('selectedFileIdx'))
     , selectedLocation      : parseNum(params.get('selectedLocation'))
     , selectedTabIdx        : parseNum(params.get('selectedTabIdx'))

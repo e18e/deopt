@@ -1,35 +1,76 @@
-import { Component, Fragment } from 'preact'
+import { Component } from 'preact'
 
 import { MarkerResolver } from '../rendering/marker-resolver.jsx'
 import { markOnly } from '../rendering/mark-only.jsx'
 
 const MAX_HIGHLIGHT_LEN = 1E5
 
+const WORD = /[\w$]/
+
+// Resolves the inclusive 1-based column range of the identifier the marker
+// column points at, so the underline covers the word rather than whatever
+// token the highlighter happened to merge it into.
+function wordRange(line, markerColumn) {
+  let i = markerColumn - 1
+  if (i < 0) i = 0
+  if (i > line.length - 1) i = line.length - 1
+  if (!WORD.test(line[i]) && i > 0 && WORD.test(line[i - 1])) i--
+  if (!WORD.test(line[i])) return [ markerColumn, markerColumn ]
+  let start = i
+  while (start > 0 && WORD.test(line[start - 1])) start--
+  let end = i
+  while (end < line.length - 1 && WORD.test(line[end + 1])) end++
+  return [ start + 1, end + 1 ]
+}
+
 function renderTokens(lines, markerResolver) {
   const totalDigits = String(lines.length).length
   return lines.map((tokens, i) => {
     const lineno = i + 1
+    const line = tokens.map(t => t.content).join('')
     const parts = []
     let column = 0
     for (const token of tokens) {
+      const tokenStart = column + 1
       column += token.content.length
       // Markers are resolved at the column past the token, matching the
       // position the marker resolver expects (1-based, end of token).
-      const { insertBefore, insertAfter } = markerResolver.resolve({ line: lineno, column })
-      parts.push(
-        ...insertBefore
-      , token.color
-          ? <span style={{ color: token.color }}>{token.content}</span>
-          : token.content
-      , ...insertAfter
+      const marker = markerResolver.resolveMarker({ line: lineno, column })
+      const style = token.color ? { color: token.color } : null
+      const text = content => style ? <span style={style}>{content}</span> : content
+      if (marker == null) {
+        parts.push(text(token.content))
+        continue
+      }
+      // Underline only the word the marker points at; clicking it jumps to the
+      // reason for the highest-severity marker anchored here.
+      const [ wordStart, wordEnd ] = wordRange(line, marker.column)
+      const from = Math.max(tokenStart, wordStart) - tokenStart
+      const to = Math.min(column, wordEnd) - tokenStart
+      const className =
+        `marked marked-${marker.severity}${marker.selected ? ' selected' : ''}`
+      const mark = content => (
+        <a
+          href='#'
+          id={`code-location-${marker.id}`}
+          class={className}
+          data-markerid={marker.id}
+          data-markertype={marker.kind}
+          style={style}>{content}</a>
       )
+      if (to < from) {
+        parts.push(mark(token.content))
+        continue
+      }
+      if (from > 0) parts.push(text(token.content.slice(0, from)))
+      parts.push(mark(token.content.slice(from, to + 1)))
+      if (to + 1 < token.content.length) parts.push(text(token.content.slice(to + 1)))
     }
     return (
-      <Fragment key={lineno}>
+      <div class="line" key={lineno}>
         <span>{String(lineno).padStart(totalDigits)}: </span>
         <span>{parts}</span>
-        <br />
-      </Fragment>
+      </div>
     )
   })
 }
@@ -40,6 +81,8 @@ export class CodeView extends Component {
     this._bind()
     this._tokens = null
     this._tokenizedCode = null
+    this._focusSeq = props.locationSeq
+    this._focusAnimation = null
   }
 
   _bind() {
@@ -56,6 +99,24 @@ export class CodeView extends Component {
     const inView = top >= 0 && bottom <= window.innerHeight
     if (inView) return
     code.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  _maybeFocusLine() {
+    const { selectedLocation, locationSeq } = this.props
+    if (locationSeq === this._focusSeq) return
+    this._focusSeq = locationSeq
+    if (selectedLocation == null) return
+    const marker = document.getElementById(`code-location-${selectedLocation}`)
+    if (marker == null) return
+    const line = marker.closest('.line')
+    if (line == null) return
+    // Filth. Needed to cancel animations if you click too fast
+    const color = getComputedStyle(line).getPropertyValue('--surface-4')
+    if (this._focusAnimation != null) this._focusAnimation.cancel()
+    this._focusAnimation = line.animate(
+      [ { background: color }, { background: 'transparent' } ]
+    , { duration: 3000, easing: 'ease-out' }
+    )
   }
 
   componentDidMount() {
@@ -75,6 +136,7 @@ export class CodeView extends Component {
   componentDidUpdate() {
     this._loadTokens()
     this._maybeScrollIntoView()
+    this._maybeFocusLine()
   }
 
   shouldComponentUpdate(nextProps) {
@@ -82,8 +144,8 @@ export class CodeView extends Component {
     return (
          props.code !== nextProps.code
       || props.selectedLocation !== nextProps.selectedLocation
+      || props.locationSeq !== nextProps.locationSeq
       || props.includeAllSeverities !== nextProps.includeAllSeverities
-      || props.highlightCode !== nextProps.highlightCode
     )
   }
 
@@ -120,8 +182,8 @@ export class CodeView extends Component {
   }
 
   async _loadTokens() {
-    const { fileName, code, highlightCode } = this.props
-    if (!highlightCode || code.length > MAX_HIGHLIGHT_LEN) return
+    const { fileName, code } = this.props
+    if (code.length > MAX_HIGHLIGHT_LEN) return
     if (this._tokenizedCode === code) return
     this._tokenizedCode = code
     this._tokens = null
@@ -137,9 +199,8 @@ export class CodeView extends Component {
   }
 
   _renderCode() {
-    const { code, highlightCode } = this.props
+    const { code } = this.props
     const highlight =
-      highlightCode &&
       code.length <= MAX_HIGHLIGHT_LEN &&
       this._tokens != null &&
       this._tokenizedCode === code

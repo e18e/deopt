@@ -19,8 +19,8 @@ export class FileDetailsView extends Component {
         groups
       , selectedFile
       , selectedLocation
+      , locationSeq
       , includeAllSeverities
-      , highlightCode
       , className = ''
       , selectedSummaryTabIdx
       , onsummaryClicked
@@ -39,9 +39,11 @@ export class FileDetailsView extends Component {
 
     return (
       <div className={className}>
+        <div className='detail-col'>
         <CodeView
-          className='flex-column vh-85 w-50 code-view'
+          className='code-view'
           selectedLocation={selectedLocation}
+          locationSeq={locationSeq}
           fileName={selectedFile}
           code={src}
           ics={ics}
@@ -51,10 +53,11 @@ export class FileDetailsView extends Component {
           codes={codes}
           codeLocations={codeLocations}
           includeAllSeverities={includeAllSeverities}
-          highlightCode={highlightCode}
           onmarkerClicked={this._onmarkerClicked} />
+        </div>
+        <div className='detail-col'>
         <SummaryView
-          className='flex-column vh-85 w-50 summary-view'
+          className='summary-view'
           file={selectedFile}
           relativePath={relativePath}
           selectedLocation={selectedLocation}
@@ -68,6 +71,7 @@ export class FileDetailsView extends Component {
           selectedTabIdx={selectedSummaryTabIdx}
           ontabHeaderClicked={this._onsummaryTabHeaderClicked}
           onsummaryClicked={onsummaryClicked} />
+        </div>
       </div>
     )
   }

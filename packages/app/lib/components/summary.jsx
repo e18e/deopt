@@ -59,7 +59,7 @@ export class SummaryView extends Component {
     const renderedCodes = this._renderCodes(codes, codeLocations, selectedTabIdx === OPT_TAB_IDX)
     return (
       <div className={className}>
-        <div className='flex flex-row'>
+        <div className='tabs'>
           {this._renderTabHeader('Optimizations', OPT_TAB_IDX)}
           {this._renderTabHeader('Deoptimizations', DEOPT_TAB_IDX)}
           {this._renderTabHeader('Inline Caches', ICS_TAB_IDX)}
@@ -80,24 +80,20 @@ export class SummaryView extends Component {
   _renderTabHeader(label, idx) {
     const { selectedTabIdx } = this.props
     const selected = idx === selectedTabIdx
-    const baseClass = 'flex flex-column ttu dib link pa3 bt outline-0 tab-header'
-    const selectedClass = 'b--blue blue'
-    const unselectedClass = 'white b--white'
-    const className = selected ? `${baseClass} ${selectedClass}` : `${baseClass} ${unselectedClass}`
+    const className = selected ? 'tab selected' : 'tab'
 
     return <a className={className} href='#' onClick={() => this._ontabHeaderClicked(idx)}>{label}</a>
   }
 
   _renderDataPoint(data, locations, renderDetails) {
     const { selectedLocation, includeAllSeverities, relativePath } = this.props
-    if (locations.length === 0) return <h4 className='ml4'>None</h4>
+    if (locations.length === 0) return <p className='summary-empty'>None</p>
     const rendered = []
     for (const loc of locations) {
       const info = data.get(loc)
       if (!includeAllSeverities && info.severity <= MIN_SEVERITY) continue
 
-      const highlightedClass = selectedLocation === info.id ? 'bg-light-yellow' : 'bg-light-green'
-      const className = `${highlightedClass} ba br2 bw1 ma3 pa2`
+      const className = selectedLocation === info.id ? 'summary-card selected' : 'summary-card'
       rendered.push(
         <div className={className} key={info.id}>
           {this._summary(info, relativePath)}
@@ -109,34 +105,28 @@ export class SummaryView extends Component {
   }
 
   _renderIcs(ics, icLocations, selected) {
-    if (ics == null) return null
-    const className = selected ? '' : 'dn'
-    const rendered = this._renderDataPoint(ics, icLocations, this._renderIc)
+    if (ics == null || !selected) return null
     return (
-      <div key='ics' className={className}>
-        {rendered}
+      <div key='ics'>
+        {this._renderDataPoint(ics, icLocations, this._renderIc)}
       </div>
     )
   }
 
   _renderDeopts(deopts, deoptLocations, selected) {
-    if (deopts == null) return null
-    const className = selected ? '' : 'dn'
-    const rendered = this._renderDataPoint(deopts, deoptLocations, this._renderDeopt)
+    if (deopts == null || !selected) return null
     return (
-      <div key='deopts' className={className}>
-        {rendered}
+      <div key='deopts'>
+        {this._renderDataPoint(deopts, deoptLocations, this._renderDeopt)}
       </div>
     )
   }
 
   _renderCodes(codes, codeLocations, selected) {
-    if (codes == null) return null
-    const className = selected ? '' : 'dn'
-    const rendered = this._renderDataPoint(codes, codeLocations, this._renderCode)
+    if (codes == null || !selected) return null
     return (
-      <div key='optimizations' className={className}>
-        {rendered}
+      <div key='optimizations'>
+        {this._renderDataPoint(codes, codeLocations, this._renderCode)}
       </div>
     )
   }
@@ -148,7 +138,7 @@ export class SummaryView extends Component {
       , line
       , column
     } = info
-    const locationEl = <span className='dark-blue f5 mr2'>{id}</span>
+    const locationEl = <span className='summary-location'>{id}</span>
     const onclicked = e => {
       e.preventDefault()
       e.stopPropagation()
@@ -157,7 +147,7 @@ export class SummaryView extends Component {
 
     const fullLoc = (
       <a href='#'
-        className='i items'
+        className='summary-link'
         onClick={onclicked}>
         {functionName} at {relativePath}:{line}:{column}
       </a>
@@ -174,12 +164,12 @@ export class SummaryView extends Component {
     const rows = info.updates.map((update, idx) => this._deoptRow(update, idx))
     return (
       <table key={'deopt:' + info.id}>
-        <thead className='f5 b pt2'>
+        <thead>
           <tr>
-            <td class='pt2 pr3 basegreen'>Timestamp</td>
-            <td class='pt2 pr3 basegreen'>Bailout</td>
-            <td class='pt2 pr3 basegreen'>Reason</td>
-            <td class='pt2 pr3 basegreen'>Inlined</td>
+            <td class='col-head'>Timestamp</td>
+            <td class='col-head'>Bailout</td>
+            <td class='col-head'>Reason</td>
+            <td class='col-head'>Inlined</td>
           </tr>
         </thead>
         <tbody>
@@ -202,9 +192,9 @@ export class SummaryView extends Component {
     return (
       <tr key={timestamp}>
         <td>{timeStampMs}ms</td>
-        <td className={bailoutClassName + ' pr3'}>{bailoutType}</td>
-        <td className='pr3'>{deoptReason}</td>
-        <td className='gray pr3'>{inlined ? 'yes' : 'no'}</td>
+        <td className={bailoutClassName}>{bailoutType}</td>
+        <td>{deoptReason}</td>
+        <td className='gray'>{inlined ? 'yes' : 'no'}</td>
       </tr>
     )
   }
@@ -213,12 +203,12 @@ export class SummaryView extends Component {
     const rows = info.updates.map((update, idx) => this._icRow(update, idx))
     return (
       <table key={'ic:' + info.id}>
-        <thead className='f5 b '>
+        <thead>
           <tr>
-            <td class='pt2 pr3 basegreen'>Old State</td>
-            <td class='pt2 pr3 basegreen'>New State</td>
-            <td class='pt2 pr3 basegreen'>Key</td>
-            <td class='pt2 pr3 basegreen'>Map</td>
+            <td class='col-head'>Old State</td>
+            <td class='col-head'>New State</td>
+            <td class='col-head'>Key</td>
+            <td class='col-head'>Map</td>
           </tr>
         </thead>
         <tbody>
@@ -243,10 +233,10 @@ export class SummaryView extends Component {
     const mapString = `0x${map}`
     return (
       <tr key={key + id}>
-        <td className={oldStateClassName + ' pr3'}>{oldStateName}</td>
-        <td className={newStateClassName + ' pr3'}>{newStateName}</td>
-        <td className='black pr3'>{key}</td>
-        <td className='gray pr3'>{mapString}</td>
+        <td className={oldStateClassName}>{oldStateName}</td>
+        <td className={newStateClassName}>{newStateName}</td>
+        <td>{key}</td>
+        <td className='gray'>{mapString}</td>
       </tr>
     )
   }
@@ -255,10 +245,10 @@ export class SummaryView extends Component {
     const rows = info.updates.map((update, idx) => this._codeRow(update, idx))
     return (
       <table key={'code:' + info.id}>
-        <thead className='f5 b '>
+        <thead>
           <tr>
-            <td class='pt2 pr3 basegreen'>Timestamp</td>
-            <td class='pt2 pr3 basegreen'>Optimization State</td>
+            <td class='col-head'>Timestamp</td>
+            <td class='col-head'>Optimization State</td>
           </tr>
         </thead>
         <tbody>
@@ -276,7 +266,7 @@ export class SummaryView extends Component {
     return (
       <tr key={timestamp}>
         <td>{timeStampMs}ms</td>
-        <td className={codeStateClassName + ' pr3'}>{stateName}</td>
+        <td className={codeStateClassName}>{stateName}</td>
       </tr>
     )
   }

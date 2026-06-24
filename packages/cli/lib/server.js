@@ -3,16 +3,16 @@ import { fileURLToPath } from 'node:url'
 
 import { H3, serve, html, getQuery } from 'h3'
 import { createHighlighterCore } from 'shiki/core'
-import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
+import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import js from 'shiki/langs/javascript.mjs'
 import jsx from 'shiki/langs/jsx.mjs'
 import ts from 'shiki/langs/typescript.mjs'
 import tsx from 'shiki/langs/tsx.mjs'
-import githubDark from 'shiki/themes/github-dark.mjs'
+import dracula from 'shiki/themes/dracula.mjs'
 
 import { buildRenderData, serializeRenderData } from './enrich-render-data.js'
 
-const THEME = 'github-dark'
+const THEME = 'dracula'
 const LANG_BY_EXT = {
     js  : 'javascript'
   , mjs : 'javascript'
@@ -50,9 +50,9 @@ export async function startServer({ dataFile }) {
   const renderData = JSON.stringify(serializeRenderData(groups))
 
   const highlighter = await createHighlighterCore({
-      themes: [ githubDark ]
+      themes: [ dracula ]
     , langs: [ js, jsx, ts, tsx ]
-    , engine: createJavaScriptRegexEngine()
+    , engine: createOnigurumaEngine(import('shiki/wasm'))
   })
 
   const tokenCache = new Map()

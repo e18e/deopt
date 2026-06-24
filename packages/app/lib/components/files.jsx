@@ -6,13 +6,11 @@ const severityClassNames = [
   , 'red b tc'
 ]
 
-const underlineTdClass = ' pl2 pr2 underlined '
-
 function coloredTds(arr) {
   return arr.map((x, idx) => {
     const className = x > 0
-      ? severityClassNames[idx] + ' tr' + underlineTdClass
-      : ' pl2 pr2 tc i gray' + underlineTdClass
+      ? severityClassNames[idx] + ' tr'
+      : 'tc i gray'
     return <td key={idx} className={className}>{x}</td>
   })
 }
@@ -32,20 +30,20 @@ export class FilesView extends Component {
       .sort(bySeverityScoreDesc)
 
     for (const { file, summary } of filesSeverities) {
-      const { icSeverities, deoptSeverities, codeStates } = summary
+      const { icSeverities, deoptSeverities, codeSeverities } = summary
       const { relativePath } = groups.get(file)
       const rendered = this._renderFile({
           file
         , relativePath
         , icSeverities
         , deoptSeverities
-        , codeStates
+        , codeSeverities
       })
       rows.push(rendered)
     }
     return (
       <div className={className}>
-        <table cellSpacing='0'>
+        <table className='files-table' cellSpacing='0'>
           {tableHeader}
           <tbody>{rows}</tbody>
         </table>
@@ -54,12 +52,12 @@ export class FilesView extends Component {
   }
 
   _renderTableHeader() {
-    const topHeaderClass = 'tc header-row pt2 pb1 '
-    const subHeaderClass = 'pa1 pl2 pr2 subhead'
+    const topHeaderClass = 'header-row'
+    const subHeaderClass = 'subhead'
     return (
       <thead>
         <tr>
-          <td className={topHeaderClass + ' '}>File</td>
+          <td className={topHeaderClass}>File</td>
           <td colSpan='3' className={topHeaderClass}>Optimizations</td>
           <td colSpan='3' className={topHeaderClass}>Deoptimizations</td>
           <td colSpan='3' className={topHeaderClass}>Inline Caches</td>
@@ -80,20 +78,19 @@ export class FilesView extends Component {
     )
   }
 
-  _renderFile({ file, relativePath, deoptSeverities, icSeverities, codeStates }) {
+  _renderFile({ file, relativePath, deoptSeverities, icSeverities, codeSeverities }) {
     const { selectedFile } = this.props
 
-    // Optimized = 3, Compile = 0, but we show them in order of serverity, so we reverse
-    const codeColumns = coloredTds(codeStates.reverse())
+    const codeColumns = coloredTds(codeSeverities.slice(1))
     const deoptColumns = coloredTds(deoptSeverities.slice(1))
     const icColumns = coloredTds(icSeverities.slice(1))
 
     const onfileClicked = this._onfileClicked.bind(this, file)
-    const selectedClass = file === selectedFile ? 'bg-light-yellow' : ''
+    const selectedClass = file === selectedFile ? 'normalrow selected' : 'normalrow'
     return (
-      <tr key={relativePath} className={'normalrow ' + selectedClass}>
-        <td class='underlined'>
-          <a className={'items pl2 pr2'}
+      <tr key={relativePath} className={selectedClass}>
+        <td>
+          <a className='file-link'
             href='#'
             onClick={onfileClicked}>
             {relativePath}
