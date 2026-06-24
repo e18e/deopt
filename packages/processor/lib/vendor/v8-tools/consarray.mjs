@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 /**
  * Constructs a ConsArray object. It is used mainly for tree traversal.
  * In this use case we have lots of arrays that we need to iterate
@@ -59,11 +60,9 @@ export class ConsArray {
    * Whether the end of iteration is reached.
    */
   atEnd() {
-    return (
-      this.currCell_ === null ||
-      this.currCell_.data === null ||
-      this.currCellPos_ >= this.currCell_.data.length
-    );
+    return this.currCell_ === null ||
+        this.currCell_.data === null ||
+        this.currCellPos_ >= this.currCell_.data.length;
   }
 
   /**
@@ -78,6 +77,7 @@ export class ConsArray {
     return result;
   }
 }
+
 
 /**
  * A cell object used for constructing a list in ConsArray.

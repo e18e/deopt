@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 /**
  * Creates a CSV lines parser.
  */
@@ -35,7 +36,7 @@ export class CsvParser {
    * @param {string} input field.
    **/
   escapeField(string) {
-    let nextPos = string.indexOf('\\');
+    let nextPos = string.indexOf("\\");
     if (nextPos === -1) return string;
     let result = [string.substring(0, nextPos)];
     // Escape sequences of the form \x00 and \u0000;
@@ -60,7 +61,7 @@ export class CsvParser {
         // Convert the selected escape sequence to a single character.
         const escapeChars = string.substring(pos, nextPos);
         if (escapeChars === '2C') {
-          result.push(',');
+            result.push(',');
         } else {
           result.push(String.fromCharCode(parseInt(escapeChars, 16)));
         }
@@ -68,7 +69,7 @@ export class CsvParser {
 
       // Continue looking for the next escape sequence.
       pos = nextPos;
-      nextPos = string.indexOf('\\', pos);
+      nextPos = string.indexOf("\\", pos);
       // If there are no more escape sequences consume the rest of the string.
       if (nextPos === -1) {
         result.push(string.substr(pos));
@@ -91,7 +92,7 @@ export class CsvParser {
     const fields = [];
     if (endPos == 0) return fields;
     let nextPos = 0;
-    while (nextPos !== -1) {
+    while(nextPos !== -1) {
       nextPos = line.indexOf(',', pos);
       let field;
       if (nextPos === -1) {
@@ -101,7 +102,7 @@ export class CsvParser {
       }
       fields.push(this.escapeField(field));
       pos = nextPos + 1;
-    }
-    return fields;
+    };
+    return fields
   }
 }
