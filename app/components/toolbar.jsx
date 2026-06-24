@@ -1,16 +1,8 @@
-'use strict'
+import { Component } from 'preact'
 
-const React = require('react')
-const { Component } = React
-
-const assert = require('assert')
-
-class ToolbarView extends Component {
+export class ToolbarView extends Component {
   constructor(props) {
     super(props)
-    const { onincludeAllSeveritiesChanged, onhighlightCodeChanged } = props
-    assert.equal(typeof onincludeAllSeveritiesChanged, 'function', 'need to pass onincludeAllSeveritiesChanged function')
-    assert.equal(typeof onhighlightCodeChanged, 'function', 'need to pass onhighlightCodeChanged function')
     this._bind()
   }
 
@@ -68,8 +60,4 @@ class ToolbarView extends Component {
     const { onhighlightCodeChanged, highlightCode } = this.props
     onhighlightCodeChanged(!highlightCode)
   }
-}
-
-module.exports = {
-  ToolbarView
 }

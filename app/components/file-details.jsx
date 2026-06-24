@@ -1,20 +1,11 @@
-'use strict'
+import { Component } from 'preact'
 
-const React = require('react')
-const { Component } = React
+import { CodeView } from './code.jsx'
+import { SummaryView } from './summary.jsx'
 
-const { CodeView } = require('./code')
-const { SummaryView } = require('./summary')
-
-const assert = require('assert')
-
-class FileDetailsView extends Component {
+export class FileDetailsView extends Component {
   constructor(props) {
     super(props)
-
-    const { onsummaryTabIdxChanged } = props
-    assert.equal(typeof onsummaryTabIdxChanged, 'function', 'need to pass onsummaryTabIdxChanged function')
-
     this._bind()
   }
 
@@ -103,5 +94,3 @@ class FileDetailsView extends Component {
     onsummaryTabIdxChanged(idx)
   }
 }
-
-module.exports = { FileDetailsView }

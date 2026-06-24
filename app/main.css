@@ -1,83 +1,67 @@
-@import './node_modules/tachyons/css/tachyons.css';
-@import './node_modules/peacock/styles/tango.css';
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,600');
-@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
+@import 'open-props/normalize';
+@import 'open-props/style';
 
 html {
-  background: #4a5859;
+  background: var(--gray-7);
 }
 
 body {
   overflow: hidden;
-  font-family: 'Source Sans Pro', sans-serif;
-  padding:15px;
+  font-family: var(--font-sans);
+  padding: var(--size-3);
 }
 
-
 /*
- * Tachyons Overrides/Additions
+ * App colors
  */
 
-.b { font-weight: 600; }
+.green { color: var(--green-5); }
+.blue { color: var(--blue-5); }
+.red { color: var(--red-5); }
 
-.green { color: #5ac878; }
-.blue { color: #4cb5ff; }
-.red { color: #ff6040; }
-.basegreen  { color: #4a5859; }
-
-.bg-light-green { background-color: #e1e7e6; }
-
-.vh-85 { height: 85vh; }
-.vh-15 { height: 15vh; }
-
-/* 
+/*
  * Table
  */
 
 .header-row {
-  background-color: #89a19d;
+  background-color: var(--gray-5);
   text-transform: uppercase;
-  font-size:1.1em;
-  color: #ffffff;
+  color: var(--gray-0);
 }
 
 .subhead {
-  background-color:#353d3e;
-  font-size: 0.9em;
-  color: #ffffff;
+  background-color: var(--gray-8);
+  font-size: var(--font-size-0);
+  color: var(--gray-0);
 }
 
-
 tbody {
-	background-color: #e1e7e6
+  background-color: var(--gray-1);
 }
 
 .underlined {
-	border-bottom: 1px solid #89a19d;
-	padding-top:1.25em;
-	padding-bottom:1.25em;
+  border-bottom: var(--border-size-1) solid var(--gray-5);
+  padding-block: var(--size-3);
 }
 
 .normalrow:hover {
-	background-color: #f5f7f7;
+  background-color: var(--gray-0);
 }
 
-a.items {
-  color: #4a5859;
-}
+/*
+ * Code / summary views
+ */
 
 .code-view,
 .summary-view,
 .highlight pre {
-  overflow-x: auto;
-  overflow-y: hidden;
   overflow: scroll;
 }
 
 .code-view,
 .highlight pre {
-  font-size: 13px;
-  font-family: 'Source Code Pro', monospace;
+  font-size: var(--font-size-0);
+  font-family: var(--font-mono);
 }
 
 .code-view a,
@@ -85,8 +69,8 @@ a.items {
   text-decoration: none;
 }
 
-.tab-header:focus {
-  outline: none;
+.code-view .pre {
+  white-space: pre;
 }
 
 /* Scrollbar on left for Code View */
@@ -99,6 +83,6 @@ a.items {
 }
 
 .code-view .selected {
-  background: yellow;
-  padding: 2px;
+  background: var(--yellow-3);
+  padding: var(--size-1);
 }

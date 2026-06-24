@@ -1,16 +1,11 @@
-'use strict'
+import { Component } from 'preact'
 
-const React = require('react')
-const { Component } = React
-const scrollIntoView = require('scroll-into-view-if-needed')
-
-const assert = require('assert')
-const { nameIcState, severityIcState } = require('../../lib/log-processing/ic-state')
-const {
+import { nameIcState, severityIcState } from '../../lib/log-processing/ic-state.js'
+import {
     nameOptimizationState
   , severityOfOptimizationState
-} = require('../../lib/log-processing/optimization-state')
-const { MIN_SEVERITY } = require('../../lib/severities')
+} from '../../lib/log-processing/optimization-state.js'
+import { MIN_SEVERITY } from '../../lib/severities.js'
 
 const severityClassNames = [
     'green i'
@@ -22,16 +17,9 @@ const OPT_TAB_IDX = 0
 const DEOPT_TAB_IDX = 1
 const ICS_TAB_IDX = 2
 
-class SummaryView extends Component {
+export class SummaryView extends Component {
   constructor(props) {
     super(props)
-    const { ics, icLocations, deopts, deoptLocations, onsummaryClicked, ontabHeaderClicked } = props
-
-    assert(ics == null || icLocations != null, 'need to provide locations for ics')
-    assert(deopts == null || deoptLocations != null, 'need to provide locations for deopts')
-    assert.equal(typeof onsummaryClicked, 'function', 'need to pass onsummaryClicked function')
-    assert.equal(typeof ontabHeaderClicked, 'function', 'need to pass ontabHeaderClicked function')
-
     this._bind()
   }
 
@@ -46,7 +34,10 @@ class SummaryView extends Component {
     if (selectedLocation == null) return
     const summary = document.getElementById(`summary-location-${selectedLocation}`)
     if (summary == null) return
-    scrollIntoView(summary, { behavior: 'smooth', scrollMode: 'if-needed' })
+    const { top, bottom } = summary.getBoundingClientRect()
+    const inView = top >= 0 && bottom <= window.innerHeight
+    if (inView) return
+    summary.scrollIntoView({ behavior: 'smooth' })
   }
 
   componentDidMount() {
@@ -316,7 +307,4 @@ class SummaryView extends Component {
   static get OPT_TAB_IDX() { return OPT_TAB_IDX }
   static get DEOPT_TAB_IDX() { return DEOPT_TAB_IDX }
   static get ICS_TAB_IDX() { return ICS_TAB_IDX }
-}
-module.exports = {
-  SummaryView
 }

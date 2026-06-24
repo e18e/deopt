@@ -13,6 +13,7 @@
     "deoptigate*"
   ],
   "scripts": {
+    "build": "npm --prefix app run build",
     "test": "node --test",
     "update-v8-tools": "node scripts/update-v8-tools.mjs"
   },

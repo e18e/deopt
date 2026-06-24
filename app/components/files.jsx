@@ -1,9 +1,6 @@
-'use strict'
+import { Component } from 'preact'
 
-const React = require('react')
-const { Component } = React
-const summarizeFile = require('../../lib/grouping/summarize-file')
-const assert = require('assert')
+import { summarizeFile } from '../../lib/grouping/summarize-file.js'
 
 const severityClassNames = [
     'green i tc'
@@ -26,13 +23,7 @@ function bySeverityScoreDesc({ summary: s1 }, { summary: s2 }) {
   return s1.severityScore < s2.severityScore ? 1 : -1
 }
 
-class FilesView extends Component {
-  constructor(props) {
-    super(props)
-    const { onfileClicked } = props
-    assert.equal(typeof onfileClicked, 'function', 'need to pass onfileClicked function')
-  }
-
+export class FilesView extends Component {
   render() {
     const { groups, includeAllSeverities, className = '' } = this.props
     const tableHeader = this._renderTableHeader()
@@ -126,5 +117,3 @@ class FilesView extends Component {
     onfileClicked(file)
   }
 }
-
-module.exports = { FilesView }

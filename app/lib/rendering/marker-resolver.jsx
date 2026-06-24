@@ -1,6 +1,5 @@
-import { severityColors, MIN_SEVERITY } from '../severities.js'
-import { unkeyLocation } from '../grouping/location.js'
-import assert from 'node:assert'
+import { severityColors, MIN_SEVERITY } from '../../../lib/severities.js'
+import { unkeyLocation } from '../../../lib/grouping/location.js'
 
 const DEOPTSYMBOL = '▼'
 const ICSYMBOL = '☎'
@@ -37,10 +36,6 @@ export class MarkerResolver {
     , selectedLocation = null
     , includeAllSeverities = true
   }) {
-    assert(ics == null || icLocations != null, 'need to provide locations for ics')
-    assert(deopts == null || deoptLocations != null, 'need to provide locations for deopts')
-    assert(codes == null || codeLocations != null, 'need to provide locations for codes')
-
     this._ics = ics
     this._ics = includeAllSeverities ? ics : highSeverity(ics)
     this._icLocations = includeAllSeverities ? icLocations : includedIn(this._ics, icLocations)
@@ -57,23 +52,18 @@ export class MarkerResolver {
     this._selectedLocation = selectedLocation
   }
 
+  // Resolves the markers anchored at the given code location into two lists of
+  // Preact elements to render before and after the code at that location.
   resolve(codeLocation) {
-    let insertBefore = ''
-    let insertAfter = ''
-    {
-      const { before, after } = this._resolveDeopt(codeLocation)
-      insertBefore += before
-      insertAfter += after
-    }
-    {
-      const { before, after } = this._resolveIc(codeLocation)
-      insertBefore += before
-      insertAfter += after
-    }
-    {
-      const { before, after } = this._resolveCode(codeLocation)
-      insertBefore += before
-      insertAfter += after
+    const insertBefore = []
+    const insertAfter = []
+    for (const { before, after } of [
+        this._resolveDeopt(codeLocation)
+      , this._resolveIc(codeLocation)
+      , this._resolveCode(codeLocation)
+    ]) {
+      insertBefore.push(...before)
+      insertAfter.push(...after)
     }
     return { insertBefore, insertAfter }
   }
@@ -92,7 +82,7 @@ export class MarkerResolver {
   }
 
   _resolveDeopt(codeLocation) {
-    if (this._deopts == null) return ''
+    if (this._deopts == null) return { before: [], after: [] }
     const { before, after, locationIdx } = this._resolve({
         codeLocation
       , map         : this._deopts
@@ -104,7 +94,7 @@ export class MarkerResolver {
   }
 
   _resolveIc(codeLocation) {
-    if (this._ics == null) return ''
+    if (this._ics == null) return { before: [], after: [] }
     const { before, after, locationIdx } = this._resolve({
         codeLocation
       , map         : this._ics
@@ -116,7 +106,7 @@ export class MarkerResolver {
   }
 
   _resolveCode(loc) {
-    if (this._codes == null) return ''
+    if (this._codes == null) return { before: [], after: [] }
     const { before, after, locationIdx } = this._resolve({
         codeLocation: loc
       , map         : this._codes
@@ -128,8 +118,8 @@ export class MarkerResolver {
   }
 
   _resolve({ map, codeLocation, locationIdx, locations }) {
-    let before = ''
-    let after = ''
+    const before = []
+    const after = []
 
     let locationKey = locations[locationIdx]
     let currentLocation = unkeyLocation(locationKey)
@@ -138,9 +128,11 @@ export class MarkerResolver {
       currentLocation != null &&
       applyMark(codeLocation, currentLocation)
     ) {
-      const { result, placeBefore } = this._determineMarkerSymbol(map, locationKey)
-      if (placeBefore) before += result
-      else after += result
+      const { marker, placeBefore } = this._determineMarker(map, locationKey)
+      if (marker != null) {
+        if (placeBefore) before.push(marker)
+        else after.push(marker)
+      }
       locationIdx++
       locationKey = locations[locationIdx]
       currentLocation = unkeyLocation(locationKey)
@@ -148,7 +140,7 @@ export class MarkerResolver {
     return { before, after, locationIdx }
   }
 
-  _determineMarkerSymbol(map, key) {
+  _determineMarker(map, key) {
     const kind = (
         map === this._deopts ?  'deopt'
       : map === this._ics ? 'ic'
@@ -157,18 +149,18 @@ export class MarkerResolver {
     if (map != null && map.has(key)) {
       return this._handle(map.get(key), kind)
     }
-    return { result: '', placeBefore: false }
+    return { marker: null, placeBefore: false }
   }
 
   _handle(info, kind) {
-    const result = this._determineBrowserMarkerSymbol(info, kind)
+    const marker = this._markerSymbol(info, kind)
 
     // anonymous Node.js function wrapper
     const placeBefore = (info.isScript && info.line === 1 && info.column === 1)
-    return { result, placeBefore }
+    return { marker, placeBefore }
   }
 
-  _determineBrowserMarkerSymbol(info, kind) {
+  _markerSymbol(info, kind) {
     const symbol = (
         kind === 'deopt' ? DEOPTSYMBOL
       : kind === 'ic' ? ICSYMBOL
@@ -181,8 +173,13 @@ export class MarkerResolver {
       : color
     )
     return (
-      `<a href='#'id="code-location-${info.id}" class="${className}"` +
-        ` data-markerid="${info.id}" data-markertype="${kind}">${symbol}</a>`
+      <a
+        key={`${kind}-${info.id}`}
+        href='#'
+        id={`code-location-${info.id}`}
+        class={className}
+        data-markerid={info.id}
+        data-markertype={kind}>{symbol}</a>
     )
   }
 }

@@ -1,17 +1,14 @@
-'use strict'
-
 /* global history */
 
-const React = require('react')
-const { Component } = React
-const { render } = require('react-dom')
-const { deoptigate } = require('../')
-const { urlFromState, stateFromUrl } = require('./lib/query-state')
+import { Component, render } from 'preact'
+import './main.css'
+import { deoptigate } from '../deoptigate.js'
+import { urlFromState, stateFromUrl } from './lib/query-state.js'
 
-const { ToolbarView } = require('./components/toolbar')
-const { FilesView } = require('./components/files')
-const { SummaryView } = require('./components/summary')
-const { FileDetailsView } = require('./components/file-details')
+import { ToolbarView } from './components/toolbar.jsx'
+import { FilesView } from './components/files.jsx'
+import { SummaryView } from './components/summary.jsx'
+import { FileDetailsView } from './components/file-details.jsx'
 
 const FILES_TAB_IDX = 0
 const DETAILS_TAB_IDX = 1
@@ -281,7 +278,7 @@ class MainView extends Component {
   }
 }
 
-async function deoptigateRender(groupedByFile) {
+export async function deoptigateRender(groupedByFile) {
   try {
     const groupedByFileAndLocation = deoptigate(groupedByFile)
 
@@ -293,5 +290,3 @@ async function deoptigateRender(groupedByFile) {
     console.error(err)
   }
 }
-
-module.exports = deoptigateRender
