@@ -13,7 +13,8 @@
     "lint:format": "oxfmt --check packages scripts",
     "lint": "npm run lint:js && npm run lint:format",
     "format": "oxfmt --write packages scripts",
-    "update-v8-tools": "node scripts/update-v8-tools.mjs"
+    "update-v8-tools": "node scripts/update-v8-tools.mjs",
+    "test": "npm run --workspaces --if-present test"
   },
   "repository": {
     "type": "git",

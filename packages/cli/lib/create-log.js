@@ -74,7 +74,7 @@ async function createDirIfMissing(dir) {
     if (statInfo != null && !statInfo.isDirectory()) {
       throw new Error(
         `Found ${dir}, but it wasn't a directory, please remove it.`,
-        { cause: err }
+        { cause: err },
       );
     }
     throw err;
