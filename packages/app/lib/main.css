@@ -148,27 +148,47 @@ body {
 }
 
 .header-row {
-  background: var(--surface-3);
+  background: var(--surface-2);
   color: var(--text-1);
   text-transform: uppercase;
+  letter-spacing: var(--font-letterspacing-1);
   text-align: center;
+  font-weight: var(--font-weight-7);
   padding: var(--size-2);
 }
 
 .subhead {
   background: var(--surface-3);
   color: var(--text-2);
-  font-size: var(--font-size-00);
+  font-size: var(--font-size-0);
+  font-weight: var(--font-weight-5);
+  text-align: center;
   padding: var(--size-1) var(--size-2);
 }
 
-.files-table td {
-  padding-inline: var(--size-2);
+/* Vertical dividers: faint between every column, stronger at group boundaries */
+.files-table td + td {
+  border-inline-start: var(--border-size-1) solid
+    color-mix(in srgb, var(--surface-4) 45%, transparent);
+}
+
+.files-table .group-start {
+  border-inline-start: var(--border-size-1) solid var(--surface-4);
+}
+
+.files-table .num {
+  width: 4.5rem;
+  text-align: center;
+}
+
+.normalrow {
+  cursor: pointer;
 }
 
 .normalrow td {
   border-bottom: var(--border-size-1) solid var(--surface-4);
   padding-block: var(--size-2);
+  padding-inline: var(--size-2);
 }
 
 .normalrow:hover {
@@ -179,12 +199,46 @@ body {
   background: var(--surface-4);
 }
 
+.normalrow.selected .file-link {
+  color: var(--text-1);
+}
+
+/* Severity counts shown as tinted pills */
+.pill {
+  display: inline-block;
+  min-width: 2.25ch;
+  padding: 1px var(--size-2);
+  border-radius: var(--radius-2);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-6);
+}
+
+.pill.sev-1 {
+  color: var(--dracula-green);
+  background: color-mix(in srgb, var(--dracula-green) 16%, transparent);
+}
+
+.pill.sev-2 {
+  color: var(--dracula-yellow);
+  background: color-mix(in srgb, var(--dracula-yellow) 16%, transparent);
+}
+
+.pill.sev-3 {
+  color: var(--dracula-red);
+  background: color-mix(in srgb, var(--dracula-red) 18%, transparent);
+}
+
+.zero {
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
 .file-link {
   color: var(--dracula-cyan);
   text-decoration: none;
 }
 
-.file-link:hover {
+.normalrow:hover .file-link {
   text-decoration: underline;
 }
 
