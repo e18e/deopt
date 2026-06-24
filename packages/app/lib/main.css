@@ -292,9 +292,15 @@ body {
   cursor: pointer;
 }
 
-.code-view .marked-1 { text-decoration-color: var(--dracula-green); }
-.code-view .marked-2 { text-decoration-color: var(--dracula-cyan); }
-.code-view .marked-3 { text-decoration-color: var(--dracula-red); }
+.code-view .marked-1 {
+  text-decoration-color: var(--dracula-green);
+}
+.code-view .marked-2 {
+  text-decoration-color: var(--dracula-cyan);
+}
+.code-view .marked-3 {
+  text-decoration-color: var(--dracula-red);
+}
 
 .code-view .selected {
   background: color-mix(in srgb, var(--dracula-purple) 30%, transparent);
@@ -361,12 +367,28 @@ body {
  * Severity / value helpers
  */
 
-.green { color: var(--dracula-green); }
-.blue { color: var(--dracula-cyan); }
-.red { color: var(--dracula-red); }
-.gray { color: var(--text-2); }
+.green {
+  color: var(--dracula-green);
+}
+.blue {
+  color: var(--dracula-cyan);
+}
+.red {
+  color: var(--dracula-red);
+}
+.gray {
+  color: var(--text-2);
+}
 
-.tc { text-align: center; }
-.tr { text-align: right; }
-.i { font-style: italic; }
-.b { font-weight: var(--font-weight-7); }
+.tc {
+  text-align: center;
+}
+.tr {
+  text-align: right;
+}
+.i {
+  font-style: italic;
+}
+.b {
+  font-weight: var(--font-weight-7);
+}

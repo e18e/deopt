@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 
 export default defineConfig({
-	plugins: [preact()],
+  plugins: [preact()],
   build: {
     outDir: 'build',
     emptyOutDir: true,
@@ -10,12 +10,12 @@ export default defineConfig({
     lib: {
       entry: 'lib/main.jsx',
       formats: ['es'],
-      fileName: () => 'deopt.js'
+      fileName: () => 'deopt.js',
     },
     rollupOptions: {
       output: {
-        assetFileNames: 'deopt.css'
-      }
-    }
-  }
-})
+        assetFileNames: 'deopt.css',
+      },
+    },
+  },
+});

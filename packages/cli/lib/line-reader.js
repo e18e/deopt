@@ -1,32 +1,34 @@
-import { open } from 'node:fs/promises'
+import { open } from 'node:fs/promises';
 
 let _50_MEGABYTES = 50 * 1024 * 1024;
 export async function* lineReader(path, encoding) {
-  const fd = await open(path, 'r')
-  const stats = await fd.stat()
-  const fileSize = stats.size
-  const maxBufferSize = _50_MEGABYTES
-  let bytesRead = 0
-  let remainingString = ''
+  const fd = await open(path, 'r');
+  const stats = await fd.stat();
+  const fileSize = stats.size;
+  const maxBufferSize = _50_MEGABYTES;
+  let bytesRead = 0;
+  let remainingString = '';
 
   while (bytesRead < fileSize) {
-    let bufferSize = maxBufferSize
-    if ((bytesRead + maxBufferSize) > fileSize) {
-      bufferSize = fileSize - bytesRead
+    let bufferSize = maxBufferSize;
+    if (bytesRead + maxBufferSize > fileSize) {
+      bufferSize = fileSize - bytesRead;
     }
 
-    const buffer = Buffer.alloc(bufferSize)
+    const buffer = Buffer.alloc(bufferSize);
 
     const chunk = await fd.read(buffer, 0, bufferSize, bytesRead);
-    let current = 0
+    let current = 0;
     while (current < bufferSize) {
-      const next = chunk.buffer.indexOf('\n', current)
-      if (next === -1) break
-      const line = remainingString + chunk.buffer.subarray(current, next).toString(encoding)
-      yield line
-      current = next + 1
+      const next = chunk.buffer.indexOf('\n', current);
+      if (next === -1) break;
+      const line =
+        remainingString +
+        chunk.buffer.subarray(current, next).toString(encoding);
+      yield line;
+      current = next + 1;
     }
-    bytesRead += current
+    bytesRead += current;
   }
-  await fd.close()
+  await fd.close();
 }

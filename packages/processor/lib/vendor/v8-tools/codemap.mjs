@@ -25,16 +25,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import { SplayTree } from "./splaytree.mjs";
+import { SplayTree } from './splaytree.mjs';
 
 /**
-* The number of alignment bits in a page address.
-*/
+ * The number of alignment bits in a page address.
+ */
 const kPageAlignment = 12;
 /**
-* Page size in bytes.
-*/
-const kPageSize =  1 << kPageAlignment;
+ * Page size in bytes.
+ */
+const kPageSize = 1 << kPageAlignment;
 
 /**
  * Constructs a mapper that maps addresses into code entries.
@@ -65,7 +65,7 @@ export class CodeMap {
    */
   pages_ = new Set();
 
-  constructor(useBigIntAddresses=false) {
+  constructor(useBigIntAddresses = false) {
     this.useBigIntAddresses = useBigIntAddresses;
     this.kPageSize = useBigIntAddresses ? BigInt(kPageSize) : kPageSize;
     this.kOne = useBigIntAddresses ? 1n : 1;
@@ -89,10 +89,12 @@ export class CodeMap {
 
     const removedNode = this.statics_.remove(start);
     this.deleteAllCoveredNodes_(
-        this.statics_, start, start + removedNode.value.size);
+      this.statics_,
+      start,
+      start + removedNode.value.size,
+    );
     this.statics_.insert(start, codeEntry);
   }
-
 
   /**
    * Adds a dynamic (i.e. moveable and discardable) code entry.
@@ -114,7 +116,11 @@ export class CodeMap {
    */
   moveCode(from, to) {
     const removedNode = this.dynamics_.remove(from);
-    this.deleteAllCoveredNodes_(this.dynamics_, to, to + removedNode.value.size);
+    this.deleteAllCoveredNodes_(
+      this.dynamics_,
+      to,
+      to + removedNode.value.size,
+    );
     this.dynamics_.insert(to, removedNode.value);
   }
 
@@ -167,7 +173,8 @@ export class CodeMap {
     while (addr >= start) {
       const node = tree.findGreatestLessThan(addr);
       if (node === null) break;
-      const start2 = node.key, end2 = start2 + node.value.size;
+      const start2 = node.key,
+        end2 = start2 + node.value.size;
       if (start2 < end && start < end2) to_delete.push(start2);
       addr = start2 - this.kOne;
     }
@@ -178,7 +185,7 @@ export class CodeMap {
    * @private
    */
   isAddressBelongsTo_(addr, node) {
-    return addr >= node.key && addr < (node.key + node.value.size);
+    return addr >= node.key && addr < node.key + node.value.size;
   }
 
   /**
@@ -206,12 +213,12 @@ export class CodeMap {
         result = this.findInTree_(this.libraries_, addr);
         if (result === null) return null;
       }
-      return {entry: result.value, offset: addr - result.key};
+      return { entry: result.value, offset: addr - result.key };
     }
     const max = this.dynamics_.findMax();
     if (max === null) return null;
     const min = this.dynamics_.findMin();
-    if (addr >= min.key && addr < (max.key + max.value.size)) {
+    if (addr >= min.key && addr < max.key + max.value.size) {
       const dynaEntry = this.findInTree_(this.dynamics_, addr);
       if (dynaEntry === null) return null;
       // Dedupe entry name.
@@ -220,7 +227,7 @@ export class CodeMap {
         entry.name = this.dynamicsNameGen_.getName(entry.name);
         entry.nameUpdated_ = true;
       }
-      return {entry, offset: addr - dynaEntry.key};
+      return { entry, offset: addr - dynaEntry.key };
     }
     return null;
   }
@@ -289,7 +296,6 @@ export class CodeMap {
   }
 }
 
-
 export class CodeEntry {
   constructor(size, opt_name, opt_type) {
     /** @type {number} */
@@ -321,7 +327,7 @@ export class CodeEntry {
 }
 
 class NameGenerator {
-  knownNames_ = { __proto__:null }
+  knownNames_ = { __proto__: null };
   getName(name) {
     if (!(name in this.knownNames_)) {
       this.knownNames_[name] = 0;
@@ -329,5 +335,5 @@ class NameGenerator {
     }
     const count = ++this.knownNames_[name];
     return name + ' {' + count + '}';
-  };
+  }
 }
