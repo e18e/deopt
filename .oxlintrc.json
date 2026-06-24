@@ -12,7 +12,12 @@
     "perf": "error",
     "suspicious": "error"
   },
-  "rules": {},
+  "rules": {
+    "no-await-in-loop": "off",
+    "no-underscore-dangle": ["error", {
+      "allowFunctionParams": true
+    }]
+  },
   "env": {
     "builtin": true
   }

@@ -1,17 +1,17 @@
 import { open } from 'node:fs/promises';
 
-let _50_MEGABYTES = 50 * 1024 * 1024;
+const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50 MB
+
 export async function* lineReader(path, encoding) {
   const fd = await open(path, 'r');
   const stats = await fd.stat();
   const fileSize = stats.size;
-  const maxBufferSize = _50_MEGABYTES;
   let bytesRead = 0;
   let remainingString = '';
 
   while (bytesRead < fileSize) {
-    let bufferSize = maxBufferSize;
-    if (bytesRead + maxBufferSize > fileSize) {
+    let bufferSize = MAX_BUFFER_SIZE;
+    if (bytesRead + MAX_BUFFER_SIZE > fileSize) {
       bufferSize = fileSize - bytesRead;
     }
 

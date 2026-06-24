@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageRoot = path.join(__dirname, '..');
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageRoot = path.join(dirname, '..');
 const repoRoot = path.join(packageRoot, '../..');
 
 const renderDataPath = path.join(tmpdir(), 'e18e-deopt', 'data.json');

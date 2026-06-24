@@ -4,17 +4,6 @@ import { CodeView } from './code.jsx';
 import { SummaryView } from './summary.jsx';
 
 export class FileDetailsView extends Component {
-  constructor(props) {
-    super(props);
-    this._bind();
-  }
-
-  _bind() {
-    this._onmarkerClicked = this._onmarkerClicked.bind(this);
-    this._onsummaryTabHeaderClicked =
-      this._onsummaryTabHeaderClicked.bind(this);
-  }
-
   render() {
     const {
       groups,
@@ -24,7 +13,7 @@ export class FileDetailsView extends Component {
       includeAllSeverities,
       className = '',
       selectedSummaryTabIdx,
-      onsummaryClicked,
+      onSummaryClicked,
     } = this.props;
 
     const {
@@ -54,7 +43,7 @@ export class FileDetailsView extends Component {
             codes={codes}
             codeLocations={codeLocations}
             includeAllSeverities={includeAllSeverities}
-            onmarkerClicked={this._onmarkerClicked}
+            onMarkerClicked={this.#onMarkerClicked}
           />
         </div>
         <div className="detail-col">
@@ -71,16 +60,16 @@ export class FileDetailsView extends Component {
             codeLocations={codeLocations}
             includeAllSeverities={includeAllSeverities}
             selectedTabIdx={selectedSummaryTabIdx}
-            ontabHeaderClicked={this._onsummaryTabHeaderClicked}
-            onsummaryClicked={onsummaryClicked}
+            onTabHeaderClicked={this.#onSummaryTabHeaderClicked}
+            onSummaryClicked={onSummaryClicked}
           />
         </div>
       </div>
     );
   }
 
-  _onmarkerClicked(id, type) {
-    const { onmarkerClicked, onsummaryTabIdxChanged, selectedSummaryTabIdx } =
+  #onMarkerClicked = (id, type) => {
+    const { onMarkerClicked, onSummaryTabIdxChanged, selectedSummaryTabIdx } =
       this.props;
     const markerSummaryTabIdx =
       type === 'code'
@@ -88,14 +77,14 @@ export class FileDetailsView extends Component {
         : type === 'deopt'
           ? SummaryView.DEOPT_TAB_IDX
           : SummaryView.ICS_TAB_IDX;
-    onmarkerClicked(id);
+    onMarkerClicked(id);
     if (markerSummaryTabIdx !== selectedSummaryTabIdx) {
-      onsummaryTabIdxChanged(markerSummaryTabIdx);
+      onSummaryTabIdxChanged(markerSummaryTabIdx);
     }
-  }
+  };
 
-  _onsummaryTabHeaderClicked(idx) {
-    const { onsummaryTabIdxChanged } = this.props;
-    onsummaryTabIdxChanged(idx);
-  }
+  #onSummaryTabHeaderClicked = (idx) => {
+    const { onSummaryTabIdxChanged } = this.props;
+    onSummaryTabIdxChanged(idx);
+  };
 }

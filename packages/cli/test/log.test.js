@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 import { groupByFileAndLocation } from '../lib/grouping/group-by-file-and-location.js';
 import { processLog } from '../lib/log.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageRoot = path.join(__dirname, '..');
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageRoot = path.join(dirname, '..');
 const repoRoot = path.join(packageRoot, '../..');
 
 async function groupedLog(scriptPath, { icStateChangesOnly = true } = {}) {

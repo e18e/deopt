@@ -1,27 +1,22 @@
 import { keyLocation, byLocationKey } from './location.js';
 
 class FileLocationGrouper {
+  #id;
+  #fileGroup;
+
   constructor(fileGroup) {
-    this._id = 0;
-    this._fileGroup = fileGroup;
+    this.#id = 0;
+    this.#fileGroup = fileGroup;
   }
 
   locationsForFileGroup() {
-    this._icsByLocation = new Map();
-    this._deoptsByLocation = new Map();
-    this._codesByLocation = new Map();
-
-    this._deoptLocations = new Set();
-    this._icLocations = new Set();
-    this._codeLocations = new Set();
-
-    const { ics, deopts, codes } = this._fileGroup;
+    const { ics, deopts, codes } = this.#fileGroup;
     const { dataByLocation: icsByLocation, locations: icLocations } =
-      this._extractLocations(ics);
+      this.#extractLocations(ics);
     const { dataByLocation: deoptsByLocation, locations: deoptLocations } =
-      this._extractLocations(deopts);
+      this.#extractLocations(deopts);
     const { dataByLocation: codesByLocation, locations: codeLocations } =
-      this._extractLocations(codes);
+      this.#extractLocations(codes);
 
     const sortedIcLocations = Array.from(icLocations).sort(byLocationKey);
     const sortedDeoptLocations = Array.from(deoptLocations).sort(byLocationKey);
@@ -36,14 +31,14 @@ class FileLocationGrouper {
     };
   }
 
-  _extractLocations(dataPoints) {
+  #extractLocations(dataPoints) {
     const dataByLocation = new Map();
     const locations = new Set();
     for (const dataPoint of dataPoints) {
       const { functionName, line, column } = dataPoint;
       const locationKey = keyLocation({ functionName, line, column });
       locations.add(locationKey);
-      dataPoint.id = this._id++;
+      dataPoint.id = this.#id++;
       dataByLocation.set(locationKey, dataPoint);
     }
     return { dataByLocation, locations };

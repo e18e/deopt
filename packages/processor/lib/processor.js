@@ -46,10 +46,15 @@ const propertyICParser = [
 ];
 
 export class DeoptProcessor extends LogReader {
+  #root;
+  #silentErrors;
+  #deserializedEntriesNames;
+  #profile;
+
   constructor(root, { silentErrors = true } = {}) {
     super();
-    this._root = root;
-    this._silentErrors = silentErrors;
+    this.#root = root;
+    this.#silentErrors = silentErrors;
 
     // LogReader requires a null-prototype dispatch table
     this.setDispatchTable(
@@ -65,19 +70,19 @@ export class DeoptProcessor extends LogReader {
             parseString,
             parseVarArgs,
           ],
-          processor: this._processCodeCreation.bind(this),
+          processor: this.#processCodeCreation.bind(this),
         },
         'code-move': {
           parsers: [parseInt, parseInt],
-          processor: this._processCodeMove.bind(this),
+          processor: this.#processCodeMove.bind(this),
         },
         'code-delete': {
           parsers: [parseInt],
-          processor: this._processCodeDelete.bind(this),
+          processor: this.#processCodeDelete.bind(this),
         },
         'sfi-move': {
           parsers: [parseInt, parseInt],
-          processor: this._processFunctionMove.bind(this),
+          processor: this.#processFunctionMove.bind(this),
         },
 
         // Collect deoptimization info
@@ -92,29 +97,29 @@ export class DeoptProcessor extends LogReader {
             parseString,
             parseString,
           ],
-          processor: this._processCodeDeopt.bind(this),
+          processor: this.#processCodeDeopt.bind(this),
         },
 
         // Collect IC info
         LoadIC: {
           parsers: propertyICParser,
-          processor: this._processPropertyIC.bind(this, 'LoadIC'),
+          processor: this.#processPropertyIC.bind(this, 'LoadIC'),
         },
         StoreIC: {
           parsers: propertyICParser,
-          processor: this._processPropertyIC.bind(this, 'StoreIC'),
+          processor: this.#processPropertyIC.bind(this, 'StoreIC'),
         },
         KeyedLoadIC: {
           parsers: propertyICParser,
-          processor: this._processPropertyIC.bind(this, 'KeyedLoadIC'),
+          processor: this.#processPropertyIC.bind(this, 'KeyedLoadIC'),
         },
         KeyedStoreIC: {
           parsers: propertyICParser,
-          processor: this._processPropertyIC.bind(this, 'KeyedStoreIC'),
+          processor: this.#processPropertyIC.bind(this, 'KeyedStoreIC'),
         },
         StoreInArrayLiteralIC: {
           parsers: propertyICParser,
-          processor: this._processPropertyIC.bind(
+          processor: this.#processPropertyIC.bind(
             this,
             'StoreInArrayLiteralIC',
           ),
@@ -122,8 +127,8 @@ export class DeoptProcessor extends LogReader {
       }),
     );
 
-    this._deserializedEntriesNames = [];
-    this._profile = new Profile();
+    this.#deserializedEntriesNames = [];
+    this.#profile = new Profile();
 
     this.entriesIC = new Map();
     this.entriesDeopt = new Map();
@@ -131,24 +136,24 @@ export class DeoptProcessor extends LogReader {
   }
 
   functionInfo(pc) {
-    const entry = this._profile.findEntry(pc);
+    const entry = this.#profile.findEntry(pc);
     if (entry == null) return { fnFile: '', state: -1 };
     const { fnFile, line, column } = formatName(entry);
     return { fnFile, line, column, state: entry.state };
   }
 
-  _processPropertyIC(
+  #processPropertyIC(
     type,
     pc,
-    timestamp,
+    _timestamp,
     line,
     column,
     old_state,
     new_state,
     map,
     propertyKey,
-    modifier,
-    slow_reason,
+    _modifier,
+    _slow_reason,
   ) {
     const { fnFile, state } = this.functionInfo(pc);
     const key = locationKey(fnFile, line, column);
@@ -162,7 +167,7 @@ export class DeoptProcessor extends LogReader {
 
   // timestamp is in micro seconds
   // https://cs.chromium.org/chromium/src/v8/src/log.cc?l=892&rcl=8fecf0eff7357c1bee222f76c4e2f6fdd8759797
-  _processCodeDeopt(
+  #processCodeDeopt(
     timestamp,
     size,
     code,
@@ -191,13 +196,13 @@ export class DeoptProcessor extends LogReader {
     );
   }
 
-  _processCodeCreation(type, kind, timestamp, start, size, name, maybe_func) {
-    name = this._deserializedEntriesNames[start] || name;
+  #processCodeCreation(type, kind, timestamp, start, size, name, maybe_func) {
+    name = this.#deserializedEntriesNames[start] || name;
 
     if (maybe_func.length) {
       const funcAddr = parseInt(maybe_func[0]);
       const state = parseOptimizationState(maybe_func[1]);
-      this._profile.addFuncCode(
+      this.#profile.addFuncCode(
         type,
         name,
         timestamp,
@@ -227,25 +232,25 @@ export class DeoptProcessor extends LogReader {
         code.addUpdate(timestamp, state);
       }
     } else {
-      this._profile.addCode(type, name, timestamp, start, size);
+      this.#profile.addCode(type, name, timestamp, start, size);
     }
   }
 
-  _processCodeMove(from, to) {
-    this._profile.moveCode(from, to);
+  #processCodeMove(from, to) {
+    this.#profile.moveCode(from, to);
   }
 
-  _processCodeDelete(start) {
-    this._profile.deleteCode(start);
+  #processCodeDelete(start) {
+    this.#profile.deleteCode(start);
   }
 
-  _processFunctionMove(from, to) {
-    this._profile.moveSharedFunctionInfo(from, to);
+  #processFunctionMove(from, to) {
+    this.#profile.moveSharedFunctionInfo(from, to);
   }
 
   // @override
   printError(msg) {
-    if (this._silentErrors) return;
+    if (this.#silentErrors) return;
     console.trace();
     console.error(msg);
   }
@@ -286,7 +291,7 @@ export class DeoptProcessor extends LogReader {
     for (const entry of this.entriesCode.values()) {
       codes.push(entry.hashmap);
     }
-    return { ics, deopts, codes, root: this._root };
+    return { ics, deopts, codes, root: this.#root };
   }
 
   toJSON(indent = 2) {

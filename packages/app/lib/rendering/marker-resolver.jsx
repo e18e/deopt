@@ -31,6 +31,17 @@ function includedIn(map, arr) {
 }
 
 export class MarkerResolver {
+  #ics;
+  #icLocations;
+  #icLocationIdx;
+  #deopts;
+  #deoptLocations;
+  #deoptLocationIdx;
+  #codes;
+  #codeLocations;
+  #codeLocationIdx;
+  #selectedLocation;
+
   constructor({
     ics,
     deopts,
@@ -41,26 +52,26 @@ export class MarkerResolver {
     selectedLocation = null,
     includeAllSeverities = true,
   }) {
-    this._ics = ics;
-    this._ics = includeAllSeverities ? ics : highSeverity(ics);
-    this._icLocations = includeAllSeverities
+    this.#ics = ics;
+    this.#ics = includeAllSeverities ? ics : highSeverity(ics);
+    this.#icLocations = includeAllSeverities
       ? icLocations
-      : includedIn(this._ics, icLocations);
-    this._icLocationIdx = 0;
+      : includedIn(this.#ics, icLocations);
+    this.#icLocationIdx = 0;
 
-    this._deopts = includeAllSeverities ? deopts : highSeverity(deopts);
-    this._deoptLocations = includeAllSeverities
+    this.#deopts = includeAllSeverities ? deopts : highSeverity(deopts);
+    this.#deoptLocations = includeAllSeverities
       ? deoptLocations
-      : includedIn(this._deopts, deoptLocations);
-    this._deoptLocationIdx = 0;
+      : includedIn(this.#deopts, deoptLocations);
+    this.#deoptLocationIdx = 0;
 
-    this._codes = includeAllSeverities ? codes : highSeverity(codes);
-    this._codeLocations = includeAllSeverities
+    this.#codes = includeAllSeverities ? codes : highSeverity(codes);
+    this.#codeLocations = includeAllSeverities
       ? codeLocations
-      : includedIn(this._codes, codeLocations);
-    this._codeLocationIdx = 0;
+      : includedIn(this.#codes, codeLocations);
+    this.#codeLocationIdx = 0;
 
-    this._selectedLocation = selectedLocation;
+    this.#selectedLocation = selectedLocation;
   }
 
   // Resolves the markers anchored at the given code location into two lists of
@@ -68,8 +79,8 @@ export class MarkerResolver {
   resolve(codeLocation) {
     const insertBefore = [];
     const insertAfter = [];
-    for (const { info, kind } of this._collect(codeLocation)) {
-      const marker = this._markerSymbol(info, kind);
+    for (const { info, kind } of this.#collect(codeLocation)) {
+      const marker = this.#markerSymbol(info, kind);
       // anonymous Node.js function wrapper
       if (info.isScript && info.line === 1 && info.column === 1) {
         insertBefore.push(marker);
@@ -84,7 +95,7 @@ export class MarkerResolver {
   // descriptor for the highest-severity marker, used to underline the code
   // range rather than insert a symbol. Returns null when nothing is anchored.
   resolveMarker(codeLocation) {
-    const entries = this._collect(codeLocation);
+    const entries = this.#collect(codeLocation);
     if (entries.length === 0) return null;
     let best = entries[0];
     for (const entry of entries) {
@@ -96,17 +107,17 @@ export class MarkerResolver {
       kind,
       column: info.column,
       severity: info.severity,
-      selected: entries.some((e) => this._selectedLocation === e.info.id),
+      selected: entries.some((e) => this.#selectedLocation === e.info.id),
       ids: entries.map((e) => e.info.id),
     };
   }
 
   nextLocation() {
-    const nextIc = unkeyLocation(this._icLocations[this._icLocationIdx]);
+    const nextIc = unkeyLocation(this.#icLocations[this.#icLocationIdx]);
     const nextDeopt = unkeyLocation(
-      this._deoptLocations[this._deoptLocationIdx],
+      this.#deoptLocations[this.#deoptLocationIdx],
     );
-    const nextOpt = unkeyLocation(this._codeLocations[this._codeLocationIdx]);
+    const nextOpt = unkeyLocation(this.#codeLocations[this.#codeLocationIdx]);
     return [nextDeopt, nextOpt].reduce((next, loc) => {
       if (next == null) return loc;
       if (loc == null) return next;
@@ -116,51 +127,51 @@ export class MarkerResolver {
     }, nextIc);
   }
 
-  _collect(codeLocation) {
+  #collect(codeLocation) {
     return [
-      ...this._resolveDeopt(codeLocation),
-      ...this._resolveIc(codeLocation),
-      ...this._resolveCode(codeLocation),
+      ...this.#resolveDeopt(codeLocation),
+      ...this.#resolveIc(codeLocation),
+      ...this.#resolveCode(codeLocation),
     ];
   }
 
-  _resolveDeopt(codeLocation) {
-    if (this._deopts == null) return [];
-    const { entries, locationIdx } = this._resolveEntries({
+  #resolveDeopt(codeLocation) {
+    if (this.#deopts == null) return [];
+    const { entries, locationIdx } = this.#resolveEntries({
       codeLocation,
-      map: this._deopts,
-      locationIdx: this._deoptLocationIdx,
-      locations: this._deoptLocations,
+      map: this.#deopts,
+      locationIdx: this.#deoptLocationIdx,
+      locations: this.#deoptLocations,
     });
-    this._deoptLocationIdx = locationIdx;
+    this.#deoptLocationIdx = locationIdx;
     return entries;
   }
 
-  _resolveIc(codeLocation) {
-    if (this._ics == null) return [];
-    const { entries, locationIdx } = this._resolveEntries({
+  #resolveIc(codeLocation) {
+    if (this.#ics == null) return [];
+    const { entries, locationIdx } = this.#resolveEntries({
       codeLocation,
-      map: this._ics,
-      locationIdx: this._icLocationIdx,
-      locations: this._icLocations,
+      map: this.#ics,
+      locationIdx: this.#icLocationIdx,
+      locations: this.#icLocations,
     });
-    this._icLocationIdx = locationIdx;
+    this.#icLocationIdx = locationIdx;
     return entries;
   }
 
-  _resolveCode(codeLocation) {
-    if (this._codes == null) return [];
-    const { entries, locationIdx } = this._resolveEntries({
+  #resolveCode(codeLocation) {
+    if (this.#codes == null) return [];
+    const { entries, locationIdx } = this.#resolveEntries({
       codeLocation,
-      map: this._codes,
-      locationIdx: this._codeLocationIdx,
-      locations: this._codeLocations,
+      map: this.#codes,
+      locationIdx: this.#codeLocationIdx,
+      locations: this.#codeLocations,
     });
-    this._codeLocationIdx = locationIdx;
+    this.#codeLocationIdx = locationIdx;
     return entries;
   }
 
-  _resolveEntries({ map, codeLocation, locationIdx, locations }) {
+  #resolveEntries({ map, codeLocation, locationIdx, locations }) {
     const entries = [];
 
     let locationKey = locations[locationIdx];
@@ -171,7 +182,7 @@ export class MarkerResolver {
       applyMark(codeLocation, currentLocation)
     ) {
       if (map.has(locationKey)) {
-        entries.push({ info: map.get(locationKey), kind: this._kindOf(map) });
+        entries.push({ info: map.get(locationKey), kind: this.#kindOf(map) });
       }
       locationIdx++;
       locationKey = locations[locationIdx];
@@ -180,16 +191,16 @@ export class MarkerResolver {
     return { entries, locationIdx };
   }
 
-  _kindOf(map) {
-    return map === this._deopts ? 'deopt' : map === this._ics ? 'ic' : 'code';
+  #kindOf(map) {
+    return map === this.#deopts ? 'deopt' : map === this.#ics ? 'ic' : 'code';
   }
 
-  _markerSymbol(info, kind) {
+  #markerSymbol(info, kind) {
     const symbol =
       kind === 'deopt' ? DEOPTSYMBOL : kind === 'ic' ? ICSYMBOL : CODESYMBOL;
     const color = severityColors[info.severity - 1];
     const className =
-      this._selectedLocation === info.id ? `${color} selected` : color;
+      this.#selectedLocation === info.id ? `${color} selected` : color;
     return (
       <a
         key={`${kind}-${info.id}`}
