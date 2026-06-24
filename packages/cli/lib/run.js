@@ -4,9 +4,9 @@ import { openLog } from './open-log.js'
 import { findLog } from './find-log.js'
 import { createLog } from './create-log.js'
 
-const simpleHead = styleText('blue', 'deoptigate')
-const happyHead = styleText('blue', 'deoptigate 💪')
-const errorHead = styleText('red', 'deoptigate 🚫')
+const simpleHead = styleText('blue', '@e18e/deopt')
+const happyHead = styleText('blue', '@e18e/deopt 💪')
+const errorHead = styleText('red', '@e18e/deopt 🚫')
 
 try {
   const log = (process.argv.length <= 2

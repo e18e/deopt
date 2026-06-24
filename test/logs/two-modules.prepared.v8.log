@@ -2481,8 +2481,8 @@ StoreIC,0x19fb7e2571b5,32985,171,5,X,X,0x000000000000,shouldBeReloadedByCJSLoade
 StoreIC,0x19fb7e250641,32996,506,75,X,X,0x000000000000,translatorKey,,
 StoreIC,0xa7de9ae7940,33046,100,9,X,X,0x000000000000,get,,
 StoreIC,0x19fb7e2539a6,33086,90,30,X,X,0x000000000000,isMain,,
-code-creation,Script,9,33216,0x3dd61dfd6f40,440, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,~
-script-source,86,file:///Users/jg/code/deoptigate/examples/two-modules/adders.js,'use strict'\n\nimport {\n    Object1\n  \x2C Object2\n  \x2C Object3\n  \x2C Object4\n  \x2C Object5\n  \x2C Object6\n  \x2C Object7\n  \x2C Object8\n} from './objects.js'\n\n// We access this object in all the functions as otherwise\n// v8 will just inline them since they are so short\nconst preventInlining = {\n  flag: false\n}\n\nfunction addSmis(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addNumbers(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addStrings(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addAny(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  // passed one object?\n  if (b == null) return a.x + a.y\n  return a + b\n}\n\nconst ITER = 1E3\n\nvar results = []\n\nfunction processResult(r) {\n  // will never happen\n  if (r === -1) preventInlining.flag = true\n  results.push(r)\n  // prevent exhausting memory\n  if (results.length > 1E5) results = []\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    processResult(addSmis(i\x2C j))\n    processResult(addNumbers(i\x2C j))\n    processResult(addNumbers(i * 0.2\x2C j * 0.2))\n    processResult(addStrings(`${i}`\x2C `${j}`))\n    // Just passing Smis for now\n    processResult(addAny(i\x2C j))\n  }\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    // Adding Doubles\n    processResult(addAny(i * 0.2\x2C j * 0.2))\n  }\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    // Adding Strings\n    processResult(addAny(`${i}`\x2C `${j}`))\n  }\n}\n\nfunction addObjects(SomeObject) {\n  for (let i = 0; i < ITER; i++) {\n    for (let j = ITER; j > 0; j--) {\n      processResult(addAny(new SomeObject(i\x2C j)))\n    }\n  }\n}\naddObjects(Object1)\naddObjects(Object2)\naddObjects(Object3)\naddObjects(Object4)\naddObjects(Object5)\naddObjects(Object6)\naddObjects(Object7)\naddObjects(Object8)\n\nfunction log() {\n  console.log.apply(console\x2C arguments)\n}\n\nlog(results.length)\n
+code-creation,Script,9,33216,0x3dd61dfd6f40,440, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,~
+script-source,86,file:///tmp/deoptigate/examples/two-modules/adders.js,'use strict'\n\nimport {\n    Object1\n  \x2C Object2\n  \x2C Object3\n  \x2C Object4\n  \x2C Object5\n  \x2C Object6\n  \x2C Object7\n  \x2C Object8\n} from './objects.js'\n\n// We access this object in all the functions as otherwise\n// v8 will just inline them since they are so short\nconst preventInlining = {\n  flag: false\n}\n\nfunction addSmis(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addNumbers(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addStrings(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  return a + b\n}\n\nfunction addAny(a\x2C b) {\n  if (preventInlining.flag) return a - b\n  // passed one object?\n  if (b == null) return a.x + a.y\n  return a + b\n}\n\nconst ITER = 1E3\n\nvar results = []\n\nfunction processResult(r) {\n  // will never happen\n  if (r === -1) preventInlining.flag = true\n  results.push(r)\n  // prevent exhausting memory\n  if (results.length > 1E5) results = []\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    processResult(addSmis(i\x2C j))\n    processResult(addNumbers(i\x2C j))\n    processResult(addNumbers(i * 0.2\x2C j * 0.2))\n    processResult(addStrings(`${i}`\x2C `${j}`))\n    // Just passing Smis for now\n    processResult(addAny(i\x2C j))\n  }\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    // Adding Doubles\n    processResult(addAny(i * 0.2\x2C j * 0.2))\n  }\n}\n\nfor (let i = 0; i < ITER; i++) {\n  for (let j = ITER; j > 0; j--) {\n    // Adding Strings\n    processResult(addAny(`${i}`\x2C `${j}`))\n  }\n}\n\nfunction addObjects(SomeObject) {\n  for (let i = 0; i < ITER; i++) {\n    for (let j = ITER; j > 0; j--) {\n      processResult(addAny(new SomeObject(i\x2C j)))\n    }\n  }\n}\naddObjects(Object1)\naddObjects(Object2)\naddObjects(Object3)\naddObjects(Object4)\naddObjects(Object5)\naddObjects(Object6)\naddObjects(Object7)\naddObjects(Object8)\n\nfunction log() {\n  console.log.apply(console\x2C arguments)\n}\n\nlog(results.length)\n
 code-source-info,0x3dd61dfd6f40,86,0,1911,C5O0C58O0C78O0C82O277C86O277C88O708C92O708C94O727C96O727C98O932C100O937C102O937C107O967C110O975C111O975C116O991C119O1005C125O991C129O1024C132O1038C138O1024C142O1060C147O1087C153O1096C157O1074C163O1060C167O1108C172O1136C176O1144C178O1122C184O1108C188O1187C194O1201C200O1187C204O981C209O954C213O946C218O919C222O1235C224O1240C226O1240C231O1270C234O1278C235O1278C240O1316C248O1339C254O1348C258O1330C264O1316C268O1284C273O1257C277O1249C282O1222C286O1376C288O1381C290O1381C295O1411C298O1419C299O1419C304O1457C312O1481C316O1489C318O1471C324O1457C328O1425C333O1398C337O1390C342O1363C346O1681C352O1670C356O1701C362O1690C366O1721C372O1710C376O1741C382O1730C386O1761C392O1750C396O1781C402O1770C406O1801C412O1790C416O1821C422O1810C426O1891C429O1903C434O1891C439O1911,,
 StoreIC,0x19fb7e253275,33317,362,17,X,X,0x000000000000,isMain,,
 code-creation,Eval,9,33648,0x3dd61dfd7228,5, node:internal/modules/esm/module_job:1:1,0x2df908029218,~
@@ -2637,8 +2637,8 @@ StoreIC,0x19fb7e2571a3,38866,168,5,X,X,0x000000000000,format,,
 StoreIC,0x19fb7e2571a9,38871,169,5,X,X,0x000000000000,responseURL,,
 StoreIC,0x19fb7e2571af,38875,170,5,X,X,0x000000000000,source,,
 StoreIC,0x19fb7e2571b5,38878,171,5,X,X,0x000000000000,shouldBeReloadedByCJSLoader,,
-code-creation,Script,9,38987,0x3dd61dfd8620,236, file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:1:1,0x2df90802d918,~
-script-source,88,file:///Users/jg/code/deoptigate/examples/two-modules/objects.js,class Object1 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n  }\n}\n\nclass Object2 {\n  constructor(x\x2C y) {\n    this.y = y\n    this.x = x\n  }\n}\n\nclass Object3 {\n  constructor(x\x2C y) {\n    this.hello = 'world'\n    this.x = x\n    this.y = y\n  }\n}\n\nclass Object4 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.hello = 'world'\n    this.y = y\n  }\n}\n\nclass Object5 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object6 {\n  constructor(x\x2C y) {\n    this.hola = 'mundo'\n    this.x = x\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object7 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.hola = 'mundo'\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object8 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n    this.hola = 'mundo'\n    this.hello = 'world'\n  }\n}\n\nexport {\n    Object1\n  \x2C Object2\n  \x2C Object3\n  \x2C Object4\n  \x2C Object5\n  \x2C Object6\n  \x2C Object7\n  \x2C Object8\n}\n
+code-creation,Script,9,38987,0x3dd61dfd8620,236, file:///tmp/deoptigate/examples/two-modules/objects.js:1:1,0x2df90802d918,~
+script-source,88,file:///tmp/deoptigate/examples/two-modules/objects.js,class Object1 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n  }\n}\n\nclass Object2 {\n  constructor(x\x2C y) {\n    this.y = y\n    this.x = x\n  }\n}\n\nclass Object3 {\n  constructor(x\x2C y) {\n    this.hello = 'world'\n    this.x = x\n    this.y = y\n  }\n}\n\nclass Object4 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.hello = 'world'\n    this.y = y\n  }\n}\n\nclass Object5 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object6 {\n  constructor(x\x2C y) {\n    this.hola = 'mundo'\n    this.x = x\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object7 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.hola = 'mundo'\n    this.y = y\n    this.hello = 'world'\n  }\n}\n\nclass Object8 {\n  constructor(x\x2C y) {\n    this.x = x\n    this.y = y\n    this.hola = 'mundo'\n    this.hello = 'world'\n  }\n}\n\nexport {\n    Object1\n  \x2C Object2\n  \x2C Object3\n  \x2C Object4\n  \x2C Object5\n  \x2C Object6\n  \x2C Object7\n  \x2C Object8\n}\n
 code-source-info,0x3dd61dfd8620,88,0,929,C10O0C26O0C46O0C70O0C93O75C116O150C139O250C162O350C185O450C208O574C231O698C235O929,,
 code-creation,JS,11,39042,0x77e6fa841000,2704,normalizeString node:path:92:25,0x18ad38350110,+'
 code-source-info,0x77e6fa841000,38,2957,4873,C21O2957C21O2957C21O2957C21O2957C21O2957C21O2957C42O2957C42O3137C128O3137C132O3137C136O3137C140O3137C144O3137C148O3137C156O3137C182O3137C189O3129C207O3129C216O3162C251O3190C274O3190C324O3239C343O2150I0C343O2173I0C363O3239C372O3326C382O3326C386O3326C405O2150I1C408O2173I1C426O3326C435O3377C443O3371C460O3371C468O3389C486O3389C494O3389C499O3389C504O3389C521O3436C530O3461C554O3461C561O3468C570O3493C583O3493C592O3670C601O3670C601O3677C610O3730C623O3730C631O3750C644O3786C652O3834C674O3898C704O3898C734O3998C758O3998C761O4005C793O4011C819O4009C835O4009C843O4081C904O4081C904O4081C918O4130C943O4494C967O4494C972O4501C994O4526C1023O4575C1031O4538C1058O4538C1094O4538C1122O4538C1144O4538C1159O4538C1164O4652C1172O4615C1199O4615C1223O4669C1223O4669C1231O4691C1239O4703C1254O4722C1296O4722C1296O4722C1296O4743C1331O4773C1340O4794C1358O4794C1366O4810C1374O4810C1397O4837C1402O4837C1407O3147C1425O3147C1429O3147C1433O3147C1437O3147C1441O3147C1463O3111C1495O3111C1517O4871C1530O4871C1560O3556C1565O4172,F0O3239F0O3326,S0x18ad3834fed0
@@ -2659,15 +2659,15 @@ code-source-info,0x3dd61dfd8e20,87,10836,14308,C4O10836C33O10865C41O10865C46O108
 code-creation,JS,9,39529,0x3dd61dfd9350,184,addJobsToDependencyGraph node:internal/modules/esm/module_job:308:38,0x2df90802f030,~
 code-source-info,0x3dd61dfd9350,87,11020,11402,C10O11020C18O11049C31O11096C40O11049C45O11122C50O11138C55O11138C62O11164C71O11171C72O11186C75O11198C80O11198C85O11243C92O11263C97O11243C103O11289C115O11273C142O11308C147O11322C156O11370C159O11329C172O11396,,
 StoreIC,0x3dd61dfd8b9b,39558,299,25,X,X,0x000000000000,instantiated,,
-code-creation,JS,9,39621,0x3dd61dfd94b8,23,addSmis file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,~
+code-creation,JS,9,39621,0x3dd61dfd94b8,23,addSmis file:///tmp/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,~
 code-source-info,0x3dd61dfd94b8,86,312,378,C0O323C5O343C11O349C13O358C16O361C17O364C19O373C22O376,,
-code-creation,JS,9,39651,0x3dd61dfd9568,55,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,~
+code-creation,JS,9,39651,0x3dd61dfd9568,55,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,~
 code-source-info,0x3dd61dfd9568,86,753,917,C0O784C2O790C7O798C13O819C17O828C20O836C25O836C30O877C33O889C44O896C49O903C51O911C54O916,,
-code-creation,JS,9,39671,0x3dd61dfd9630,23,addNumbers file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,~
+code-creation,JS,9,39671,0x3dd61dfd9630,23,addNumbers file:///tmp/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,~
 code-source-info,0x3dd61dfd9630,86,399,465,C0O410C5O430C11O436C13O445C16O448C17O451C19O460C22O463,,
-code-creation,JS,9,39692,0x3dd61dfd96d0,23,addStrings file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,~
+code-creation,JS,9,39692,0x3dd61dfd96d0,23,addStrings file:///tmp/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,~
 code-source-info,0x3dd61dfd96d0,86,486,552,C0O497C5O517C11O523C13O532C16O535C17O538C19O547C22O550,,
-code-creation,JS,9,39734,0x3dd61dfd9780,41,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,~
+code-creation,JS,9,39734,0x3dd61dfd9780,41,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,~
 code-source-info,0x3dd61dfd9780,86,569,693,C0O580C5O600C11O606C13O615C16O618C17O645C22O669C27O675C31O671C34O676C35O679C37O688C40O691,,
 LoadIC,0x3dd61dfd957c,39753,49,11,0,1,0x3a10cbe5df19,push,,
 LoadIC,0x3dd61dfd9589,39758,51,15,0,1,0x3a10cbe5df19,length,,
@@ -2689,30 +2689,30 @@ code-source-info,0x77e6fa842740,39,21965,22076,C22O21976C120O21995C168O22010C207
 code-creation,JS,10,40059,0x77e6fa842900,44,noop node:internal/util/debuglog:57:14,0x1c1928d2b938,^
 script-source,19,node:internal/util/debuglog,'use strict';\n\nconst {\n  MathFloor\x2C\n  Number\x2C\n  NumberPrototypeToFixed\x2C\n  ObjectDefineProperty\x2C\n  RegExp\x2C\n  RegExpPrototypeExec\x2C\n  SafeArrayIterator\x2C\n  SafeMap\x2C\n  StringPrototypePadStart\x2C\n  StringPrototypeSplit\x2C\n  StringPrototypeToLowerCase\x2C\n  StringPrototypeToUpperCase\x2C\n} = primordials;\nconst {\n  CHAR_LOWERCASE_B: kTraceBegin\x2C\n  CHAR_LOWERCASE_E: kTraceEnd\x2C\n  CHAR_LOWERCASE_N: kTraceInstant\x2C\n} = require('internal/constants');\nconst { inspect\x2C format\x2C formatWithOptions } = require('internal/util/inspect');\nconst { getCategoryEnabledBuffer\x2C trace } = internalBinding('trace_events');\n\n// `debugImpls` and `testEnabled` are deliberately not initialized so any call\n// to `debuglog()` before `initializeDebugEnv()` is called will throw.\nlet debugImpls;\nlet testEnabled;\n\n\n// `debugEnv` is initial value of process.env.NODE_DEBUG\nfunction initializeDebugEnv(debugEnv) {\n  debugImpls = { __proto__: null };\n  if (debugEnv) {\n    // This is run before any user code\x2C it's OK not to use primordials.\n    debugEnv = debugEnv.replace(/[|\\\\{}()[\\]^$+?.]/g\x2C '\\\\$&')\n      .replaceAll('*'\x2C '.*')\n      .replaceAll('\x2C'\x2C '$|^');\n    const debugEnvRegex = new RegExp(`^${debugEnv}$`\x2C 'i');\n    testEnabled = (str) => RegExpPrototypeExec(debugEnvRegex\x2C str) !== null;\n  } else {\n    testEnabled = () => false;\n  }\n}\n\n// Emits warning when user sets\n// NODE_DEBUG=http or NODE_DEBUG=http2.\nfunction emitWarningIfNeeded(set) {\n  if ('HTTP' === set || 'HTTP2' === set) {\n    process.emitWarning('Setting the NODE_DEBUG environment variable ' +\n      'to \\'' + StringPrototypeToLowerCase(set) + '\\' can expose sensitive ' +\n      'data (such as passwords\x2C tokens and authentication headers) ' +\n      'in the resulting log.');\n  }\n}\n\nconst noop = () => {};\n\nlet utilColors;\nfunction lazyUtilColors() {\n  utilColors ??= require('internal/util/colors');\n  return utilColors;\n}\n\nfunction debuglogImpl(enabled\x2C set) {\n  if (debugImpls[set] === undefined) {\n    if (enabled) {\n      const pid = process.pid;\n      emitWarningIfNeeded(set);\n      debugImpls[set] = function debug(...args) {\n        const colors = lazyUtilColors().shouldColorize(process.stderr);\n        const msg = formatWithOptions({ colors }\x2C ...args);\n        const coloredPID = inspect(pid\x2C { colors });\n        process.stderr.write(format('%s %s: %s\\n'\x2C set\x2C coloredPID\x2C msg));\n      };\n    } else {\n      debugImpls[set] = noop;\n    }\n  }\n  return debugImpls[set];\n}\n\n// debuglogImpl depends on process.pid and process.env.NODE_DEBUG\x2C\n// so it needs to be called lazily in top scopes of internal modules\n// that may be loaded before these run time states are allowed to\n// be accessed.\nfunction debuglog(set\x2C cb) {\n  function init() {\n    set = StringPrototypeToUpperCase(set);\n    enabled = testEnabled(set);\n  }\n  let debug = (...args) => {\n    init();\n    // Only invokes debuglogImpl() when the debug function is\n    // called for the first time.\n    debug = debuglogImpl(enabled\x2C set);\n    if (typeof cb === 'function') {\n      ObjectDefineProperty(debug\x2C 'enabled'\x2C {\n        __proto__: null\x2C\n        get() {\n          return enabled;\n        }\x2C\n        configurable: true\x2C\n        enumerable: true\x2C\n      });\n      cb(debug);\n    }\n    switch (args.length) {\n      case 1: return debug(args[0]);\n      case 2: return debug(args[0]\x2C args[1]);\n      default: return debug(...new SafeArrayIterator(args));\n    }\n  };\n  let enabled;\n  let test = () => {\n    init();\n    test = () => enabled;\n    return enabled;\n  };\n  const logger = (...args) => {\n    // Improve performance when debug is disabled\x2C avoid calling `new SafeArrayIterator(args)`\n    if (enabled === false) return;\n    switch (args.length) {\n      case 1: return debug(args[0]);\n      case 2: return debug(args[0]\x2C args[1]);\n      default: return debug(...new SafeArrayIterator(args));\n    }\n  };\n  ObjectDefineProperty(logger\x2C 'enabled'\x2C {\n    __proto__: null\x2C\n    get() {\n      return test();\n    }\x2C\n    configurable: true\x2C\n    enumerable: true\x2C\n  });\n  return logger;\n}\n\nfunction pad(value) {\n  return StringPrototypePadStart(`${value}`\x2C 2\x2C '0');\n}\n\nconst kNone = 1 << 0;\nconst kSkipLog = 1 << 1;\nconst kSkipTrace = 1 << 2;\nconst kShouldSkipAll = kSkipLog | kSkipTrace;\n\nconst kSecond = 1000;\nconst kMinute = 60 * kSecond;\nconst kHour = 60 * kMinute;\n\nfunction formatTime(ms) {\n  let hours = 0;\n  let minutes = 0;\n  let seconds = 0;\n\n  if (ms >= kSecond) {\n    if (ms >= kMinute) {\n      if (ms >= kHour) {\n        hours = MathFloor(ms / kHour);\n        ms = ms % kHour;\n      }\n      minutes = MathFloor(ms / kMinute);\n      ms = ms % kMinute;\n    }\n    seconds = ms / kSecond;\n  }\n\n  if (hours !== 0 || minutes !== 0) {\n    ({ 0: seconds\x2C 1: ms } = StringPrototypeSplit(\n      NumberPrototypeToFixed(seconds\x2C 3)\x2C\n      '.'\x2C\n      2\x2C\n    ));\n    const res = hours !== 0 ? `${hours}:${pad(minutes)}` : minutes;\n    return `${res}:${pad(seconds)}.${ms} (${hours !== 0 ? 'h:m' : ''}m:ss.mmm)`;\n  }\n\n  if (seconds !== 0) {\n    return `${NumberPrototypeToFixed(seconds\x2C 3)}s`;\n  }\n\n  return `${Number(NumberPrototypeToFixed(ms\x2C 3))}ms`;\n}\n\nfunction safeTraceLabel(label) {\n  return label.replaceAll('\\\\'\x2C '\\\\\\\\').replaceAll('"'\x2C '\\\\"');\n}\n\n/**\n * @typedef {(label: string\x2C timeFormatted: string\x2C args?: any[]) => void} LogImpl\n */\n\n/**\n * Returns true if label was found\n * @param {string} timesStore\n * @param {string} implementation\n * @param {LogImpl} logImp\n * @param {string} label\n * @param {any} args\n * @returns {void}\n */\nfunction timeLogImpl(timesStore\x2C implementation\x2C logImp\x2C label\x2C args) {\n  const time = timesStore.get(label);\n  if (time === undefined) {\n    process.emitWarning(`No such label '${label}' for ${implementation}`);\n    return;\n  }\n\n  const duration = process.hrtime(time);\n  const ms = duration[0] * 1000 + duration[1] / 1e6;\n\n  const formatted = formatTime(ms);\n\n  if (args === undefined) {\n    logImp(label\x2C formatted);\n  } else {\n    logImp(label\x2C formatted\x2C args);\n  }\n}\n\n/**\n * @param {SafeMap} timesStore\n * @param {string} traceCategory\n * @param {string} implementation\n * @param {number} timerFlags\n * @param {string} logLabel\n * @param {string} traceLabel\n * @returns {void}\n */\nfunction time(timesStore\x2C traceCategory\x2C implementation\x2C timerFlags\x2C logLabel = 'default'\x2C traceLabel = undefined) {\n  // Coerces everything other than Symbol to a string\n  logLabel = `${logLabel}`;\n\n  if (traceLabel !== undefined) {\n    traceLabel = `${traceLabel}`;\n  } else {\n    traceLabel = logLabel;\n  }\n\n  if (timesStore.has(logLabel)) {\n    process.emitWarning(`Label '${logLabel}' already exists for ${implementation}`);\n    return;\n  }\n\n  if ((timerFlags & kSkipTrace) === 0) {\n    traceLabel = safeTraceLabel(traceLabel);\n    trace(kTraceBegin\x2C traceCategory\x2C traceLabel\x2C 0);\n  }\n\n  timesStore.set(logLabel\x2C process.hrtime());\n}\n\n/**\n * @param {SafeMap} timesStore\n * @param {string} traceCategory\n * @param {string} implementation\n * @param {number} timerFlags\n * @param {LogImpl} logImpl\n * @param {string} logLabel\n * @param {string} traceLabel\n * @returns {void}\n */\nfunction timeEnd(\n  timesStore\x2C\n  traceCategory\x2C\n  implementation\x2C\n  timerFlags\x2C\n  logImpl\x2C\n  logLabel = 'default'\x2C\n  traceLabel = undefined\x2C\n) {\n  // Coerces everything other than Symbol to a string\n  logLabel = `${logLabel}`;\n\n  if (traceLabel !== undefined) {\n    traceLabel = `${traceLabel}`;\n  } else {\n    traceLabel = logLabel;\n  }\n\n  if ((timerFlags & kSkipLog) === 0) {\n    timeLogImpl(timesStore\x2C implementation\x2C logImpl\x2C logLabel);\n  }\n\n  if ((timerFlags & kSkipTrace) === 0) {\n    traceLabel = safeTraceLabel(traceLabel);\n    trace(kTraceEnd\x2C traceCategory\x2C traceLabel\x2C 0);\n  }\n\n  timesStore.delete(logLabel);\n}\n\n/**\n * @param {SafeMap} timesStore\n * @param {string} traceCategory\n * @param {string} implementation\n * @param {number} timerFlags\n * @param {LogImpl} logImpl\n * @param {string} logLabel\n * @param {string} traceLabel\n * @param {any[]} args\n * @returns {void}\n */\nfunction timeLog(\n  timesStore\x2C\n  traceCategory\x2C\n  implementation\x2C\n  timerFlags\x2C\n  logImpl\x2C\n  logLabel = 'default'\x2C\n  traceLabel = undefined\x2C\n  args\x2C\n) {\n  // Coerces everything other than Symbol to a string\n  logLabel = `${logLabel}`;\n\n  if (traceLabel !== undefined) {\n    traceLabel = `${traceLabel}`;\n  } else {\n    traceLabel = logLabel;\n  }\n\n  if ((timerFlags & kSkipLog) === 0) {\n    timeLogImpl(timesStore\x2C implementation\x2C logImpl\x2C logLabel\x2C args);\n  }\n\n  if ((timerFlags & kSkipTrace) === 0) {\n    traceLabel = safeTraceLabel(traceLabel);\n    trace(kTraceInstant\x2C traceCategory\x2C traceLabel\x2C 0);\n  }\n}\n\n/**\n * @type {Record<string\x2C SafeMap>}\n */\nlet tracesStores;\n\n/**\n * @typedef {(logLabel: string\x2C traceLabel?: string) => void} TimerStart\n */\n\n/**\n * @typedef {(logLabel: string\x2C traceLabel?: string) => void} TimerEnd\n */\n\n/**\n * @typedef {(logLabel: string\x2C traceLabel?: string\x2C args?: any[]) => void} TimerLog\n */\n\n/**\n * Debuglog with time fns and support for trace\n * @param {string} set\n * @param {(startTimer: TimerStart\x2C endTimer: TimerEnd\x2C logTimer: TimerLog) => void} cb\n * @returns {{startTimer: TimerStart\x2C endTimer: TimerEnd\x2C logTimer: TimerLog}}\n */\nfunction debugWithTimer(set\x2C cb) {\n  set = StringPrototypeToUpperCase(set);\n\n  if (tracesStores === undefined) {\n    tracesStores = { __proto__: null };\n  }\n\n  /**\n   * @type {LogImpl}\n   */\n  function logImpl(label\x2C timeFormatted\x2C args) {\n    const pid = process.pid;\n    const colors = { colors: lazyUtilColors().shouldColorize(process.stderr) };\n    const coloredPID = inspect(pid\x2C colors);\n\n    if (args === undefined)\n      process.stderr.write(format('%s %s %s: %s\\n'\x2C set\x2C coloredPID\x2C label\x2C timeFormatted));\n    else\n      process.stderr.write(\n        format(\n          '%s %s %s: %s\\n'\x2C\n          set\x2C\n          coloredPID\x2C\n          label\x2C\n          timeFormatted\x2C\n          ...new SafeArrayIterator(args)\x2C\n        )\x2C\n      );\n  }\n\n  const traceCategory = `node\x2Cnode.${StringPrototypeToLowerCase(set)}`;\n  let traceCategoryBuffer;\n  let debugLogCategoryEnabled = false;\n  let timerFlags = kNone;\n\n  function ensureTimerFlagsAreUpdated() {\n    timerFlags &= ~kSkipTrace;\n\n    if (traceCategoryBuffer[0] === 0) {\n      timerFlags |= kSkipTrace;\n    }\n  }\n\n  /**\n   * @type {TimerStart}\n   */\n  function internalStartTimer(logLabel\x2C traceLabel) {\n    ensureTimerFlagsAreUpdated();\n\n    if ((timerFlags & kShouldSkipAll) === kShouldSkipAll) {\n      return;\n    }\n\n    time(\n      tracesStores[set]\x2C\n      traceCategory\x2C\n      'debuglog.time'\x2C\n      timerFlags\x2C\n      logLabel\x2C\n      traceLabel\x2C\n    );\n  }\n\n  /**\n   * @type {TimerEnd}\n   */\n  function internalEndTimer(logLabel\x2C traceLabel) {\n    ensureTimerFlagsAreUpdated();\n\n    if ((timerFlags & kShouldSkipAll) === kShouldSkipAll) {\n      return;\n    }\n\n    timeEnd(\n      tracesStores[set]\x2C\n      traceCategory\x2C\n      'debuglog.timeEnd'\x2C\n      timerFlags\x2C\n      logImpl\x2C\n      logLabel\x2C\n      traceLabel\x2C\n    );\n  }\n\n  /**\n   * @type {TimerLog}\n   */\n  function internalLogTimer(logLabel\x2C traceLabel\x2C args) {\n    ensureTimerFlagsAreUpdated();\n\n    if ((timerFlags & kShouldSkipAll) === kShouldSkipAll) {\n      return;\n    }\n\n    timeLog(\n      tracesStores[set]\x2C\n      traceCategory\x2C\n      'debuglog.timeLog'\x2C\n      timerFlags\x2C\n      logImpl\x2C\n      logLabel\x2C\n      traceLabel\x2C\n      args\x2C\n    );\n  }\n\n  function init() {\n    if (tracesStores[set] === undefined) {\n      tracesStores[set] = new SafeMap();\n    }\n    emitWarningIfNeeded(set);\n    debugLogCategoryEnabled = testEnabled(set);\n    traceCategoryBuffer = getCategoryEnabledBuffer(traceCategory);\n\n    timerFlags = kNone;\n\n    if (!debugLogCategoryEnabled) {\n      timerFlags |= kSkipLog;\n    }\n\n    if (traceCategoryBuffer[0] === 0) {\n      timerFlags |= kSkipTrace;\n    }\n\n    cb(internalStartTimer\x2C internalEndTimer\x2C internalLogTimer);\n  }\n\n  /**\n   * @type {TimerStart}\n   */\n  const startTimer = (logLabel\x2C traceLabel) => {\n    init();\n\n    if ((timerFlags & kShouldSkipAll) !== kShouldSkipAll)\n      internalStartTimer(logLabel\x2C traceLabel);\n  };\n\n  /**\n   * @type {TimerEnd}\n   */\n  const endTimer = (logLabel\x2C traceLabel) => {\n    init();\n\n    if ((timerFlags & kShouldSkipAll) !== kShouldSkipAll)\n      internalEndTimer(logLabel\x2C traceLabel);\n  };\n\n  /**\n   * @type {TimerLog}\n   */\n  const logTimer = (logLabel\x2C traceLabel\x2C args) => {\n    init();\n\n    if ((timerFlags & kShouldSkipAll) !== kShouldSkipAll)\n      internalLogTimer(logLabel\x2C traceLabel\x2C args);\n  };\n\n  return {\n    startTimer\x2C\n    endTimer\x2C\n    logTimer\x2C\n  };\n}\n\nmodule.exports = {\n  kNone\x2C\n  kSkipLog\x2C\n  kSkipTrace\x2C\n  formatTime\x2C\n  time\x2C\n  timeEnd\x2C\n  timeLog\x2C\n  debuglog\x2C\n  debugWithTimer\x2C\n  initializeDebugEnv\x2C\n};\n
 code-source-info,0x77e6fa842900,19,1733,1741,C24O1740,,
-code-creation,JS,10,40393,0x77e6fa842980,392,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,^
+code-creation,JS,10,40393,0x77e6fa842980,392,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,^
 code-source-info,0x77e6fa842980,86,753,917,C22O784C32O790C57O798C123O819C147O828C159O836C187O836C207O877C219O889C257O896C285O903C303O911C374O916,,
-code-creation,JS,10,40401,0x77e6fa842b40,188,addNumbers file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,^
+code-creation,JS,10,40401,0x77e6fa842b40,188,addNumbers file:///tmp/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,^
 code-source-info,0x77e6fa842b40,86,399,465,C21O410C80O430C116O436C120O445C134O448C151O451C155O460C169O463,,
-code-creation,JS,10,40407,0x77e6fa842c40,188,addSmis file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,^
+code-creation,JS,10,40407,0x77e6fa842c40,188,addSmis file:///tmp/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,^
 code-source-info,0x77e6fa842c40,86,312,378,C21O323C80O343C116O349C120O358C134O361C151O364C155O373C169O376,,
-code-creation,JS,10,40412,0x77e6fa842d40,188,addStrings file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,^
+code-creation,JS,10,40412,0x77e6fa842d40,188,addStrings file:///tmp/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,^
 code-source-info,0x77e6fa842d40,86,486,552,C21O497C80O517C116O523C120O532C134O535C151O538C155O547C169O550,,
-code-creation,JS,10,40418,0x77e6fa842e40,320,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,^
+code-creation,JS,10,40418,0x77e6fa842e40,320,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,^
 code-source-info,0x77e6fa842e40,86,569,693,C21O580C80O600C116O606C120O615C134O618C151O645C200O669C228O675C252O671C266O676C283O679C287O688C301O691,,
-code-creation,JS,11,40432,0x77e6fa842fc0,468,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,+'
+code-creation,JS,11,40432,0x77e6fa842fc0,468,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,+'
 code-source-info,0x77e6fa842fc0,86,753,917,C7O753C7O753C7O753C28O753C42O790C69O790C92O828C96O836C125O836C132O836C136O836C155O836C159O836C163O836C167O836C175O836C186O836C224O896C242O896C260O916C277O916C307O819C312O903,,
 new,MemoryChunk,0x1a5f757c0000,262144
-code-creation,JS,11,40707,0x77e6fa843200,372,addNumbers file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,+'
+code-creation,JS,11,40707,0x77e6fa843200,372,addNumbers file:///tmp/deoptigate/examples/two-modules/adders.js:25:20,0x2df908026368,+'
 code-source-info,0x77e6fa843200,86,399,465,C7O399C7O399C7O399C7O399C28O399C32O460C75O460C114O460C128O463C138O463C240O463,,
-code-creation,JS,11,40838,0x77e6fa8433c0,264,addSmis file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,+'
+code-creation,JS,11,40838,0x77e6fa8433c0,264,addSmis file:///tmp/deoptigate/examples/two-modules/adders.js:20:17,0x2df908026320,+'
 code-source-info,0x77e6fa8433c0,86,312,378,C7O312C7O312C7O312C7O312C28O312C32O373C48O373C61O373C79O376C89O376C99O376,,
 new,MemoryChunk,0x1f99dc0000,262144
-code-creation,JS,11,40890,0x77e6fa843540,284,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,40890,0x77e6fa843540,284,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa843540,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C54O688C67O688C79O688C97O691C107O691C114O691C144O669,,
-code-creation,JS,11,40931,0x77e6fa8436c0,204,addStrings file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,+'
+code-creation,JS,11,40931,0x77e6fa8436c0,204,addStrings file:///tmp/deoptigate/examples/two-modules/adders.js:30:20,0x2df9080263b0,+'
 code-source-info,0x77e6fa8436c0,86,486,552,C7O486C7O486C7O486C7O486C28O486C32O547C60O547C85O547C110O550C120O550,,
 new,MemoryChunk,0x1770eb00000,262144
-code-creation,JS,10,41311,0x77e6fa843800,4488, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,^
+code-creation,JS,10,41311,0x77e6fa843800,4488, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,^
 code-source-info,0x77e6fa843800,86,0,1911,C120O0C774O0C895O0C942O277C977O277C1041O708C1051O708C1115O727C1133O727C1197O932C1206O937C1214O937C1245O967C1260O975C1262O975C1293O991C1308O1005C1348O991C1378O1024C1393O1038C1433O1024C1463O1060C1488O1087C1522O1096C1546O1074C1586O1060C1616O1108C1638O1136C1661O1144C1677O1122C1717O1108C1747O1187C1777O1201C1820O1187C1850O981C1874O954C2065O946C2089O919C2277O1235C2283O1240C2291O1240C2319O1270C2331O1278C2333O1278C2361O1316C2401O1339C2432O1348C2453O1330C2496O1316C2526O1284C2544O1257C2732O1249C2750O1222C2938O1376C2944O1381C2952O1381C2980O1411C2992O1419C2994O1419C3022O1457C3056O1481C3076O1489C3092O1471C3135O1457C3165O1425C3183O1398C3371O1390C3389O1363C3577O1681C3651O1670C3678O1701C3752O1690C3779O1721C3853O1710C3880O1741C3954O1730C3981O1761C4055O1750C4082O1781C4156O1770C4183O1801C4257O1790C4284O1821C4358O1810C4385O1891C4400O1903C4434O1891C4468O1911,,
 new,MemoryChunk,0x3f483b5c0000,262144
 new,MemoryChunk,0x3a5519080000,184320
@@ -2721,72 +2721,72 @@ new,MemoryChunk,0x20d3af800000,262144
 new,MemoryChunk,0x3274d8ac0000,262144
 delete,MemoryChunk,0x3a7a8de0
 new,MemoryChunk,0x683829c0000,409600
-code-creation,JS,12,43424,0x77e6fa8449c0,532,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,*'
+code-creation,JS,12,43424,0x77e6fa8449c0,532,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,*'
 code-source-info,0x77e6fa8449c0,86,753,917,C11O753C25O790C59O828C73O836C186O896C199O916C232O903C262O911C303O916C312O819C317O753C363O836,,
-code-creation,JS,11,43445,0x77e6fa804bc0,9452, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
+code-creation,JS,11,43445,0x77e6fa804bc0,9452, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
 code-source-info,0x77e6fa804bc0,86,0,1911,C8O0C8O0C8O0C8O0C8O0C8O0C8O0C8O0C8O0C8O0C8O0C29O0C36O975C57O975C69O991C81O1005C100O312I0C110O323I0C118O323I0C131O343I0C161O343I0C165O343I0C272O373I0C296O373I0C312O991C331O753I1C331O790I1C358O790I1C385O790I1C408O828I1C412O836I1C441O836I1C448O836I1C452O836I1C471O836I1C475O836I1C479O836I1C483O836I1C491O836I1C502O836I1C540O896I1C558O896I1C570O1024C582O1038C601O399I2C601O410I2C609O410I2C622O430I2C652O430I2C656O430I2C763O460I2C782O460I2C799O460I2C811O1024C830O753I3C830O790I3C946O790I3C973O790I3C996O828I3C1000O836I3C1029O836I3C1036O836I3C1040O836I3C1056O836I3C1060O836I3C1064O836I3C1068O836I3C1076O836I3C1087O836I3C1125O896I3C1143O896I3C1155O1060C1186O1087C1206O1096C1218O399I4C1218O410I4C1226O410I4C1239O430I4C1269O430I4C1273O430I4C1373O460I4C1385O1060C1404O753I5C1404O790I5C1520O790I5C1547O790I5C1570O828I5C1574O836I5C1603O836I5C1610O836I5C1614O836I5C1630O836I5C1634O836I5C1638O836I5C1642O836I5C1650O836I5C1661O836I5C1699O896I5C1717O896I5C1729O1108C1744O1136C1763O1144C1776O1122C1795O486I6C1805O497I6C1813O497I6C1826O517I6C1855O517I6C1859O517I6C1967O547I6C1990O1108C2009O753I7C2016O790I7C2043O790I7C2066O828I7C2070O836I7C2099O836I7C2106O836I7C2110O836I7C2126O836I7C2130O836I7C2134O836I7C2138O836I7C2146O836I7C2157O836I7C2195O896I7C2213O896I7C2225O1187C2233O1187C2237O1201C2256O569I8C2256O580I8C2264O580I8C2277O600I8C2307O600I8C2311O600I8C2411O1187C2430O753I9C2441O790I9C2468O790I9C2491O828I9C2495O836I9C2524O836I9C2531O836I9C2535O836I9C2551O836I9C2555O836I9C2559O836I9C2563O836I9C2571O836I9C2582O836I9C2620O896I9C2638O896I9C2653O981C2678O954C2688O954C2715O954C2752O954C2761O954C2773O954C2784O312I10C2784O323I10C2792O323I10C2805O343I10C2835O343I10C2839O343I10C2946O373I10C2962O954C2981O753I11C2981O790I11C3005O790I11C3032O790I11C3055O828I11C3059O836I11C3088O836I11C3095O836I11C3099O836I11C3115O836I11C3119O836I11C3123O836I11C3127O836I11C3135O836I11C3149O836I11C3187O896I11C3205O896I11C3217O954C3225O399I12C3225O410I12C3233O410I12C3246O430I12C3276O430I12C3280O430I12C3387O460I12C3407O460I12C3419O954C3438O753I13C3438O790I13C3554O790I13C3581O790I13C3604O828I13C3608O836I13C3637O836I13C3644O836I13C3648O836I13C3664O836I13C3668O836I13C3672O836I13C3676O836I13C3684O836I13C3695O836I13C3733O896I13C3751O896I13C3763O954C3791O954C3803O399I14C3803O410I14C3811O410I14C3824O430I14C3854O430I14C3858O430I14C3966O460I14C3978O954C3997O753I15C3997O790I15C4113O790I15C4140O790I15C4163O828I15C4167O836I15C4196O836I15C4203O836I15C4207O836I15C4223O836I15C4227O836I15C4231O836I15C4235O836I15C4243O836I15C4254O836I15C4292O896I15C4310O896I15C4336O954C4347O954C4356O486I16C4366O497I16C4374O497I16C4387O517I16C4416O517I16C4420O517I16C4528O547I16C4551O954C4570O753I17C4577O790I17C4604O790I17C4627O828I17C4631O836I17C4660O836I17C4667O836I17C4671O836I17C4687O836I17C4691O836I17C4695O836I17C4699O836I17C4707O836I17C4718O836I17C4756O896I17C4774O896I17C4786O954C4794O954C4798O954C4817O569I18C4817O580I18C4825O580I18C4838O600I18C4868O600I18C4872O600I18C4972O954C4991O753I19C5005O790I19C5032O790I19C5055O828I19C5059O836I19C5088O836I19C5095O836I19C5099O836I19C5115O836I19C5119O836I19C5123O836I19C5127O836I19C5135O836I19C5149O836I19C5187O896I19C5205O896I19C5220O954C5245O954C5255O954C5282O954C5287O358I0C5302O798I1C5310O798I1C5323O819I1C5328O903I1C5333O445I2C5348O798I3C5356O798I3C5369O819I3C5374O903I3C5379O445I4C5394O798I5C5402O798I5C5415O819I5C5420O903I5C5425O532I6C5440O798I7C5448O798I7C5461O819I7C5466O903I7C5471O615I8C5486O798I9C5494O798I9C5507O819I9C5512O903I9C5517O358I10C5532O798I11C5540O798I11C5553O819I11C5558O903I11C5563O445I12C5578O798I13C5586O798I13C5599O819I13C5604O903I13C5609O445I14C5624O798I15C5632O798I15C5645O819I15C5650O903I15C5655O532I16C5670O798I17C5678O798I17C5691O819I17C5696O903I17C5701O615I18C5716O798I19C5724O798I19C5737O819I19C5742O903I19C5754O946C5766O946C5774O919,F0O1005F1O991F2O1038F1O1024F2O1074F1O1060F3O1122F1O1108F4O1201F1O1187F0O954F1O954F2O954F1O954F2O954F1O954F3O954F1O954F4O954F1O954,S0x2df908026320S0x2df908026440S0x2df908026368S0x2df9080263b0S0x2df9080263f8
-code-deopt,43627,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,43714,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,43627,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,43714,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0xc1ff9c00000,262144
-code-deopt,43806,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,43806,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x1d31a9140000,614400
-code-deopt,44121,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,44192,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,44285,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,44375,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,44445,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,44121,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,44192,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,44285,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,44375,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,44445,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x353af5c80000,262144
 delete,MemoryChunk,0x3a7a8de0
 new,MemoryChunk,0x1cd9b6980000,917504
-code-deopt,46099,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46166,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46228,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46286,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46343,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46359,640,0x77e6fa8449c0,-1,836,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:49:11>,wrong map
+code-deopt,46099,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46166,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46228,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46286,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46343,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46359,640,0x77e6fa8449c0,-1,836,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:49:11>,wrong map
 LoadIC,0x3dd61dfd957c,46384,49,11,1,P,0x3a10cbe7af61,push,,
 LoadIC,0x3dd61dfd9589,46391,51,15,1,P,0x3a10cbe7af61,length,,
-code-deopt,46460,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,46528,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46460,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46528,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x276842240000,262144
-code-deopt,46616,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46616,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x2ea55efc0000,184320
-code-deopt,46766,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46766,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x2885146c0000,274432
-code-deopt,46955,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,47028,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,46955,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,47028,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0xce733d40000,409600
-code-deopt,47259,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,47329,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,47398,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,47259,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,47329,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,47398,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x371092bc0000,262144
-code-deopt,47495,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,47495,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x1bba0f2c0000,262144
 new,MemoryChunk,0x3d80c2d40000,262144
 delete,MemoryChunk,0x3a7a9390
 delete,MemoryChunk,0x3a7aa500
 new,MemoryChunk,0x3ce4d5300000,614400
-code-deopt,48992,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49060,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49118,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49176,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49245,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,48992,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49060,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49118,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49176,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49245,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x1476e2b40000,917504
 new,MemoryChunk,0x39d500680000,262144
-code-deopt,49680,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49755,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49849,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49921,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,49995,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49680,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49755,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49849,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49921,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,49995,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0xcf412800000,262144
-code-deopt,50139,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
-code-deopt,50286,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,50139,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,50286,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x374844b80000,262144
-code-deopt,50425,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
+code-deopt,50425,9920,0x77e6fa804bc0,-1,946,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:54:28>,exit from OSR'd inner loop
 new,MemoryChunk,0x210ba4000000,184320
-code-creation,JS,12,50586,0x77e6fa844c40,7216, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
+code-creation,JS,12,50586,0x77e6fa844c40,7216, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
 code-source-info,0x77e6fa844c40,86,0,1911,C29O1005C54O1122C79O1038C104O0C142O580I8C192O954C204O975C258O991C262O1005C275O373I0C321O991C330O790I19C361O836I19C365O828I19C369O836I19C457O896I19C470O903I19C500O911I19C574O1038C587O460I1C603O790I18C643O828I18C647O836I18C859O896I18C871O903I18C901O911I18C985O1096C1009O1087C1021O460I2C1025O790I17C1049O828I17C1053O836I17C1255O896I17C1267O903I17C1297O911I17C1341O1136C1363O1144C1392O1122C1405O547I3C1447O828I16C1461O836I16C1562O896I16C1575O903I16C1605O911I16C1646O1187C1661O1201C1680O645I9C1724O1187C1743O828I15C1747O836I15C1837O896I15C1849O903I15C1879O911I15C1954O981C1971O975C1978O954C1994O946C2048O919C2055O937C2112O954C2149O975C2168O991C2172O1005C2185O373I4C2207O991C2216O790I14C2246O836I14C2253O828I14C2257O836I14C2352O896I14C2365O903I14C2395O911I14C2481O1038C2494O460I5C2499O1087C2504O460I5C2508O790I13C2548O828I13C2562O836I13C2742O896I13C2769O903I13C2799O911I13C2868O1096C2888O1087C2892O460I6C2896O790I12C2912O828I12C2916O836I12C3131O896I12C3144O903I12C3174O911I12C3215O1136C3231O1144C3260O1122C3273O547I7C3315O828I11C3329O836I11C3430O896I11C3443O903I11C3473O911I11C3514O1187C3529O1201C3548O645I8C3592O1187C3611O828I10C3615O836I10C3702O896I10C3714O903I10C3744O911I10C3819O981C3836O975C3843O954C3859O946C3872O919C3888O1240C3893O669I8C3898O819I12C3903O819I13C3908O819I14C3913O669I9C3918O819I17C3923O819I18C3928O819I19C3933O0C4013O836I19C4153O836I18C4479O836I17C4797O836I16C4907O836I15C5025O954C5115O836I14C5260O836I13C5571O836I12C5825O836I11C5935O836I10C6050O954C6137O919,F0O1005F1O1038F1O1074F2O1122F0O1005F1O1038F1O1074F2O1122F3O1201F3O1201F4O1187F4O1108F4O1060F4O1024F4O991F4O1187F4O1108F4O1060F4O1024F4O991,S0x2df908026320S0x2df908026368S0x2df9080263b0S0x2df9080263f8S0x2df908026440
-code-deopt,50695,9920,0x77e6fa804bc0,-1,954,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:55:3>,prepare for on stack replacement (OSR)
+code-deopt,50695,9920,0x77e6fa804bc0,-1,954,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:55:3>,prepare for on stack replacement (OSR)
 new,MemoryChunk,0x10de0d080000,274432
 new,MemoryChunk,0x33d7d9a40000,262144
 new,MemoryChunk,0x33f28ed80000,409600
@@ -3324,18 +3324,18 @@ new,MemoryChunk,0x11c046700000,274432
 new,MemoryChunk,0x8d9bae40000,409600
 new,MemoryChunk,0x162781380000,614400
 new,MemoryChunk,0x30872700000,917504
-code-deopt,154699,7488,0x77e6fa844c40,-1,1240,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:65:19>,Insufficient type feedback for compare operation
-code-deopt,154738,384,0x77e6fa843540,-1,688,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:39:12>,not a Smi
+code-deopt,154699,7488,0x77e6fa844c40,-1,1240,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:65:19>,Insufficient type feedback for compare operation
+code-deopt,154738,384,0x77e6fa843540,-1,688,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:39:12>,not a Smi
 new,MemoryChunk,0x77e6fa880000,262144
 new,MemoryChunk,0x3feabe700000,262144
 new,MemoryChunk,0x77e6fa8c0000,262144
-code-creation,JS,11,155059,0x77e6fa880040,400,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,155059,0x77e6fa880040,400,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa880040,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C54O688C94O688C133O688C147O691C157O691C259O691C289O669,,
 new,MemoryChunk,0x367cf1400000,262144
-code-creation,JS,11,155110,0x77e6fa8c0040,772,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,+'
+code-creation,JS,11,155110,0x77e6fa8c0040,772,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,+'
 code-source-info,0x77e6fa8c0040,86,753,917,C10O753C10O753C10O753C31O753C45O790C72O790C95O828C99O836C145O836C152O836C156O836C179O836C183O836C187O836C201O836C214O836C227O836C234O836C242O836C246O836C251O836C260O836C264O836C272O836C283O836C318O836C331O896C349O896C357O903C383O903C386O903C407O903C411O903C417O903C431O911C463O911C473O916C490O916C520O819,,
-code-deopt,155697,9920,0x77e6fa804bc0,-1,0,dependency-change,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1>,embedded weak objects cleared
-code-deopt,155732,7488,0x77e6fa844c40,-1,0,dependency-change,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1>,embedded weak objects cleared
+code-deopt,155697,9920,0x77e6fa804bc0,-1,0,dependency-change,<file:///tmp/deoptigate/examples/two-modules/adders.js:1:1>,embedded weak objects cleared
+code-deopt,155732,7488,0x77e6fa844c40,-1,0,dependency-change,<file:///tmp/deoptigate/examples/two-modules/adders.js:1:1>,embedded weak objects cleared
 delete,MemoryChunk,0x3a7e2360
 delete,MemoryChunk,0x3a7a5f40
 delete,MemoryChunk,0x3a7ab670
@@ -3401,7 +3401,7 @@ delete,MemoryChunk,0x77e6ec00d6a0
 delete,MemoryChunk,0x77e6f4006080
 delete,MemoryChunk,0x77e6f4007860
 new,MemoryChunk,0x5a87ba80000,184320
-code-creation,JS,11,158370,0x77e6fa887480,4108, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
+code-creation,JS,11,158370,0x77e6fa887480,4108, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
 code-source-info,0x77e6fa887480,86,0,1911,C1O0C1O0C1O0C1O0C1O0C1O0C1O0C129O0C192O1240C200O1240C211O1240C231O1240C241O1278C249O1316C257O1316C261O1339C280O1339C292O1348C296O1348C308O1330C327O569I0C327O580I0C335O580I0C348O600I0C378O600I0C382O600I0C482O688I0C494O1316C513O753I1C513O790I1C634O790I1C661O790I1C684O828I1C688O836I1C734O836I1C741O836I1C745O836I1C768O836I1C772O836I1C776O836I1C790O836I1C803O836I1C816O836I1C823O836I1C831O836I1C835O836I1C840O836I1C845O836I1C849O836I1C857O836I1C868O836I1C903O836I1C913O896I1C931O896I1C939O903I1C965O903I1C968O903I1C989O903I1C993O903I1C999O903I1C1013O911I1C1046O911I1C1051O911I1C1067O1284C1092O1257C1102O1257C1131O1257C1152O1257C1162O1257C1175O1257C1183O1257C1187O1257C1203O1257C1215O1257C1234O569I2C1234O580I2C1242O580I2C1255O600I2C1285O600I2C1289O600I2C1397O688I2C1409O1257C1428O753I3C1428O790I3C1549O790I3C1576O790I3C1599O828I3C1603O836I3C1650O836I3C1657O836I3C1661O836I3C1681O836I3C1685O836I3C1689O836I3C1703O836I3C1716O836I3C1729O836I3C1736O836I3C1744O836I3C1748O836I3C1753O836I3C1758O836I3C1762O836I3C1770O836I3C1781O836I3C1816O836I3C1819O896I3C1837O896I3C1845O903I3C1871O903I3C1871O903I3C1892O903I3C1896O903I3C1902O903I3C1912O911I3C1946O911I3C1951O911I3C1970O1257C1995O1257C2006O1257C2035O1257C2049O1249C2058O1249C2099O1249C2115O1222C2125O1222C2154O1222C2162O615I0C2177O798I1C2185O798I1C2198O819I1C2203O615I2C2218O798I3C2226O798I3C2239O819I3C2244O1381C2246O1381C2246O1381C2250O1381,F0O1330F1O1316F0O1257F1O1257,S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0x363907080000,274432
 new,MemoryChunk,0x1d298dcc0000,409600
@@ -3417,9 +3417,9 @@ new,MemoryChunk,0x1099e1400000,274432
 new,MemoryChunk,0x37268f80000,409600
 new,MemoryChunk,0x339448800000,614400
 new,MemoryChunk,0x755fd0c0000,917504
-code-creation,JS,12,164703,0x77e6fa888580,1512, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
+code-creation,JS,12,164703,0x77e6fa888580,1512, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
 code-source-info,0x77e6fa888580,86,0,1911,C26O0C64O1240C128O1278C147O1316C151O1339C166O1348C200O1339C204O688I0C208O1330C228O1316C247O790I1C274O828I1C288O836I1C592O896I1C604O903I1C667O911I1C691O1284C701O1278C708O1257C724O1249C744O1222C760O1381C765O819I1C770O0C816O836I1C1147O903I1C1235O1257C1309O1222,F0O1330F1O1316,S0x2df9080263f8S0x2df908026440
-code-deopt,164744,4352,0x77e6fa887480,-1,1249,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:65:28>,prepare for on stack replacement (OSR)
+code-deopt,164744,4352,0x77e6fa887480,-1,1249,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:65:28>,prepare for on stack replacement (OSR)
 new,MemoryChunk,0x31112a200000,184320
 new,MemoryChunk,0x6ef05700000,274432
 new,MemoryChunk,0x2ca610a80000,409600
@@ -3489,11 +3489,11 @@ new,MemoryChunk,0x38bf24640000,274432
 new,MemoryChunk,0x362eaa8c0000,409600
 new,MemoryChunk,0x6260e200000,614400
 new,MemoryChunk,0x62ef5c00000,917504
-code-deopt,180060,1664,0x77e6fa888580,-1,1381,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:72:19>,Insufficient type feedback for compare operation
-code-deopt,180101,512,0x77e6fa880040,-1,688,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:39:12>,not a Number or Oddball
-code-creation,JS,11,180381,0x77e6fa888c00,188,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-deopt,180060,1664,0x77e6fa888580,-1,1381,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:72:19>,Insufficient type feedback for compare operation
+code-deopt,180101,512,0x77e6fa880040,-1,688,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:39:12>,not a Number or Oddball
+code-creation,JS,11,180381,0x77e6fa888c00,188,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa888c00,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C55O688C95O691C105O691C135O669,,
-code-creation,JS,11,180790,0x77e6fa888d00,3856, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
+code-creation,JS,11,180790,0x77e6fa888d00,3856, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,+
 code-source-info,0x77e6fa888d00,86,0,1911,C1O0C1O0C1O0C1O0C1O0C1O0C1O0C119O0C128O1381C136O1381C147O1381C164O1381C174O1419C189O1457C197O1457C211O1481C227O1489C240O1471C259O569I0C269O580I0C277O580I0C290O600I0C319O600I0C323O600I0C423O645I0C445O688I0C468O1457C487O753I1C497O790I1C524O790I1C547O828I1C551O836I1C597O836I1C604O836I1C608O836I1C631O836I1C635O836I1C639O836I1C653O836I1C662O836I1C666O836I1C674O836I1C685O836I1C720O836I1C720O896I1C738O896I1C746O903I1C772O903I1C772O903I1C793O903I1C797O903I1C803O903I1C820O911I1C853O911I1C858O911I1C881O1425C903O1398C913O1398C942O1398C960O1398C970O1398C990O1398C999O1398C1011O1398C1024O1398C1043O569I2C1053O580I2C1061O580I2C1074O600I2C1103O600I2C1107O600I2C1207O645I2C1229O688I2C1252O1398C1271O753I3C1278O790I3C1305O790I3C1328O828I3C1332O836I3C1379O836I3C1386O836I3C1390O836I3C1410O836I3C1414O836I3C1418O836I3C1432O836I3C1441O836I3C1445O836I3C1453O836I3C1464O836I3C1499O836I3C1499O896I3C1517O896I3C1525O903I3C1551O903I3C1551O903I3C1572O903I3C1576O903I3C1582O903I3C1592O911I3C1626O911I3C1631O911I3C1650O1398C1675O1398C1686O1398C1715O1398C1732O1390C1737O1390C1788O1390C1803O1363C1813O1363C1841O1363C1849O615I0C1854O669I0C1869O798I1C1877O798I1C1890O819I1C1895O836I1C1900O615I2C1905O669I2C1920O798I3C1928O798I3C1941O819I3C1946O836I3C1951O1681C1955O1681C1959O1681C1963O1681C1971O1681C1984O1670,F0O1471F1O1457F0O1398F1O1398,S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0x2cc94e40000,184320
 new,MemoryChunk,0x5f3b0800000,274432
@@ -3531,7 +3531,7 @@ new,MemoryChunk,0x21a1a3e00000,274432
 new,MemoryChunk,0x51313bc0000,262144
 new,MemoryChunk,0x2639f8640000,409600
 new,MemoryChunk,0x2074b2700000,262144
-code-creation,JS,12,189515,0x77e6fa889d40,672,processResult file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,*'
+code-creation,JS,12,189515,0x77e6fa889d40,672,processResult file:///tmp/deoptigate/examples/two-modules/adders.js:46:23,0x2df908026440,*'
 code-source-info,0x77e6fa889d40,86,753,917,C11O753C25O790C59O828C73O836C252O896C265O916C298O903C355O911C379O916C388O819C393O753C439O836C518O903,,
 new,MemoryChunk,0x21c5a6a80000,262144
 new,MemoryChunk,0x93a63f00000,614400
@@ -3546,9 +3546,9 @@ new,MemoryChunk,0x3e3905240000,262144
 new,MemoryChunk,0x186c51600000,184320
 new,MemoryChunk,0x1b2e7a580000,262144
 new,MemoryChunk,0x30fc2c040000,274432
-code-creation,JS,12,192365,0x77e6fa88a040,3260, file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
+code-creation,JS,12,192365,0x77e6fa88a040,3260, file:///tmp/deoptigate/examples/two-modules/adders.js:1:1,0x2df908025eb8,*
 code-source-info,0x77e6fa88a040,86,0,1911,C26O0C128O1381C184O1419C193O1457C201O1481C233O1489C262O1471C288O688I0C332O1457C358O828I1C372O836I1C524O896I1C548O903I1C605O911I1C629O1425C653O1398C704O1419C730O1457C738O1481C781O1489C814O1471C837O688I0C881O1457C904O828I1C918O836I1C1070O896I1C1094O903I1C1151O911I1C1175O1425C1192O1398C1208O1419C1218O1390C1238O1363C1254O1681C1286O1670C1321O1701C1360O1690C1395O1721C1434O1710C1469O1741C1508O1730C1543O1761C1582O1750C1617O1781C1656O1770C1691O1801C1730O1790C1765O1821C1804O1810C1839O1891C1850O1903C1855O836I1C1873O0C1919O836I1C2047O903I1C2106O1398C2199O836I1C2327O903I1C2386O1398C2476O1363C2526O1821C2576O1801C2623O1781C2670O1761C2717O1741C2764O1721C2811O1701C2858O1681,F0O1471F1O1457,S0x2df9080263f8S0x2df908026440
-code-deopt,192449,4160,0x77e6fa888d00,-1,1390,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:72:28>,prepare for on stack replacement (OSR)
+code-deopt,192449,4160,0x77e6fa888d00,-1,1390,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:72:28>,prepare for on stack replacement (OSR)
 new,MemoryChunk,0xd80b2800000,262144
 new,MemoryChunk,0x1ad30b80000,409600
 new,MemoryChunk,0x353e5ad80000,262144
@@ -3665,70 +3665,70 @@ new,MemoryChunk,0x229f75e00000,274432
 new,MemoryChunk,0x2e8299580000,409600
 new,MemoryChunk,0x3c3116440000,614400
 new,MemoryChunk,0x61b66740000,917504
-code-creation,JS,9,220354,0x3feabe709ce0,69,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,~
+code-creation,JS,9,220354,0x3feabe709ce0,69,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,~
 code-source-info,0x3feabe709ce0,86,1521,1669,C0O1551C2O1556C4O1558C6O1556C11O1588C14O1596C15O1596C20O1614C34O1635C40O1628C45O1614C49O1602C54O1575C58O1565C63O1538C68O1668,,
-code-creation,JS,9,220412,0x3feabe709dc0,14,Object1 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,~
+code-creation,JS,9,220412,0x3feabe709dc0,14,Object1 file:///tmp/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,~
 code-source-info,0x3feabe709dc0,88,29,71,C0O42C2O49C6O57C8O64C13O70,,
 StoreIC,0x3feabe709dc2,220434,3,12,X,X,0x000000000000,x,,
 StoreIC,0x3feabe709dc8,220445,4,12,X,X,0x000000000000,y,,
-code-deopt,220453,256,0x77e6fa888c00,-1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27>,Insufficient type feedback for generic named access
+code-deopt,220453,256,0x77e6fa888c00,-1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27>,Insufficient type feedback for generic named access
 LoadIC,0x3dd61dfd9796,220504,38,27,0,1,0x2e3e29521691,x,,
 LoadIC,0x3dd61dfd979b,220511,38,33,0,1,0x2e3e29521691,y,,
 StoreIC,0x3feabe709dc2,220524,3,12,0,1,0x2e3e295215a9,x,,
 StoreIC,0x3feabe709dc8,220528,4,12,0,1,0x2e3e29521639,y,,
-code-creation,JS,11,220878,0x77e6fa88ae40,320,Object1 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,+'
+code-creation,JS,11,220878,0x77e6fa88ae40,320,Object1 file:///tmp/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,+'
 code-source-info,0x77e6fa88ae40,88,29,71,C7O29C7O29C7O29C7O29C28O29C32O49C66O49C74O49C78O49C116O64C125O64C129O64C173O70C190O70,,
 new,MemoryChunk,0x82d47500000,262144
 new,MemoryChunk,0x4054e1c0000,262144
-code-creation,JS,11,221083,0x77e6fa8c03c0,448,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,221083,0x77e6fa8c03c0,448,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa8c03c0,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C59O669C87O669C91O675C95O671C99O671C103O671C121O676C131O676C141O676C175O688C215O691C225O691,,
-code-creation,JS,10,221147,0x77e6fa846980,96,Object1 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,^
+code-creation,JS,10,221147,0x77e6fa846980,96,Object1 file:///tmp/deoptigate/examples/two-modules/objects.js:2:14,0x2df90802dc88,^
 code-source-info,0x77e6fa846980,88,29,71,C17O42C21O49C42O57C46O64C77O70,,
-code-creation,JS,10,221161,0x77e6fa846a00,712,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,^
+code-creation,JS,10,221161,0x77e6fa846a00,712,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,^
 code-source-info,0x77e6fa846a00,86,1521,1669,C27O1551C33O1556C41O1558C88O1556C113O1588C125O1596C127O1596C155O1614C199O1635C238O1628C266O1614C290O1602C308O1575C487O1565C505O1538C694O1668,,
-code-creation,JS,11,221470,0x77e6fa88afc0,4148,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,221470,0x77e6fa88afc0,4148,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa88afc0,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C26O1596C44O1596C56O1614C64O1614C72O1635C91O1635C117O1635C124O1635C145O1635C149O1635C160O1635C164O1635C168O29I0C172O49I0C182O49I0C186O49I0C224O64I0C228O64I0C262O1628C281O569I1C291O580I1C299O580I1C312O600I1C342O600I1C346O600I1C446O671I1C457O671I1C470O676I1C470O1614C489O753I2C489O790I2C516O790I2C543O790I2C566O828I2C570O836I2C616O836I2C623O836I2C627O836I2C650O836I2C654O836I2C658O836I2C672O836I2C685O836I2C698O836I2C705O836I2C713O836I2C717O836I2C722O836I2C727O836I2C731O836I2C739O836I2C750O836I2C785O836I2C795O896I2C813O896I2C821O903I2C847O903I2C850O903I2C871O903I2C875O903I2C881O903I2C895O911I2C928O911I2C933O911I2C946O1602C968O1575C978O1575C1014O1575C1024O1575C1031O1575C1052O1575C1065O1575C1074O1575C1079O1575C1105O1575C1109O1575C1123O1575C1127O1575C1138O1575C1142O1575C1146O29I3C1150O49I3C1154O49I3C1188O64I3C1197O64I3C1201O64I3C1235O1575C1254O569I4C1264O580I4C1272O580I4C1285O600I4C1315O600I4C1319O600I4C1426O671I4C1439O676I4C1439O1575C1458O753I5C1458O790I5C1479O790I5C1506O790I5C1529O828I5C1533O836I5C1580O836I5C1587O836I5C1591O836I5C1611O836I5C1615O836I5C1619O836I5C1633O836I5C1646O836I5C1659O836I5C1666O836I5C1674O836I5C1678O836I5C1683O836I5C1688O836I5C1692O836I5C1700O836I5C1711O836I5C1746O836I5C1749O896I5C1767O896I5C1775O903I5C1801O903I5C1801O903I5C1822O903I5C1826O903I5C1832O903I5C1842O911I5C1876O911I5C1881O911I5C1897O1575C1919O1575C1930O1575C1966O1575C1980O615I1C1995O798I2C2003O798I2C2016O819I2C2021O615I4C2036O798I5C2044O798I5C2057O819I5C2066O1565C2078O1565C2086O1538,F0O1635F1O1628F2O1614F0O1575F1O1575F2O1575,S0x2df90802dc88S0x2df9080263f8S0x2df908026440
-code-deopt,221637,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221702,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221739,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221775,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221811,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221859,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221896,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221932,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,221968,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222001,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221637,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221702,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221739,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221775,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221811,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221859,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221896,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221932,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,221968,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222001,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x269c60000000,184320
-code-deopt,222165,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222206,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222243,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222279,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222316,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222352,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222387,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222165,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222206,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222243,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222279,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222316,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222352,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222387,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x2ea7114c0000,274432
-code-deopt,222566,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222607,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222645,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222682,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222720,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222756,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222794,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222831,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222870,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222910,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,222949,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222566,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222607,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222645,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222682,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222720,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222756,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222794,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222831,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222870,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222910,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,222949,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xd9bbf240000,409600
-code-deopt,223246,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223298,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223338,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223377,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223416,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223455,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223495,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223542,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,223580,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,12,223640,0x77e6fa88c100,2064,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
+code-deopt,223246,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223298,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223338,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223377,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223416,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223455,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223495,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223542,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,223580,4416,0x77e6fa88afc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,12,223640,0x77e6fa88c100,2064,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
 code-source-info,0x77e6fa88c100,86,1521,1669,C23O1635C48O1521C69O819I4C128O1575C131O1596C174O1614C182O1635C195O49I0C205O1628C214O671I3C246O1614C255O790I5C269O828I5C273O836I5C391O896I5C404O903I5C454O911I5C478O1602C487O1596C494O1575C510O1565C576O1538C579O1556C583O1558C599O1556C625O1596C640O1575C660O1596C679O1614C687O49I1C694O1635C707O1628C716O671I2C733O1614C742O790I4C758O828I4C762O836I4C885O896I4C898O903I4C948O911I4C971O1602C980O1596C987O1575C1003O1565C1016O1538C1032O1668C1065O819I4C1070O819I5C1075O1521C1133O836I5C1257O903I5C1320O1575C1406O836I4C1537O903I4C1606O1575C1698O1538C1803O1558,F0O1635F0O1635F1O1628F1O1628F2O1614F2O1614,S0x2df90802dc88S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0x3a4031cc0000,614400
 new,MemoryChunk,0x38dc86c0000,917504
@@ -3777,65 +3777,65 @@ new,MemoryChunk,0x35bb3b900000,274432
 new,MemoryChunk,0x30b2f7840000,409600
 new,MemoryChunk,0x1323c2200000,614400
 new,MemoryChunk,0x301af5b40000,917504
-code-creation,JS,9,238708,0x3feabe70aa48,14,Object2 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,~
+code-creation,JS,9,238708,0x3feabe70aa48,14,Object2 file:///tmp/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,~
 code-source-info,0x3feabe70aa48,88,104,146,C0O117C2O124C6O132C8O139C13O145,,
 StoreIC,0x3feabe70aa4a,238737,10,12,X,X,0x000000000000,y,,
 StoreIC,0x3feabe70aa50,238748,11,12,X,X,0x000000000000,x,,
-code-deopt,238756,576,0x77e6fa8c03c0,-1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
+code-deopt,238756,576,0x77e6fa8c03c0,-1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
 LoadIC,0x3dd61dfd9796,238795,38,27,1,P,0x2e3e29521929,x,,
 LoadIC,0x3dd61dfd979b,238799,38,33,1,P,0x2e3e29521929,y,,
-code-deopt,238804,2176,0x77e6fa88c100,-1,1635,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:82:28>,wrong call target
+code-deopt,238804,2176,0x77e6fa88c100,-1,1635,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:82:28>,wrong call target
 StoreIC,0x3feabe70aa4a,238831,10,12,0,1,0x2e3e29521841,y,,
 StoreIC,0x3feabe70aa50,238836,11,12,0,1,0x2e3e295218d1,x,,
-code-creation,JS,11,239099,0x77e6fa846d00,320,Object2 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,+'
+code-creation,JS,11,239099,0x77e6fa846d00,320,Object2 file:///tmp/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,+'
 code-source-info,0x77e6fa846d00,88,104,146,C7O104C7O104C7O104C7O104C28O104C32O124C66O124C74O124C78O124C116O139C125O139C129O139C173O145C190O145,,
 new,MemoryChunk,0x3072ced40000,262144
-code-creation,JS,11,239169,0x77e6fa8c0600,532,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,239169,0x77e6fa8c0600,532,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa8c0600,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C59O669C67O669C81O669C90O669C94O669C99O669C119O669C123O669C123O669C123O675C132O675C136O675C141O675C161O675C165O675C165O675C168O671C175O671C179O671C197O676C207O676C217O676C251O688C291O691C301O691,,
-code-creation,JS,11,239524,0x77e6fa846e80,3916,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,239524,0x77e6fa846e80,3916,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa846e80,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C26O1596C44O1596C56O1614C64O1614C82O1635C132O1628C151O569I0C161O580I0C169O580I0C182O600I0C211O600I0C215O600I0C315O669I0C323O669I0C337O669I0C346O669I0C350O669I0C355O669I0C375O669I0C379O669I0C379O669I0C379O675I0C388O675I0C392O675I0C397O675I0C417O675I0C421O675I0C421O675I0C424O671I0C431O671I0C435O671I0C447O676I0C451O1614C470O753I1C470O790I1C493O790I1C520O790I1C543O828I1C547O836I1C593O836I1C600O836I1C604O836I1C627O836I1C631O836I1C635O836I1C649O836I1C662O836I1C675O836I1C682O836I1C690O836I1C694O836I1C699O836I1C704O836I1C708O836I1C716O836I1C727O836I1C762O836I1C772O896I1C790O896I1C798O903I1C824O903I1C827O903I1C848O903I1C852O903I1C858O903I1C872O911I1C905O911I1C910O911I1C923O1602C945O1575C955O1575C991O1575C1024O1575C1031O1575C1052O1575C1065O1575C1074O1575C1093O1575C1141O1575C1160O569I2C1170O580I2C1178O580I2C1191O600I2C1220O600I2C1224O600I2C1324O669I2C1332O669I2C1346O669I2C1355O669I2C1359O669I2C1364O669I2C1384O669I2C1388O669I2C1388O669I2C1388O675I2C1397O675I2C1401O675I2C1406O675I2C1426O675I2C1430O675I2C1430O675I2C1433O671I2C1440O671I2C1444O671I2C1456O676I2C1460O1575C1479O753I3C1479O790I3C1497O790I3C1524O790I3C1547O828I3C1551O836I3C1598O836I3C1605O836I3C1609O836I3C1629O836I3C1633O836I3C1637O836I3C1651O836I3C1664O836I3C1677O836I3C1684O836I3C1692O836I3C1696O836I3C1701O836I3C1706O836I3C1710O836I3C1718O836I3C1729O836I3C1764O836I3C1767O896I3C1785O896I3C1793O903I3C1819O903I3C1819O903I3C1840O903I3C1844O903I3C1850O903I3C1860O911I3C1894O911I3C1899O911I3C1915O1575C1937O1575C1948O1575C1984O1575C1998O615I0C2013O798I1C2021O798I1C2034O819I1C2039O615I2C2054O798I3C2062O798I3C2075O819I3C2084O1565C2096O1565C2104O1538,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,239652,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,239698,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,239734,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,239770,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,239805,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239652,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239698,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239734,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239770,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239805,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x98519640000,184320
-code-deopt,239925,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,239964,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240001,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240036,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240104,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240147,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240188,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239925,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,239964,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240001,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240036,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240104,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240147,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240188,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x36c028080000,274432
-code-deopt,240375,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240427,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,12,240464,0x77e6fa88c980,344,Object2 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,*'
+code-deopt,240375,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240427,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,12,240464,0x77e6fa88c980,344,Object2 file:///tmp/deoptigate/examples/two-modules/objects.js:9:14,0x2df90802dcd0,*'
 code-source-info,0x77e6fa88c980,88,104,146,C11O104C25O124C109O139C161O145C194O104,,
-code-deopt,240489,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240527,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240562,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240597,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240632,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240668,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240704,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240739,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,240775,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240489,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240527,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240562,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240597,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240632,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240668,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240704,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240739,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,240775,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x278981280000,409600
-code-deopt,240966,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241006,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241041,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241077,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241113,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241172,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241216,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241252,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241288,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241323,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241360,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241396,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,241431,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,12,241469,0x77e6fa88cb40,2404,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
+code-deopt,240966,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241006,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241041,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241077,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241113,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241172,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241216,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241252,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241288,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241323,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241360,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241396,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,241431,4160,0x77e6fa846e80,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,12,241469,0x77e6fa88cb40,2404,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
 code-source-info,0x77e6fa88cb40,86,1521,1669,C23O1521C37O819I2C128O1596C183O1614C191O1635C236O1628C259O669I1C312O675I1C328O669I1C339O675I1C350O671I1C362O1614C388O790I3C398O828I3C412O836I3C534O896I3C558O903I3C615O911I3C639O1602C660O1575C676O1565C768O1538C772O1556C776O1558C792O1556C820O1596C890O1614C898O1635C948O1628C971O669I0C1024O675I0C1040O669I0C1051O675I0C1062O671I0C1074O1614C1097O790I2C1107O828I2C1121O836I2C1243O896I2C1267O903I2C1324O911I2C1348O1602C1369O1575C1385O1565C1398O1538C1414O1668C1440O819I2C1445O819I3C1450O1521C1496O836I3C1615O903I3C1674O1575C1761O836I2C1886O903I2C1945O1575C2035O1538C2142O1558,F0O1628F0O1628F1O1614F1O1614,S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0xdab452c0000,614400
 new,MemoryChunk,0x256317880000,917504
@@ -4030,88 +4030,88 @@ new,MemoryChunk,0x2578b5b80000,262144
 new,MemoryChunk,0x5bcb0d00000,262144
 new,MemoryChunk,0x1729a4800000,262144
 new,MemoryChunk,0xfc9bfac0000,262144
-code-creation,JS,9,278942,0x3feabe70b950,20,Object3 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,~
+code-creation,JS,9,278942,0x3feabe70b950,20,Object3 file:///tmp/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,~
 code-source-info,0x3feabe70b950,88,179,246,C0O192C2O203C6O217C8O224C12O232C14O239C19O245,,
 StoreIC,0x3feabe70b952,278971,17,16,X,X,0x000000000000,hello,,
 StoreIC,0x3feabe70b958,278983,18,12,X,X,0x000000000000,x,,
 StoreIC,0x3feabe70b95e,278987,19,12,X,X,0x000000000000,y,,
-code-deopt,278994,640,0x77e6fa8c0600,-1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
+code-deopt,278994,640,0x77e6fa8c0600,-1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
 LoadIC,0x3dd61dfd9796,279034,38,27,P,P,0x04054e1ebd91,x,,
 LoadIC,0x3dd61dfd979b,279039,38,33,P,P,0x04054e1ebd91,y,,
-code-deopt,279046,2560,0x77e6fa88cb40,1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
+code-deopt,279046,2560,0x77e6fa88cb40,1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///tmp/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
 StoreIC,0x3feabe70b952,279080,17,16,0,1,0x04054e1ebc61,hello,,
 StoreIC,0x3feabe70b958,279085,18,12,0,1,0x04054e1ebcf1,x,,
 StoreIC,0x3feabe70b95e,279087,19,12,0,1,0x04054e1ebd49,y,,
-code-creation,JS,11,279291,0x77e6fa88d540,472,Object3 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,+'
+code-creation,JS,11,279291,0x77e6fa88d540,472,Object3 file:///tmp/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,+'
 code-source-info,0x77e6fa88d540,88,179,246,C7O179C7O179C7O179C7O179C28O179C32O203C72O203C104O203C142O224C150O224C154O224C192O239C201O239C205O239C249O245C266O245,,
-code-creation,JS,11,279381,0x77e6fa88d780,584,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,279381,0x77e6fa88d780,584,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa88d780,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C59O669C67O669C81O669C90O669C94O669C99O669C137O669C141O669C141O669C141O675C150O675C154O675C169O675C178O675C182O675C190O675C210O675C214O675C217O675C220O671C227O671C231O671C249O676C259O676C269O676C303O688C343O691C353O691,,
 new,MemoryChunk,0xfd642e40000,262144
-code-creation,JS,11,279420,0x77e6fa847ec0,3068,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+'
+code-creation,JS,11,279420,0x77e6fa847ec0,3068,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+'
 code-source-info,0x77e6fa847ec0,86,1521,1669,C18O1521C18O1521C18O1521C39O1521C49O1556C64O1556C71O1556C92O1556C100O1614C108O1614C126O1635C179O1628C198O569I0C198O669I0C206O669I0C220O669I0C229O669I0C233O669I0C238O669I0C258O669I0C262O669I0C262O669I0C262O675I0C271O675I0C275O675I0C280O675I0C300O675I0C304O675I0C304O675I0C307O671I0C314O671I0C318O671I0C330O676I0C334O1614C353O753I1C353O790I1C376O790I1C403O790I1C426O828I1C430O836I1C477O836I1C484O836I1C488O836I1C511O836I1C515O836I1C519O836I1C533O836I1C546O836I1C559O836I1C566O836I1C574O836I1C578O836I1C583O836I1C588O836I1C592O836I1C600O836I1C611O836I1C646O836I1C649O896I1C667O896I1C675O903I1C701O903I1C701O903I1C722O903I1C726O903I1C732O903I1C742O911I1C776O911I1C781O911I1C803O1575C813O1575C832O1575C839O1575C860O1575C869O1575C877O1575C895O1575C940O1575C959O569I2C959O669I2C967O669I2C981O669I2C990O669I2C994O669I2C999O669I2C1019O669I2C1023O669I2C1023O669I2C1023O675I2C1032O675I2C1036O675I2C1041O675I2C1061O675I2C1065O675I2C1065O675I2C1068O671I2C1075O671I2C1079O671I2C1091O676I2C1095O1575C1114O753I3C1114O790I3C1134O790I3C1161O790I3C1184O828I3C1188O836I3C1235O836I3C1242O836I3C1246O836I3C1266O836I3C1270O836I3C1274O836I3C1288O836I3C1301O836I3C1314O836I3C1321O836I3C1329O836I3C1333O836I3C1338O836I3C1343O836I3C1347O836I3C1355O836I3C1366O836I3C1401O836I3C1404O896I3C1422O896I3C1430O903I3C1456O903I3C1456O903I3C1477O903I3C1481O903I3C1487O903I3C1497O911I3C1531O911I3C1536O911I3C1552O1575C1574O1575C1592O1575C1607O1565C1620O1538C1637O1538C1658O1668C1675O1668C1705O819I1C1710O819I3,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0x3a8f6c440000,262144
 new,MemoryChunk,0x2b5bd7b00000,262144
-code-creation,JS,11,279829,0x77e6fa88da40,4040,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,279829,0x77e6fa88da40,4040,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa88da40,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C26O1596C44O1596C56O1614C64O1614C82O1635C132O1628C151O569I0C161O580I0C169O580I0C182O600I0C211O600I0C215O600I0C315O669I0C323O669I0C337O669I0C346O669I0C350O669I0C355O669I0C393O669I0C397O669I0C397O669I0C397O675I0C406O675I0C410O675I0C438O675I0C447O675I0C451O675I0C456O675I0C476O675I0C480O675I0C480O675I0C483O671I0C490O671I0C494O671I0C506O676I0C510O1614C529O753I1C529O790I1C552O790I1C579O790I1C602O828I1C606O836I1C652O836I1C659O836I1C663O836I1C686O836I1C690O836I1C694O836I1C708O836I1C721O836I1C734O836I1C741O836I1C749O836I1C753O836I1C758O836I1C763O836I1C767O836I1C775O836I1C786O836I1C821O836I1C831O896I1C849O896I1C857O903I1C883O903I1C886O903I1C907O903I1C911O903I1C917O903I1C931O911I1C964O911I1C969O911I1C982O1602C1004O1575C1014O1575C1050O1575C1088O1575C1095O1575C1116O1575C1129O1575C1138O1575C1157O1575C1205O1575C1224O569I2C1234O580I2C1242O580I2C1255O600I2C1284O600I2C1288O600I2C1388O669I2C1396O669I2C1410O669I2C1419O669I2C1423O669I2C1428O669I2C1466O669I2C1470O669I2C1470O669I2C1470O675I2C1479O675I2C1483O675I2C1511O675I2C1520O675I2C1524O675I2C1529O675I2C1549O675I2C1553O675I2C1553O675I2C1556O671I2C1563O671I2C1567O671I2C1579O676I2C1583O1575C1602O753I3C1602O790I3C1620O790I3C1647O790I3C1670O828I3C1674O836I3C1721O836I3C1728O836I3C1732O836I3C1752O836I3C1756O836I3C1760O836I3C1774O836I3C1787O836I3C1800O836I3C1807O836I3C1815O836I3C1819O836I3C1824O836I3C1829O836I3C1833O836I3C1841O836I3C1852O836I3C1887O836I3C1890O896I3C1908O896I3C1916O903I3C1942O903I3C1942O903I3C1963O903I3C1967O903I3C1973O903I3C1983O911I3C2017O911I3C2022O911I3C2038O1575C2060O1575C2071O1575C2107O1575C2121O615I0C2136O798I1C2144O798I1C2157O819I1C2162O615I2C2177O798I3C2185O798I3C2198O819I3C2207O1565C2219O1565C2227O1538,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,279932,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,279992,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280043,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,279932,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,279992,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280043,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x2611456c0000,262144
-code-deopt,280146,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280198,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280277,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280146,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280198,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280277,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x20ed99a80000,262144
-code-deopt,280355,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280407,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280355,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280407,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x33fa1bf80000,184320
-code-deopt,280543,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280596,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280647,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280543,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280596,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280647,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x240abd6c0000,262144
-code-deopt,280751,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280807,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280859,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,280908,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280751,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280807,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280859,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,280908,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x3fe0c2400000,274432
-code-creation,JS,12,281071,0x77e6fa88eb00,496,Object3 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,*'
+code-creation,JS,12,281071,0x77e6fa88eb00,496,Object3 file:///tmp/deoptigate/examples/two-modules/objects.js:16:14,0x2df90802dd18,*'
 code-source-info,0x77e6fa88eb00,88,179,246,C11O179C25O203C124O224C175O239C227O245C260O179,,
-code-deopt,281096,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281096,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x343a67540000,262144
-code-deopt,281165,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281222,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281273,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281323,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281374,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281423,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281165,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281222,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281273,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281323,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281374,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281423,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xdf4eb980000,262144
-code-deopt,281487,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281541,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281590,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281642,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281487,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281541,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281590,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281642,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x330628540000,409600
-code-deopt,281845,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281845,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xca756a00000,262144
-code-deopt,281915,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,281967,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282017,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282069,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282151,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282209,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281915,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,281967,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282017,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282069,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282151,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282209,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x2f95cd740000,262144
-code-deopt,282276,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282329,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282380,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282430,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,282480,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282276,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282329,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282380,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282430,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282480,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xe1e706c0000,262144
-code-deopt,282562,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,11,282600,0x77e6fa848bc0,4748,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-deopt,282562,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,11,282600,0x77e6fa848bc0,4748,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa848bc0,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C64O1556C72O1556C80O1558C93O1556C109O1556C126O1556C136O1596C144O1614C152O1614C170O1635C220O1628C239O569I0C249O580I0C257O580I0C270O600I0C299O600I0C303O600I0C403O669I0C411O669I0C425O669I0C434O669I0C438O669I0C443O669I0C481O669I0C485O669I0C485O669I0C485O675I0C494O675I0C498O675I0C526O675I0C535O675I0C539O675I0C544O675I0C564O675I0C568O675I0C568O675I0C571O671I0C578O671I0C582O671I0C594O676I0C598O1614C617O753I1C617O790I1C640O790I1C667O790I1C690O828I1C694O836I1C740O836I1C747O836I1C751O836I1C774O836I1C778O836I1C782O836I1C796O836I1C809O836I1C822O836I1C829O836I1C837O836I1C841O836I1C846O836I1C851O836I1C855O836I1C863O836I1C874O836I1C909O836I1C919O896I1C937O896I1C945O903I1C971O903I1C974O903I1C995O903I1C999O903I1C1005O903I1C1019O911I1C1052O911I1C1057O911I1C1070O1602C1092O1575C1102O1575C1138O1575C1152O1575C1159O1575C1180O1575C1193O1575C1202O1575C1221O1575C1269O1575C1288O569I2C1298O580I2C1306O580I2C1319O600I2C1348O600I2C1352O600I2C1452O669I2C1460O669I2C1474O669I2C1483O669I2C1487O669I2C1492O669I2C1530O669I2C1534O669I2C1534O669I2C1534O675I2C1543O675I2C1547O675I2C1575O675I2C1584O675I2C1588O675I2C1593O675I2C1613O675I2C1617O675I2C1617O675I2C1620O671I2C1627O671I2C1631O671I2C1643O676I2C1647O1575C1666O753I3C1666O790I3C1684O790I3C1711O790I3C1734O828I3C1738O836I3C1785O836I3C1792O836I3C1796O836I3C1816O836I3C1820O836I3C1824O836I3C1838O836I3C1851O836I3C1864O836I3C1871O836I3C1879O836I3C1883O836I3C1888O836I3C1893O836I3C1897O836I3C1905O836I3C1916O836I3C1951O836I3C1954O896I3C1972O896I3C1980O903I3C2006O903I3C2006O903I3C2027O903I3C2031O903I3C2037O903I3C2047O911I3C2081O911I3C2086O911I3C2102O1575C2124O1575C2135O1575C2171O1575C2185O1565C2190O1565C2241O1565C2253O1538C2263O1538C2298O1538C2316O1668C2333O1668C2363O615I0C2378O798I1C2386O798I1C2399O819I1C2404O615I2C2419O798I3C2427O798I3C2440O819I3,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,282690,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,282690,4288,0x77e6fa88da40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xc0e257c0000,614400
 new,MemoryChunk,0x8196b640000,262144
 new,MemoryChunk,0x3a6dabdc0000,262144
-code-creation,JS,12,284180,0x77e6fa88ed40,1308,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
+code-creation,JS,12,284180,0x77e6fa88ed40,1308,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
 code-source-info,0x77e6fa88ed40,86,1521,1669,C23O1521C37O1558C64O1556C76O1558C92O1556C125O1596C232O1614C240O1635C291O1628C314O669I0C401O675I0C449O669I0C460O675I0C470O671I0C482O1614C505O790I1C515O828I1C529O836I1C651O896I1C663O903I1C720O911I1C744O1602C763O1575C779O1565C800O1538C816O1668C849O819I1C854O1521C900O836I1C1006O903I1C1045O1575C1091O1538C1138O1558,F0O1628F1O1614,S0x2df9080263f8S0x2df908026440
 delete,MemoryChunk,0x3a890790
 delete,MemoryChunk,0x3a8871b0
@@ -4151,7 +4151,7 @@ delete,MemoryChunk,0x3a8fa0b0
 delete,MemoryChunk,0x3a903da0
 delete,MemoryChunk,0x3a90e220
 delete,MemoryChunk,0x3a9071f0
-code-deopt,285774,5056,0x77e6fa848bc0,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,prepare for on stack replacement (OSR)
+code-deopt,285774,5056,0x77e6fa848bc0,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,prepare for on stack replacement (OSR)
 new,MemoryChunk,0x1b278380000,917504
 new,MemoryChunk,0x7c528240000,184320
 new,MemoryChunk,0x3e2bf140000,274432
@@ -4269,65 +4269,65 @@ new,MemoryChunk,0x2feae0700000,274432
 new,MemoryChunk,0x2660e1900000,409600
 new,MemoryChunk,0x3cde82580000,614400
 new,MemoryChunk,0x22d9a2500000,917504
-code-creation,JS,9,319016,0x3feabe70c438,20,Object4 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,~
+code-creation,JS,9,319016,0x3feabe70c438,20,Object4 file:///tmp/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,~
 code-source-info,0x3feabe70c438,88,279,346,C0O292C2O299C6O307C8O318C12O332C14O339C19O345,,
 StoreIC,0x3feabe70c43a,319048,25,12,X,X,0x000000000000,x,,
 StoreIC,0x3feabe70c440,319070,26,16,X,X,0x000000000000,hello,,
 StoreIC,0x3feabe70c446,319074,27,12,X,X,0x000000000000,y,,
-code-deopt,319083,3328,0x77e6fa847ec0,0,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
+code-deopt,319083,3328,0x77e6fa847ec0,0,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///tmp/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
 LoadIC,0x3dd61dfd9796,319141,38,27,P,P,0x0fd642e40fb9,x,,
 LoadIC,0x3dd61dfd979b,319146,38,33,P,P,0x0fd642e40fb9,y,,
-code-deopt,319154,704,0x77e6fa88d780,-1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
+code-deopt,319154,704,0x77e6fa88d780,-1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
 StoreIC,0x3feabe70c43a,319177,25,12,0,1,0x0fd642e40e89,x,,
 StoreIC,0x3feabe70c440,319181,26,16,0,1,0x0fd642e40f19,hello,,
 StoreIC,0x3feabe70c446,319184,27,12,0,1,0x0fd642e40f71,y,,
-code-creation,JS,11,319438,0x77e6fa88f2c0,472,Object4 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,+'
+code-creation,JS,11,319438,0x77e6fa88f2c0,472,Object4 file:///tmp/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,+'
 code-source-info,0x77e6fa88f2c0,88,279,346,C7O279C7O279C7O279C7O279C28O279C32O299C66O299C74O299C78O299C122O318C155O318C193O339C202O339C206O339C250O345C267O345,,
-code-creation,JS,11,319482,0x77e6fa849f80,636,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,319482,0x77e6fa849f80,636,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa849f80,86,569,693,C7O569C7O569C7O569C7O569C28O569C32O645C59O669C67O669C81O669C100O669C109O669C114O669C124O669C128O669C133O669C171O669C175O669C175O669C185O675C194O675C198O675C203O675C212O675C216O675C224O675C262O675C266O675C269O675C272O671C279O671C283O671C301O676C311O676C321O676C355O688C395O691C405O691,,
-code-creation,JS,11,319905,0x77e6fa88f500,4160,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,319905,0x77e6fa88f500,4160,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa88f500,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C26O1596C44O1596C56O1614C64O1614C82O1635C132O1628C151O569I0C161O580I0C169O580I0C182O600I0C211O600I0C215O600I0C315O669I0C323O669I0C337O669I0C356O669I0C365O669I0C370O669I0C380O669I0C384O669I0C389O669I0C427O669I0C431O669I0C431O669I0C441O675I0C450O675I0C454O675I0C459O675I0C468O675I0C472O675I0C480O675I0C518O675I0C522O675I0C525O675I0C528O671I0C535O671I0C539O671I0C552O676I0C556O1614C575O753I1C575O790I1C596O790I1C623O790I1C646O828I1C650O836I1C696O836I1C703O836I1C707O836I1C730O836I1C734O836I1C738O836I1C752O836I1C765O836I1C778O836I1C785O836I1C793O836I1C797O836I1C802O836I1C807O836I1C811O836I1C819O836I1C830O836I1C865O836I1C875O896I1C893O896I1C901O903I1C927O903I1C930O903I1C951O903I1C955O903I1C961O903I1C975O911I1C1008O911I1C1013O911I1C1026O1602C1048O1575C1058O1575C1094O1575C1152O1575C1159O1575C1180O1575C1193O1575C1202O1575C1221O1575C1269O1575C1288O569I2C1298O580I2C1306O580I2C1319O600I2C1348O600I2C1352O600I2C1452O669I2C1460O669I2C1474O669I2C1493O669I2C1502O669I2C1507O669I2C1517O669I2C1521O669I2C1526O669I2C1564O669I2C1568O669I2C1568O669I2C1578O675I2C1587O675I2C1591O675I2C1596O675I2C1605O675I2C1609O675I2C1617O675I2C1655O675I2C1659O675I2C1662O675I2C1665O671I2C1672O671I2C1676O671I2C1689O676I2C1693O1575C1712O753I3C1712O790I3C1730O790I3C1757O790I3C1780O828I3C1784O836I3C1831O836I3C1838O836I3C1842O836I3C1862O836I3C1866O836I3C1870O836I3C1884O836I3C1897O836I3C1910O836I3C1917O836I3C1925O836I3C1929O836I3C1934O836I3C1939O836I3C1943O836I3C1951O836I3C1962O836I3C1997O836I3C2000O896I3C2018O896I3C2026O903I3C2052O903I3C2052O903I3C2073O903I3C2077O903I3C2083O903I3C2093O911I3C2127O911I3C2132O911I3C2148O1575C2170O1575C2181O1575C2217O1575C2231O615I0C2246O798I1C2254O798I1C2267O819I1C2272O615I2C2287O798I3C2295O798I3C2308O819I3C2317O1565C2329O1565C2337O1538,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,320019,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320067,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320107,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320144,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320019,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320067,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320107,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320144,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x1a2f942c0000,184320
-code-deopt,320343,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320398,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320436,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320512,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320588,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,320663,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,12,320752,0x77e6fa890640,1124,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*'
+code-deopt,320343,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320398,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320436,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320512,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320588,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320663,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,12,320752,0x77e6fa890640,1124,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*'
 code-source-info,0x77e6fa890640,86,1521,1669,C11O1521C25O836I1C64O1556C128O1602C146O1596C155O1614C175O1635C235O1628C255O669I0C390O675I0C488O671I0C500O1614C520O790I1C530O828I1C544O836I1C666O896I1C678O903I1C735O911I1C764O1565C767O1538C783O1668C812O819I1C817O1521C863O836I1C945O903I1C984O1538,F0O1628F1O1614,S0x2df9080263f8S0x2df908026440
-code-creation,JS,12,320800,0x77e6fa890b00,420,Object4 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,*'
+code-creation,JS,12,320800,0x77e6fa890b00,420,Object4 file:///tmp/deoptigate/examples/two-modules/objects.js:24:14,0x2df90802dd60,*'
 code-source-info,0x77e6fa890b00,88,279,346,C11O279C25O299C75O318C143O339C195O345C228O279,,
-code-deopt,320842,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,320842,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xa1054f00000,274432
-code-deopt,321083,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321130,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321167,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321203,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321239,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321274,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321310,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321346,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321381,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321416,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321452,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321083,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321130,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321167,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321203,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321239,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321274,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321310,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321346,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321381,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321416,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321452,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x3d0467440000,409600
-code-deopt,321642,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321683,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321725,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321760,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321796,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321831,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321866,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321902,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321938,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,321973,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,322008,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-creation,JS,12,322042,0x77e6fa890d00,2688,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
+code-deopt,321642,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321683,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321725,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321760,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321796,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321831,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321866,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321902,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321938,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,321973,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,322008,4416,0x77e6fa88f500,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-creation,JS,12,322042,0x77e6fa890d00,2688,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
 code-source-info,0x77e6fa890d00,86,1521,1669,C23O1521C37O819I2C128O1596C183O1614C191O1635C236O1628C259O669I1C394O675I1C498O671I1C510O1614C536O790I3C546O828I3C560O836I3C682O896I3C706O903I3C763O911I3C787O1602C808O1575C824O1565C896O1538C900O1556C904O1558C920O1556C948O1596C1018O1614C1026O1635C1076O1628C1099O669I0C1234O675I0C1338O671I0C1350O1614C1373O790I2C1383O828I2C1397O836I2C1519O896I2C1543O903I2C1600O911I2C1624O1602C1645O1575C1661O1565C1674O1538C1690O1668C1716O819I2C1721O819I3C1726O1521C1772O836I3C1891O903I3C1950O1575C2037O836I2C2162O903I2C2221O1575C2311O1538C2418O1558,F0O1628F0O1628F1O1614F1O1614,S0x2df9080263f8S0x2df908026440
 new,MemoryChunk,0x1ce0b8680000,614400
 new,MemoryChunk,0x33b8967c0000,917504
@@ -4409,21 +4409,21 @@ new,MemoryChunk,0xf89bed80000,274432
 new,MemoryChunk,0x8b2a7b80000,409600
 new,MemoryChunk,0x19ca5480000,614400
 new,MemoryChunk,0x330e80900000,917504
-code-creation,JS,9,354888,0x3feabe70d9a0,20,Object5 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,~
+code-creation,JS,9,354888,0x3feabe70d9a0,20,Object5 file:///tmp/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,~
 code-source-info,0x3feabe70d9a0,88,379,446,C0O392C2O399C6O407C8O414C12O422C14O433C19O445,,
 StoreIC,0x3feabe70d9a2,354918,33,12,X,X,0x000000000000,x,,
 StoreIC,0x3feabe70d9a8,354930,34,12,X,X,0x000000000000,y,,
 StoreIC,0x3feabe70d9ae,354933,35,16,X,X,0x000000000000,hello,,
-code-deopt,354941,1216,0x77e6fa890640,0,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
+code-deopt,354941,1216,0x77e6fa890640,0,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27> inlined at <file:///tmp/deoptigate/examples/two-modules/adders.js:82:21>,wrong map
 LoadIC,0x3dd61dfd9796,354991,38,27,P,N,0x0fd642e41239,x,,
 LoadIC,0x3dd61dfd979b,354996,38,33,P,N,0x0fd642e41239,y,,
-code-deopt,355004,768,0x77e6fa849f80,-1,669,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
+code-deopt,355004,768,0x77e6fa849f80,-1,669,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:38:27>,wrong map
 StoreIC,0x3feabe70d9a2,355026,33,12,0,1,0x0fd642e41109,x,,
 StoreIC,0x3feabe70d9a8,355030,34,12,0,1,0x0fd642e41199,y,,
 StoreIC,0x3feabe70d9ae,355033,35,16,0,1,0x0fd642e411f1,hello,,
-code-creation,JS,11,355301,0x77e6fa891800,472,Object5 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,+'
+code-creation,JS,11,355301,0x77e6fa891800,472,Object5 file:///tmp/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,+'
 code-source-info,0x77e6fa891800,88,379,446,C7O379C7O379C7O379C7O379C28O379C32O399C66O399C74O399C78O399C116O414C125O414C129O414C173O433C205O433C249O445C266O445,,
-code-creation,JS,11,355336,0x77e6fa84a280,524,addAny file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
+code-creation,JS,11,355336,0x77e6fa84a280,524,addAny file:///tmp/deoptigate/examples/two-modules/adders.js:35:16,0x2df9080263f8,+'
 code-source-info,0x77e6fa84a280,86,569,693,C10O569C10O569C10O569C10O569C31O569C35O645C79O669C124O675C148O671C164O671C176O671C194O676C204O676C214O676C248O688C288O691C298O691,,
 delete,MemoryChunk,0x3a890790
 delete,MemoryChunk,0x3a8871b0
@@ -4456,27 +4456,27 @@ delete,MemoryChunk,0x3a928d90
 delete,MemoryChunk,0x3a92f630
 delete,MemoryChunk,0x3a9071f0
 delete,MemoryChunk,0x3a9094d0
-code-creation,JS,11,356864,0x77e6fa891a40,3932,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,356864,0x77e6fa891a40,3932,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa891a40,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C26O1596C44O1596C56O1614C64O1614C82O1635C132O1628C151O569I0C161O580I0C169O580I0C182O600I0C211O600I0C215O600I0C325O669I0C370O675I0C394O671I0C410O671I0C422O671I0C434O676I0C438O1614C457O753I1C457O790I1C478O790I1C505O790I1C528O828I1C532O836I1C579O836I1C586O836I1C590O836I1C613O836I1C617O836I1C621O836I1C635O836I1C648O836I1C661O836I1C668O836I1C676O836I1C680O836I1C685O836I1C690O836I1C694O836I1C702O836I1C713O836I1C748O836I1C751O896I1C769O896I1C777O903I1C803O903I1C803O903I1C824O903I1C828O903I1C834O903I1C844O911I1C878O911I1C883O911I1C899O1602C921O1575C932O1575C968O1575C1024O1575C1031O1575C1052O1575C1065O1575C1073O1575C1091O1575C1141O1575C1160O569I2C1170O580I2C1178O580I2C1191O600I2C1220O600I2C1224O600I2C1344O669I2C1389O675I2C1413O671I2C1429O671I2C1441O671I2C1453O676I2C1457O1575C1476O753I3C1476O790I3C1494O790I3C1521O790I3C1544O828I3C1548O836I3C1595O836I3C1602O836I3C1606O836I3C1626O836I3C1630O836I3C1634O836I3C1648O836I3C1661O836I3C1674O836I3C1681O836I3C1689O836I3C1693O836I3C1698O836I3C1703O836I3C1707O836I3C1715O836I3C1726O836I3C1761O836I3C1764O896I3C1782O896I3C1790O903I3C1816O903I3C1816O903I3C1837O903I3C1841O903I3C1847O903I3C1857O911I3C1891O911I3C1896O911I3C1912O1575C1934O1575C1945O1575C1981O1575C1986O615I0C2001O798I1C2009O798I1C2022O819I1C2027O615I2C2042O798I3C2050O798I3C2063O819I3C2072O1565C2084O1565C2092O1538,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,356933,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357014,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357074,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357116,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357157,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357198,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
-code-deopt,357238,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,356933,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357014,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357074,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357116,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357157,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357198,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357238,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0x17def73c0000,184320
-code-creation,JS,11,357350,0x77e6fa892ac0,4680,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
+code-creation,JS,11,357350,0x77e6fa892ac0,4680,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,+
 code-source-info,0x77e6fa892ac0,86,1521,1669,C1O1521C1O1521C1O1521C1O1521C1O1521C1O1521C22O1521C64O1556C72O1556C80O1558C93O1556C109O1556C126O1556C136O1596C144O1614C152O1614C170O1635C220O1628C239O569I0C249O580I0C257O580I0C270O600I0C299O600I0C303O600I0C413O669I0C458O675I0C482O671I0C498O671I0C510O671I0C522O676I0C526O1614C545O753I1C545O790I1C566O790I1C593O790I1C616O828I1C620O836I1C667O836I1C674O836I1C678O836I1C701O836I1C705O836I1C709O836I1C723O836I1C736O836I1C749O836I1C756O836I1C764O836I1C768O836I1C773O836I1C778O836I1C782O836I1C790O836I1C801O836I1C836O836I1C839O896I1C857O896I1C865O903I1C891O903I1C891O903I1C912O903I1C916O903I1C922O903I1C932O911I1C966O911I1C971O911I1C987O1602C1009O1575C1020O1575C1056O1575C1088O1575C1095O1575C1116O1575C1129O1575C1137O1575C1155O1575C1205O1575C1224O569I2C1234O580I2C1242O580I2C1255O600I2C1284O600I2C1288O600I2C1408O669I2C1453O675I2C1477O671I2C1493O671I2C1505O671I2C1517O676I2C1521O1575C1540O753I3C1540O790I3C1558O790I3C1585O790I3C1608O828I3C1612O836I3C1659O836I3C1666O836I3C1670O836I3C1690O836I3C1694O836I3C1698O836I3C1712O836I3C1725O836I3C1738O836I3C1745O836I3C1753O836I3C1757O836I3C1762O836I3C1767O836I3C1771O836I3C1779O836I3C1790O836I3C1825O836I3C1828O896I3C1846O896I3C1854O903I3C1880O903I3C1880O903I3C1901O903I3C1905O903I3C1911O903I3C1921O911I3C1955O911I3C1960O911I3C1976O1575C1998O1575C2009O1575C2045O1575C2050O1565C2059O1565C2120O1565C2133O1538C2144O1538C2179O1538C2197O1668C2214O1668C2244O615I0C2259O798I1C2267O798I1C2280O819I1C2285O615I2C2300O798I3C2308O798I3C2321O819I3,F0O1628F1O1614F0O1575F1O1575,S0x2df9080263f8S0x2df908026440
-code-deopt,357451,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
+code-deopt,357451,4224,0x77e6fa891a40,-1,1565,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:80:30>,exit from OSR'd inner loop
 new,MemoryChunk,0xf8970e00000,274432
-code-creation,JS,12,357937,0x77e6fa893e40,416,Object5 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,*'
+code-creation,JS,12,357937,0x77e6fa893e40,416,Object5 file:///tmp/deoptigate/examples/two-modules/objects.js:32:14,0x2df90802dda8,*'
 code-source-info,0x77e6fa893e40,88,379,446,C11O379C25O399C109O414C127O433C193O445C226O379,,
 new,MemoryChunk,0xcdc72a00000,409600
 new,MemoryChunk,0x381cf7680000,614400
-code-creation,JS,12,359187,0x77e6fa894040,2472,addObjects file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
+code-creation,JS,12,359187,0x77e6fa894040,2472,addObjects file:///tmp/deoptigate/examples/two-modules/adders.js:79:20,0x2df908026488,*
 code-source-info,0x77e6fa894040,86,1521,1669,C23O1521C37O819I2C128O1596C181O1614C196O1635C237O1628C267O669I1C308O675I1C356O671I1C410O1614C436O790I3C446O828I3C460O836I3C581O896I3C605O903I3C662O911I3C686O1602C707O1575C723O1565C832O1538C836O1556C840O1558C856O1556C886O1596C956O1614C964O1635C1017O1628C1047O669I0C1091O675I0C1142O671I0C1196O1614C1219O790I2C1229O828I2C1243O836I2C1365O896I2C1389O903I2C1446O911I2C1470O1602C1491O1575C1507O1565C1520O1538C1536O1668C1562O819I2C1567O819I3C1572O1521C1619O836I3C1728O903I3C1777O1575C1854O836I2C1969O903I2C2018O1575C2098O1538C2185O1558,F0O1628F0O1628F1O1614F1O1614,S0x2df9080263f8S0x2df908026440
-code-deopt,359216,4992,0x77e6fa892ac0,-1,1575,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:81:5>,prepare for on stack replacement (OSR)
+code-deopt,359216,4992,0x77e6fa892ac0,-1,1575,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:81:5>,prepare for on stack replacement (OSR)
 new,MemoryChunk,0x35c1943c0000,917504
 new,MemoryChunk,0x61beb7c0000,184320
 new,MemoryChunk,0x1cad50b80000,274432
@@ -4556,7 +4556,7 @@ new,MemoryChunk,0x29559ba40000,274432
 new,MemoryChunk,0x3fbef2cc0000,409600
 new,MemoryChunk,0x32af51c00000,614400
 new,MemoryChunk,0xd0148dc0000,917504
-code-creation,JS,9,393781,0x3dd61dfe7328,26,Object6 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,~
+code-creation,JS,9,393781,0x3dd61dfe7328,26,Object6 file:///tmp/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,~
 code-source-info,0x3dd61dfe7328,88,479,570,C0O492C2O502C6O516C8O523C12O531C14O538C18O546C20O557C25O569,,
 StoreIC,0x3dd61dfe732a,393816,41,15,X,X,0x000000000000,hola,,
 StoreIC,0x3dd61dfe7330,393828,42,12,X,X,0x000000000000,x,,
@@ -4568,11 +4568,11 @@ StoreIC,0x3dd61dfe732a,393861,41,15,0,1,0x0fd642e41b29,hola,,
 StoreIC,0x3dd61dfe7330,393864,42,12,0,1,0x0fd642e41bb9,x,,
 StoreIC,0x3dd61dfe7336,393867,43,12,0,1,0x0fd642e41c11,y,,
 StoreIC,0x3dd61dfe733c,393869,44,16,0,1,0x0fd642e41c59,hello,,
-code-creation,JS,11,394115,0x77e6fa894a80,608,Object6 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,+'
+code-creation,JS,11,394115,0x77e6fa894a80,608,Object6 file:///tmp/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,+'
 code-source-info,0x77e6fa894a80,88,479,570,C7O479C7O479C7O479C7O479C28O479C32O502C72O502C104O502C142O523C150O523C154O523C192O538C201O538C205O538C249O557C281O557C325O569C342O569,,
 new,MemoryChunk,0x12ec2e6c0000,184320
 new,MemoryChunk,0x3e9b01580000,274432
-code-creation,JS,12,395144,0x77e6fa894d40,568,Object6 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,*'
+code-creation,JS,12,395144,0x77e6fa894d40,568,Object6 file:///tmp/deoptigate/examples/two-modules/objects.js:40:14,0x2df90802ddf0,*'
 code-source-info,0x77e6fa894d40,88,479,570,C11O479C25O502C124O523C175O538C193O557C259O569C292O479,,
 new,MemoryChunk,0xe7ecae40000,409600
 new,MemoryChunk,0x15788f640000,614400
@@ -4678,7 +4678,7 @@ new,MemoryChunk,0x370973f80000,274432
 new,MemoryChunk,0x1cbbd2100000,409600
 new,MemoryChunk,0x5234dc40000,614400
 new,MemoryChunk,0x138ad5180000,917504
-code-creation,JS,9,432723,0x3dd61dfe7698,26,Object7 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,~
+code-creation,JS,9,432723,0x3dd61dfe7698,26,Object7 file:///tmp/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,~
 code-source-info,0x3dd61dfe7698,88,603,694,C0O616C2O623C6O631C8O641C12O655C14O662C18O670C20O681C25O693,,
 StoreIC,0x3dd61dfe769a,432757,50,12,X,X,0x000000000000,x,,
 StoreIC,0x3dd61dfe76a0,432769,51,15,X,X,0x000000000000,hola,,
@@ -4690,11 +4690,11 @@ StoreIC,0x3dd61dfe769a,432799,50,12,0,1,0x04054e1ecb09,x,,
 StoreIC,0x3dd61dfe76a0,432802,51,15,0,1,0x04054e1ecb99,hola,,
 StoreIC,0x3dd61dfe76a6,432805,52,12,0,1,0x04054e1ecbf1,y,,
 StoreIC,0x3dd61dfe76ac,432807,53,16,0,1,0x04054e1ecc39,hello,,
-code-creation,JS,11,433054,0x77e6fa894fc0,608,Object7 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,+'
+code-creation,JS,11,433054,0x77e6fa894fc0,608,Object7 file:///tmp/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,+'
 code-source-info,0x77e6fa894fc0,88,603,694,C7O603C7O603C7O603C7O603C28O603C32O623C66O623C74O623C78O623C122O641C155O641C193O662C202O662C206O662C250O681C282O681C326O693C343O693,,
 new,MemoryChunk,0x55051e40000,184320
 new,MemoryChunk,0x2847c8000000,274432
-code-creation,JS,12,434073,0x77e6fa895280,496,Object7 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,*'
+code-creation,JS,12,434073,0x77e6fa895280,496,Object7 file:///tmp/deoptigate/examples/two-modules/objects.js:49:14,0x2df90802de38,*'
 code-source-info,0x77e6fa895280,88,603,694,C11O603C25O623C75O641C143O662C161O681C227O693C260O603,,
 new,MemoryChunk,0x20c5fd740000,409600
 new,MemoryChunk,0x24b797180000,614400
@@ -4799,7 +4799,7 @@ delete,MemoryChunk,0x3a8871b0
 delete,MemoryChunk,0x3a890790
 delete,MemoryChunk,0x3a7ece20
 new,MemoryChunk,0x7be0ca80000,917504
-code-creation,JS,9,471062,0x3dd61dfe7a00,26,Object8 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,~
+code-creation,JS,9,471062,0x3dd61dfe7a00,26,Object8 file:///tmp/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,~
 code-source-info,0x3dd61dfe7a00,88,727,818,C0O740C2O747C6O755C8O762C12O770C14O780C18O794C20O805C25O817,,
 StoreIC,0x3dd61dfe7a02,471089,59,12,X,X,0x000000000000,x,,
 StoreIC,0x3dd61dfe7a08,471103,60,12,X,X,0x000000000000,y,,
@@ -4811,11 +4811,11 @@ StoreIC,0x3dd61dfe7a02,471131,59,12,0,1,0x04054e1ecf59,x,,
 StoreIC,0x3dd61dfe7a08,471134,60,12,0,1,0x04054e1ecfe9,y,,
 StoreIC,0x3dd61dfe7a0e,471136,61,15,0,1,0x04054e1ed041,hola,,
 StoreIC,0x3dd61dfe7a14,471139,62,16,0,1,0x04054e1ed089,hello,,
-code-creation,JS,11,471391,0x77e6fa8954c0,608,Object8 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,+'
+code-creation,JS,11,471391,0x77e6fa8954c0,608,Object8 file:///tmp/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,+'
 code-source-info,0x77e6fa8954c0,88,727,818,C7O727C7O727C7O727C7O727C28O727C32O747C66O747C74O747C78O747C116O762C125O762C129O762C173O780C205O780C249O805C281O805C325O817C342O817,,
 new,MemoryChunk,0xddba9800000,184320
 new,MemoryChunk,0x3c37e5d80000,274432
-code-creation,JS,12,472456,0x77e6fa895780,492,Object8 file:///Users/jg/code/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,*'
+code-creation,JS,12,472456,0x77e6fa895780,492,Object8 file:///tmp/deoptigate/examples/two-modules/objects.js:58:14,0x2df90802de80,*'
 code-source-info,0x77e6fa895780,88,727,818,C11O727C25O747C109O762C127O780C160O805C226O817C259O727,,
 new,MemoryChunk,0x313a9140000,409600
 new,MemoryChunk,0x3bed49ec0000,614400
@@ -4891,9 +4891,9 @@ new,MemoryChunk,0x2b3d33700000,274432
 new,MemoryChunk,0x2a9163d00000,409600
 new,MemoryChunk,0x393ed5f40000,614400
 new,MemoryChunk,0x5d07bb00000,917504
-code-deopt,508349,3584,0x77e6fa88a040,-1,1903,deopt-eager,<file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:99:13>,Insufficient type feedback for generic named access
+code-deopt,508349,3584,0x77e6fa88a040,-1,1903,deopt-eager,<file:///tmp/deoptigate/examples/two-modules/adders.js:99:13>,Insufficient type feedback for generic named access
 LoadIC,0x3dd61dfd70ed,508402,99,13,0,1,0x3a10cbe5df19,length,,
-code-creation,JS,9,508459,0x3dd61dfe7d50,28,log file:///Users/jg/code/deoptigate/examples/two-modules/adders.js:95:13,0x2df9080264d0,~
+code-creation,JS,9,508459,0x3dd61dfe7d50,28,log file:///tmp/deoptigate/examples/two-modules/adders.js:95:13,0x2df9080264d0,~
 code-source-info,0x3dd61dfe7d50,86,1843,1889,C0O1843C2O1850C6O1858C11O1862C16O1868C20O1862C27O1888,,
 LoadGlobalIC,0x3dd61dfe7d52,508479,96,3,X,X,0x3a10cbe5b521,console,,
 LoadGlobalIC,0x3dd61dfe7d60,508484,96,21,X,X,0x3a10cbe5b521,console,,

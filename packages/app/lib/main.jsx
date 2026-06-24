@@ -187,7 +187,7 @@ class MainView extends Component {
       , selectedSummaryTabIdx
     }
     try {
-      history.pushState(state, 'deoptigate', urlFromState(state))
+      history.pushState(state, 'deopt', urlFromState(state))
     } catch (e) {
       // some browsers like Safari block this in the name of security
       // if we opened the index file directly, i.e. the page isn't served

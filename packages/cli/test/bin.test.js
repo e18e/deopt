@@ -12,8 +12,8 @@ const repoRoot = path.join(packageRoot, '../..')
 
 const renderDataPath = path.join(
   tmpdir(),
-  'deoptigate',
-  'deoptigate.render-data.json'
+  'e18e-deopt',
+  'data.json'
 )
 
 const binPath = path.join(packageRoot, 'bin/deopt')
@@ -27,7 +27,7 @@ async function runDeoptigate(srcPath) {
   return JSON.parse(contents)
 }
 
-test('deoptigate simple/adders.js', async () => {
+test('simple/adders.js', async () => {
   const srcPath = path.join(repoRoot, 'examples/simple/adders.js')
 
   const renderData = await runDeoptigate(srcPath)
@@ -46,7 +46,7 @@ test('deoptigate simple/adders.js', async () => {
   assert.equal(fileData.src, fileSrc, 'file source')
 })
 
-test('deoptigate two-modules/adders.js', async () => {
+test('two-modules/adders.js', async () => {
   const srcPaths = [
     path.join(repoRoot, 'examples/two-modules/adders.js'),
     path.join(repoRoot, 'examples/two-modules/objects.js'),

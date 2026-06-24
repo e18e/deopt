@@ -69,10 +69,10 @@ export async function startServer({ dataFile }) {
   const app = new H3()
 
   app.get('/', async () => html(await fs.readFile(fileURLToPath(indexHtml), 'utf8')))
-  app.get('/deoptigate.js', () =>
-    asset(new URL('deoptigate.js', buildDir), 'text/javascript; charset=utf-8'))
-  app.get('/deoptigate.css', () =>
-    asset(new URL('deoptigate.css', buildDir), 'text/css; charset=utf-8'))
+  app.get('/deopt.js', () =>
+    asset(new URL('deopt.js', buildDir), 'text/javascript; charset=utf-8'))
+  app.get('/deopt.css', () =>
+    asset(new URL('deopt.css', buildDir), 'text/css; charset=utf-8'))
   app.get('/api/data', () =>
     new Response(renderData, { headers: { 'content-type': 'application/json; charset=utf-8' } }))
   app.get('/api/tokens', (event) => {

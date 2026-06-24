@@ -3,8 +3,14 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { groupByFileAndLocation } from '../lib/grouping/group-by-file-and-location.js'
+import { processLog } from '../lib/log.js'
 
-import { deoptigateLog } from '../lib/log.js'
+async function groupedLog(p, { icStateChangesOnly = true } = {}) {
+  const groupedByFile = await processLog(p, { icStateChangesOnly })
+  const groupedByFileAndLocation = groupByFileAndLocation(groupedByFile)
+  return groupedByFileAndLocation
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const packageRoot = path.join(__dirname, '..')
@@ -36,7 +42,7 @@ async function prepareLogFile(srcLog, replacements) {
 test('adders.v8.log', async () => {
   const replacements = [
     [
-      '/tmp/deoptigate/examples/simple/adders.js',
+      '/tmp/e18e-deopt/examples/simple/adders.js',
       path.join(repoRoot, 'examples/simple/adders.js'),
     ],
   ]
@@ -44,7 +50,7 @@ test('adders.v8.log', async () => {
   const srcLogPath = path.join(repoRoot, 'test/logs/adders.v8.log')
   const destLogPath = await prepareLogFile(srcLogPath, replacements)
 
-  const result = await deoptigateLog(destLogPath)
+  const result = await groupedLog(destLogPath)
   assert.equal(result.size, 1, 'number of files')
 
   const fileData = result.get(addersSrcFile)
@@ -68,11 +74,11 @@ test('adders.v8.log', async () => {
 test('two-modules.v8.log', async () => {
   const replacements = [
     [
-      '/tmp/deoptigate/examples/two-modules/adders.js',
+      '/tmp/e18e-deopt/examples/two-modules/adders.js',
       path.join(repoRoot, 'examples/two-modules/adders.js'),
     ],
     [
-      '/tmp/deoptigate/examples/two-modules/objects.js',
+      '/tmp/e18e-deopt/examples/two-modules/objects.js',
       path.join(repoRoot, 'examples/two-modules/objects.js'),
     ],
   ]
@@ -81,7 +87,7 @@ test('two-modules.v8.log', async () => {
   const srcLogPath = path.join(repoRoot, 'test/logs/two-modules.v8.log')
   const destLogPath = await prepareLogFile(srcLogPath, replacements)
 
-  const result = await deoptigateLog(destLogPath)
+  const result = await groupedLog(destLogPath)
   assert.equal(result.size, 2, 'number of files')
 
   const fileData = result.get(srcFile)

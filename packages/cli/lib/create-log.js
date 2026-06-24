@@ -4,13 +4,13 @@ import { mkdir, stat } from 'node:fs/promises'
 import { styleText } from 'node:util'
 
 function determineArgs(args) {
-  const __index = args.indexOf('--')
-  if (__index < 0) {
+  const dashIndex = args.indexOf('--')
+  if (dashIndex < 0) {
     return { argv: args, extraExecArgv: [] }
   }
-  // For now we ignore any args before the -- as those would be for deoptigate
-  // At this point deoptigate doesn't consume any flags
-  const afterDashes = args.slice(__index + 1)
+  // For now we ignore any args before the -- as those would be for our CLI
+  // We currently have no such flags.
+  const afterDashes = args.slice(dashIndex + 1)
 
   const first = afterDashes[0]
   if (first == null) return { execArgv: [] }
@@ -18,13 +18,13 @@ function determineArgs(args) {
   if (first[0] === '-') {
     throw Error(
       `The node binary must immediately follow the double dash (--)
-  deoptigate -- node [nodeFlags] script.js [scriptFlags]
+  npx @e18e/deopt -- node [nodeFlags] script.js [scriptFlags]
     `)
   }
   const afterDashesArgs = afterDashes.slice(1)
 
   // Piece together execArgv and argv in cases as
-  // deoptigate -- node --allow-natives-syntax app.js --log
+  // {bin} -- node --allow-natives-syntax app.js --log
   // to be: [ --allow-natives-syntax ] and [ app.js, --log ]
   // Not super important as ispawn concatentates them anyways, but for correctness
   const extraExecArgv = []
@@ -82,10 +82,10 @@ async function createDirIfMissing(dir) {
 export async function createLog(args, head, simpleHead) {
   const { extraExecArgv, argv,  nodeExecutable } = determineArgs(args)
 
-  const logDir = `${tmpdir()}/deoptigate`
+  const logDir = `${tmpdir()}/e18e-deopt`
   await createDirIfMissing(logDir)
 
-  const logFile = `${tmpdir()}/deoptigate/v8.log`
+  const logFile = `${tmpdir()}/e18e-deopt/v8.log`
 
   const execArgv = [
       '--log-ic'

@@ -1,9 +1,9 @@
-import { open, read, close, fstat } from 'node:fs/promises'
+import { open } from 'node:fs/promises'
 
 let _50_MEGABYTES = 50 * 1024 * 1024;
 export async function* lineReader(path, encoding) {
   const fd = await open(path, 'r')
-  const stats = await fstat(fd)
+  const stats = await fd.stat()
   const fileSize = stats.size
   const maxBufferSize = _50_MEGABYTES
   let bytesRead = 0
@@ -17,7 +17,7 @@ export async function* lineReader(path, encoding) {
 
     const buffer = Buffer.alloc(bufferSize)
 
-    const chunk = await read(fd, buffer, 0, bufferSize, bytesRead);
+    const chunk = await fd.read(buffer, 0, bufferSize, bytesRead);
     let current = 0
     while (current < bufferSize) {
       const next = chunk.buffer.indexOf('\n', current)
@@ -28,5 +28,5 @@ export async function* lineReader(path, encoding) {
     }
     bytesRead += current
   }
-  await close(fd)
+  await fd.close()
 }

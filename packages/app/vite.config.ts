@@ -10,11 +10,11 @@ export default defineConfig({
     lib: {
       entry: 'lib/main.jsx',
       formats: ['es'],
-      fileName: () => 'deoptigate.js'
+      fileName: () => 'deopt.js'
     },
     rollupOptions: {
       output: {
-        assetFileNames: 'deoptigate.css'
+        assetFileNames: 'deopt.css'
       }
     }
   }
