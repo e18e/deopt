@@ -1,8 +1,5 @@
-/* global history */
-
 import { Component, render } from 'preact'
 import './main.css'
-import { deoptigate } from '../deoptigate.js'
 import { urlFromState, stateFromUrl } from './lib/query-state.js'
 
 import { ToolbarView } from './components/toolbar.jsx'
@@ -278,12 +275,20 @@ class MainView extends Component {
   }
 }
 
-export async function deoptigateRender(groupedByFile) {
-  try {
-    const groupedByFileAndLocation = deoptigate(groupedByFile)
+function reviveGroups(payload) {
+  return new Map(payload.map(([ file, group ]) => [ file, Object.assign({}, group, {
+      ics: new Map(group.ics)
+    , deopts: new Map(group.deopts)
+    , codes: new Map(group.codes)
+  }) ]))
+}
 
+export async function mount() {
+  try {
+    const res = await fetch('/api/data')
+    const groups = reviveGroups(await res.json())
     render(
-      <MainView groups={groupedByFileAndLocation} />
+      <MainView groups={groups} />
     , app()
     )
   } catch (err) {

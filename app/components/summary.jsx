@@ -1,11 +1,6 @@
 import { Component } from 'preact'
 
-import { nameIcState, severityIcState } from '../../lib/log-processing/ic-state.js'
-import {
-    nameOptimizationState
-  , severityOfOptimizationState
-} from '../../lib/log-processing/optimization-state.js'
-import { MIN_SEVERITY } from '../../lib/severities.js'
+import { MIN_SEVERITY } from '../lib/severities.js'
 
 const severityClassNames = [
     'green i'
@@ -235,18 +230,15 @@ export class SummaryView extends Component {
 
   _icRow(update, id) {
     const {
-        oldState
-      , newState
-      , key
+        key
       , map
+      , oldStateName
+      , oldStateSeverity
+      , newStateName
+      , newStateSeverity
     } = update
-    const oldStateName = nameIcState(oldState)
-    const severityOldState = severityIcState(oldState)
-    const oldStateClassName = severityClassNames[severityOldState - 1]
-
-    const newStateName = nameIcState(newState)
-    const severityNewState = severityIcState(newState)
-    const newStateClassName = severityClassNames[severityNewState - 1]
+    const oldStateClassName = severityClassNames[oldStateSeverity - 1]
+    const newStateClassName = severityClassNames[newStateSeverity - 1]
 
     const mapString = `0x${map}`
     return (
@@ -277,16 +269,14 @@ export class SummaryView extends Component {
   }
 
   _codeRow(info, id) {
-    const { timestamp, state } = info
+    const { timestamp, stateName, severity } = info
     const timeStampMs = (timestamp / 1E3).toFixed()
-    const codeState = nameOptimizationState(state)
-    const severity = severityOfOptimizationState(state)
     const codeStateClassName = severityClassNames[severity - 1]
 
     return (
       <tr key={timestamp}>
         <td>{timeStampMs}ms</td>
-        <td className={codeStateClassName + ' pr3'}>{codeState}</td>
+        <td className={codeStateClassName + ' pr3'}>{stateName}</td>
       </tr>
     )
   }

@@ -1,7 +1,5 @@
 import { Component } from 'preact'
 
-import { summarizeFile } from '../../lib/grouping/summarize-file.js'
-
 const severityClassNames = [
     'green i tc'
   , 'blue tc'
@@ -29,11 +27,7 @@ export class FilesView extends Component {
     const tableHeader = this._renderTableHeader()
     const rows = []
     const filesSeverities = Array.from(groups)
-      .map(([ file, info ]) => {
-        const { deopts, ics, codes } = info
-        const summary = summarizeFile({ ics, deopts, codes })
-        return { file, summary }
-      })
+      .map(([ file, info ]) => ({ file, summary: info.summary }))
       .filter(({ summary }) => includeAllSeverities || summary.hasCriticalSeverities)
       .sort(bySeverityScoreDesc)
 

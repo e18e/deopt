@@ -7,6 +7,7 @@
   "type": "module",
   "files": [
     "app/build",
+    "app/static",
     "app/lib",
     "bin/",
     "lib/",
@@ -24,7 +25,9 @@
   "homepage": "https://github.com/thlorenz/deoptigate",
   "dependencies": {
     "files-provider": "~0.2.0",
+    "h3": "^2.0.1-rc.22",
     "ispawn": "~0.2.0",
+    "shiki": "^4.2.0",
     "tiny-open": "^1.3.0"
   },
   "keywords": [],

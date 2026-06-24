@@ -18,7 +18,9 @@ const renderDataPath = path.join(
 const binPath = repoRoot('bin/deoptigate')
 
 async function runDeoptigate(srcPath) {
-  spawnSync(process.execPath, [binPath, srcPath])
+  spawnSync(process.execPath, [binPath, srcPath], {
+    env: { ...process.env, DEOPTIGATE_NO_SERVE: '1' }
+  })
 
   const contents = await readFile(renderDataPath, 'utf8')
   return JSON.parse(contents)

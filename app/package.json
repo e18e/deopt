@@ -29,7 +29,6 @@
   "devDependencies": {
     "open-props": "^1.7.23",
     "preact": "^10.29.2",
-    "shiki": "^4.2.0",
     "vite": "^8.1.0"
   }
 }

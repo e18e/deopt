@@ -1,5 +1,10 @@
-import { severityColors, MIN_SEVERITY } from '../../../lib/severities.js'
-import { unkeyLocation } from '../../../lib/grouping/location.js'
+import { severityColors, MIN_SEVERITY } from '../severities.js'
+
+function unkeyLocation(key) {
+  if (key == null) return null
+  const [ functionName, line, column ] = key.split(':')
+  return { functionName, line: parseInt(line), column: parseInt(column) }
+}
 
 const DEOPTSYMBOL = '▼'
 const ICSYMBOL = '☎'

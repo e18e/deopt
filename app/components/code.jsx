@@ -1,41 +1,9 @@
 import { Component, Fragment } from 'preact'
-import { createHighlighterCore } from 'shiki/core'
-import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
-import js from 'shiki/langs/javascript.mjs'
-import jsx from 'shiki/langs/jsx.mjs'
-import ts from 'shiki/langs/typescript.mjs'
-import tsx from 'shiki/langs/tsx.mjs'
-import githubDark from 'shiki/themes/github-dark.mjs'
 
 import { MarkerResolver } from '../lib/rendering/marker-resolver.jsx'
 import { markOnly } from '../lib/rendering/mark-only.jsx'
 
 const MAX_HIGHLIGHT_LEN = 1E5
-const THEME = 'github-dark'
-
-const LANG_BY_EXT = {
-    js  : 'javascript'
-  , mjs : 'javascript'
-  , cjs : 'javascript'
-  , jsx : 'jsx'
-  , ts  : 'typescript'
-  , mts : 'typescript'
-  , cts : 'typescript'
-  , tsx : 'tsx'
-}
-
-// Created once with only the grammars and theme we need so the JavaScript
-// engine can tokenize synchronously once the highlighter has loaded.
-const highlighterPromise = createHighlighterCore({
-    themes: [ githubDark ]
-  , langs: [ js, jsx, ts, tsx ]
-  , engine: createJavaScriptRegexEngine()
-})
-
-function langFromFileName(fileName) {
-  const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase()
-  return LANG_BY_EXT[ext] || 'javascript'
-}
 
 function renderTokens(lines, markerResolver) {
   const totalDigits = String(lines.length).length
@@ -151,22 +119,21 @@ export class CodeView extends Component {
     })
   }
 
-  // Tokenizing is only needed when the source changes; marker resolution
-  // (which depends on the selected location) stays synchronous in render.
-  _loadTokens() {
+  async _loadTokens() {
     const { fileName, code, highlightCode } = this.props
     if (!highlightCode || code.length > MAX_HIGHLIGHT_LEN) return
     if (this._tokenizedCode === code) return
     this._tokenizedCode = code
     this._tokens = null
-    const lang = langFromFileName(fileName)
-    highlighterPromise
-      .then(highlighter => {
-        if (this._tokenizedCode !== code) return
-        this._tokens = highlighter.codeToTokens(code, { lang, theme: THEME }).tokens
-        this.forceUpdate()
-      })
-      .catch(() => {})
+    try {
+      const res = await fetch(`/api/tokens?file=${encodeURIComponent(fileName)}`);
+      const tokens = await res.json();
+      if (this._tokenizedCode !== code) return
+      this._tokens = tokens
+      this.forceUpdate()
+    } catch {
+      // do nothing
+    }
   }
 
   _renderCode() {
