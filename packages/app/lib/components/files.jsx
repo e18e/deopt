@@ -24,7 +24,7 @@ function bySeverityScoreDesc({ summary: s1 }, { summary: s2 }) {
 export class FilesView extends Component {
   render() {
     const { groups, includeAllSeverities, className = '' } = this.props;
-    const tableHeader = this._renderTableHeader();
+    const tableHeader = this.#renderTableHeader();
     const rows = [];
     const filesSeverities = Array.from(groups)
       .map(([file, info]) => ({ file, summary: info.summary }))
@@ -36,7 +36,7 @@ export class FilesView extends Component {
     for (const { file, summary } of filesSeverities) {
       const { icSeverities, deoptSeverities, codeSeverities } = summary;
       const { relativePath } = groups.get(file);
-      const rendered = this._renderFile({
+      const rendered = this.#renderFile({
         file,
         relativePath,
         icSeverities,
@@ -55,7 +55,7 @@ export class FilesView extends Component {
     );
   }
 
-  _renderTableHeader() {
+  #renderTableHeader() {
     const topHeaderClass = 'header-row';
     const subHeaderClass = 'subhead';
     return (
@@ -88,7 +88,7 @@ export class FilesView extends Component {
     );
   }
 
-  _renderFile({
+  #renderFile({
     file,
     relativePath,
     deoptSeverities,
@@ -101,7 +101,7 @@ export class FilesView extends Component {
     const deoptColumns = coloredTds(deoptSeverities.slice(1));
     const icColumns = coloredTds(icSeverities.slice(1));
 
-    const onFileClicked = this._onFileClicked.bind(this, file);
+    const onFileClicked = this.#onFileClicked.bind(this, file);
     const selectedClass =
       file === selectedFile ? 'normalrow selected' : 'normalrow';
     return (
@@ -116,7 +116,7 @@ export class FilesView extends Component {
     );
   }
 
-  _onFileClicked(file, e) {
+  #onFileClicked(file, e) {
     e.preventDefault();
     const { onFileClicked } = this.props;
     onFileClicked(file);

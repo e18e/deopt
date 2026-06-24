@@ -6,7 +6,7 @@ async function canRead(p) {
   try {
     await access(p, fs.constants.R_OK);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

@@ -9,18 +9,7 @@ const DEOPT_TAB_IDX = 1;
 const ICS_TAB_IDX = 2;
 
 export class SummaryView extends Component {
-  constructor(props) {
-    super(props);
-    this._bind();
-  }
-
-  _bind() {
-    this._renderIc = this._renderIc.bind(this);
-    this._renderDeopt = this._renderDeopt.bind(this);
-    this._renderCode = this._renderCode.bind(this);
-  }
-
-  _maybeScrollIntoView() {
+  #maybeScrollIntoView() {
     const { selectedLocation } = this.props;
     if (selectedLocation == null) return;
     const summary = document.getElementById(
@@ -34,11 +23,11 @@ export class SummaryView extends Component {
   }
 
   componentDidMount() {
-    this._maybeScrollIntoView();
+    this.#maybeScrollIntoView();
   }
 
   componentDidUpdate() {
-    this._maybeScrollIntoView();
+    this.#maybeScrollIntoView();
   }
 
   render() {
@@ -52,17 +41,17 @@ export class SummaryView extends Component {
       codeLocations,
       selectedTabIdx,
     } = this.props;
-    const renderedDeopts = this._renderDeopts(
+    const renderedDeopts = this.#renderDeopts(
       deopts,
       deoptLocations,
       selectedTabIdx === DEOPT_TAB_IDX,
     );
-    const renderedIcs = this._renderIcs(
+    const renderedIcs = this.#renderIcs(
       ics,
       icLocations,
       selectedTabIdx === ICS_TAB_IDX,
     );
-    const renderedCodes = this._renderCodes(
+    const renderedCodes = this.#renderCodes(
       codes,
       codeLocations,
       selectedTabIdx === OPT_TAB_IDX,
@@ -70,9 +59,9 @@ export class SummaryView extends Component {
     return (
       <div className={className}>
         <div className="tabs">
-          {this._renderTabHeader('Optimizations', OPT_TAB_IDX)}
-          {this._renderTabHeader('Deoptimizations', DEOPT_TAB_IDX)}
-          {this._renderTabHeader('Inline Caches', ICS_TAB_IDX)}
+          {this.#renderTabHeader('Optimizations', OPT_TAB_IDX)}
+          {this.#renderTabHeader('Deoptimizations', DEOPT_TAB_IDX)}
+          {this.#renderTabHeader('Inline Caches', ICS_TAB_IDX)}
         </div>
         <div>
           {renderedCodes}
@@ -87,7 +76,7 @@ export class SummaryView extends Component {
    * Tabs
    */
 
-  _renderTabHeader(label, idx) {
+  #renderTabHeader(label, idx) {
     const { selectedTabIdx } = this.props;
     const selected = idx === selectedTabIdx;
     const className = selected ? 'tab selected' : 'tab';
@@ -96,14 +85,14 @@ export class SummaryView extends Component {
       <a
         className={className}
         href="#"
-        onClick={() => this._ontabHeaderClicked(idx)}
+        onClick={() => this.#onTabHeaderClicked(idx)}
       >
         {label}
       </a>
     );
   }
 
-  _renderDataPoint(data, locations, renderDetails) {
+  #renderDataPoint(data, locations, renderDetails) {
     const { selectedLocation, includeAllSeverities, relativePath } = this.props;
     if (locations.length === 0) return <p className="summary-empty">None</p>;
     const rendered = [];
@@ -115,7 +104,7 @@ export class SummaryView extends Component {
         selectedLocation === info.id ? 'summary-card selected' : 'summary-card';
       rendered.push(
         <div className={className} key={info.id}>
-          {this._summary(info, relativePath)}
+          {this.#summary(info, relativePath)}
           {renderDetails(info)}
         </div>,
       );
@@ -123,44 +112,44 @@ export class SummaryView extends Component {
     return rendered;
   }
 
-  _renderIcs(ics, icLocations, selected) {
+  #renderIcs(ics, icLocations, selected) {
     if (ics == null || !selected) return null;
     return (
       <div key="ics">
-        {this._renderDataPoint(ics, icLocations, this._renderIc)}
+        {this.#renderDataPoint(ics, icLocations, this.#renderIc)}
       </div>
     );
   }
 
-  _renderDeopts(deopts, deoptLocations, selected) {
+  #renderDeopts(deopts, deoptLocations, selected) {
     if (deopts == null || !selected) return null;
     return (
       <div key="deopts">
-        {this._renderDataPoint(deopts, deoptLocations, this._renderDeopt)}
+        {this.#renderDataPoint(deopts, deoptLocations, this.#renderDeopt)}
       </div>
     );
   }
 
-  _renderCodes(codes, codeLocations, selected) {
+  #renderCodes(codes, codeLocations, selected) {
     if (codes == null || !selected) return null;
     return (
       <div key="optimizations">
-        {this._renderDataPoint(codes, codeLocations, this._renderCode)}
+        {this.#renderDataPoint(codes, codeLocations, this.#renderCode)}
       </div>
     );
   }
 
-  _summary(info, relativePath) {
+  #summary(info, relativePath) {
     const { id, functionName, line, column } = info;
     const locationEl = <span className="summary-location">{id}</span>;
-    const onclicked = (e) => {
+    const onClicked = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      this._onsummaryClicked(id);
+      this.#onSummaryClicked(id);
     };
 
     const fullLoc = (
-      <a href="#" className="summary-link" onClick={onclicked}>
+      <a href="#" className="summary-link" onClick={onClicked}>
         {functionName} at {relativePath}:{line}:{column}
       </a>
     );
@@ -172,8 +161,8 @@ export class SummaryView extends Component {
     );
   }
 
-  _renderDeopt(info) {
-    const rows = info.updates.map((update, idx) => this._deoptRow(update, idx));
+  #renderDeopt = (info) => {
+    const rows = info.updates.map((update, idx) => this.#deoptRow(update, idx));
     return (
       <table key={'deopt:' + info.id}>
         <thead>
@@ -187,9 +176,9 @@ export class SummaryView extends Component {
         <tbody>{rows}</tbody>
       </table>
     );
-  }
+  };
 
-  _deoptRow(info) {
+  #deoptRow(info) {
     const { inlined, bailoutType, deoptReason, timestamp, severity } = info;
     const bailoutClassName = severityClassNames[severity - 1];
     const timeStampMs = (timestamp / 1e3).toFixed();
@@ -203,8 +192,8 @@ export class SummaryView extends Component {
     );
   }
 
-  _renderIc(info) {
-    const rows = info.updates.map((update, idx) => this._icRow(update, idx));
+  #renderIc = (info) => {
+    const rows = info.updates.map((update, idx) => this.#icRow(update, idx));
     return (
       <table key={'ic:' + info.id}>
         <thead>
@@ -218,9 +207,9 @@ export class SummaryView extends Component {
         <tbody>{rows}</tbody>
       </table>
     );
-  }
+  };
 
-  _icRow(update, id) {
+  #icRow(update, id) {
     const {
       key,
       map,
@@ -243,8 +232,8 @@ export class SummaryView extends Component {
     );
   }
 
-  _renderCode(info) {
-    const rows = info.updates.map((update, idx) => this._codeRow(update, idx));
+  #renderCode = (info) => {
+    const rows = info.updates.map((update) => this.#codeRow(update));
     return (
       <table key={'code:' + info.id}>
         <thead>
@@ -256,9 +245,9 @@ export class SummaryView extends Component {
         <tbody>{rows}</tbody>
       </table>
     );
-  }
+  };
 
-  _codeRow(info, id) {
+  #codeRow(info) {
     const { timestamp, stateName, severity } = info;
     const timeStampMs = (timestamp / 1e3).toFixed();
     const codeStateClassName = severityClassNames[severity - 1];
@@ -274,14 +263,14 @@ export class SummaryView extends Component {
   /*
    * Events
    */
-  _ontabHeaderClicked(idx) {
-    const { ontabHeaderClicked } = this.props;
-    ontabHeaderClicked(idx);
+  #onTabHeaderClicked(idx) {
+    const { onTabHeaderClicked } = this.props;
+    onTabHeaderClicked(idx);
   }
 
-  _onsummaryClicked(id) {
-    const { onsummaryClicked } = this.props;
-    onsummaryClicked(id);
+  #onSummaryClicked(id) {
+    const { onSummaryClicked } = this.props;
+    onSummaryClicked(id);
   }
 
   static get OPT_TAB_IDX() {

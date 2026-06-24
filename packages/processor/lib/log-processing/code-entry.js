@@ -2,13 +2,19 @@ import { severityOfOptimizationState } from './optimization-state.js';
 import { normalizeFile } from './normalize-file.js';
 
 export class CodeEntry {
+  #functionName;
+  #file;
+  #line;
+  #column;
+  #isScript;
+
   constructor({ fnFile, line, column, isScript }) {
     const parts = fnFile.split(' ');
-    this._functionName = parts[0];
-    this._file = normalizeFile(parts[1]);
-    this._line = line;
-    this._column = column;
-    this._isScript = isScript;
+    this.#functionName = parts[0];
+    this.#file = normalizeFile(parts[1]);
+    this.#line = line;
+    this.#column = column;
+    this.#isScript = isScript;
 
     this.updates = [];
   }
@@ -20,11 +26,11 @@ export class CodeEntry {
 
   get hashmap() {
     return {
-      functionName: this._functionName,
-      file: this._file,
-      line: this._line,
-      column: this._column,
-      isScript: this._isScript,
+      functionName: this.#functionName,
+      file: this.#file,
+      line: this.#line,
+      column: this.#column,
+      isScript: this.#isScript,
       updates: this.updates,
     };
   }

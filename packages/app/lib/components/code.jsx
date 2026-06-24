@@ -80,21 +80,20 @@ function renderTokens(lines, markerResolver) {
 }
 
 export class CodeView extends Component {
+  #tokens;
+  #tokenizedCode;
+  #focusSeq;
+  #focusAnimation;
+
   constructor(props) {
     super(props);
-    this._bind();
-    this._tokens = null;
-    this._tokenizedCode = null;
-    this._focusSeq = props.locationSeq;
-    this._focusAnimation = null;
+    this.#tokens = null;
+    this.#tokenizedCode = null;
+    this.#focusSeq = props.locationSeq;
+    this.#focusAnimation = null;
   }
 
-  _bind() {
-    this._onmarkerClicked = this._onmarkerClicked.bind(this);
-    this._onclick = this._onclick.bind(this);
-  }
-
-  _maybeScrollIntoView() {
+  #maybeScrollIntoView() {
     const { selectedLocation } = this.props;
     if (selectedLocation == null) return;
     const code = document.querySelector(
@@ -107,10 +106,10 @@ export class CodeView extends Component {
     code.scrollIntoView({ behavior: 'smooth' });
   }
 
-  _maybeFocusLine() {
+  #maybeFocusLine() {
     const { selectedLocation, locationSeq } = this.props;
-    if (locationSeq === this._focusSeq) return;
-    this._focusSeq = locationSeq;
+    if (locationSeq === this.#focusSeq) return;
+    this.#focusSeq = locationSeq;
     if (selectedLocation == null) return;
     const marker = document.querySelector(
       `[data-code-locations~="${selectedLocation}"]`,
@@ -120,31 +119,31 @@ export class CodeView extends Component {
     if (line == null) return;
     // Filth. Needed to cancel animations if you click too fast
     const color = getComputedStyle(line).getPropertyValue('--surface-4');
-    if (this._focusAnimation != null) this._focusAnimation.cancel();
-    this._focusAnimation = line.animate(
+    if (this.#focusAnimation != null) this.#focusAnimation.cancel();
+    this.#focusAnimation = line.animate(
       [{ background: color }, { background: 'transparent' }],
       { duration: 3000, easing: 'ease-out' },
     );
   }
 
   componentDidMount() {
-    this._loadTokens();
-    this._maybeScrollIntoView();
+    this.#loadTokens();
+    this.#maybeScrollIntoView();
   }
 
-  _onclick(event) {
+  #onClick = (event) => {
     const marker = event.target.closest('[data-markerid]');
     if (marker == null) return;
     event.preventDefault();
     event.stopPropagation();
     const { markerid, markertype } = marker.dataset;
-    this._onmarkerClicked(parseInt(markerid), markertype);
-  }
+    this.#onMarkerClicked(parseInt(markerid), markertype);
+  };
 
   componentDidUpdate() {
-    this._loadTokens();
-    this._maybeScrollIntoView();
-    this._maybeFocusLine();
+    this.#loadTokens();
+    this.#maybeScrollIntoView();
+    this.#maybeFocusLine();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -160,13 +159,13 @@ export class CodeView extends Component {
   render() {
     const { className = '' } = this.props;
     return (
-      <div className={className} onClick={this._onclick}>
-        {this._renderCode()}
+      <div className={className} onClick={this.#onClick}>
+        {this.#renderCode()}
       </div>
     );
   }
 
-  _makeMarkerResolver() {
+  #makeMarkerResolver() {
     const {
       ics,
       deopts,
@@ -189,45 +188,45 @@ export class CodeView extends Component {
     });
   }
 
-  async _loadTokens() {
+  async #loadTokens() {
     const { fileName, code } = this.props;
     if (code.length > MAX_HIGHLIGHT_LEN) return;
-    if (this._tokenizedCode === code) return;
-    this._tokenizedCode = code;
-    this._tokens = null;
+    if (this.#tokenizedCode === code) return;
+    this.#tokenizedCode = code;
+    this.#tokens = null;
     try {
       const res = await fetch(
         `/api/tokens?file=${encodeURIComponent(fileName)}`,
       );
       const tokens = await res.json();
-      if (this._tokenizedCode !== code) return;
-      this._tokens = tokens;
+      if (this.#tokenizedCode !== code) return;
+      this.#tokens = tokens;
       this.forceUpdate();
     } catch {
       // do nothing
     }
   }
 
-  _renderCode() {
+  #renderCode() {
     const { code } = this.props;
     const highlight =
       code.length <= MAX_HIGHLIGHT_LEN &&
-      this._tokens != null &&
-      this._tokenizedCode === code;
+      this.#tokens != null &&
+      this.#tokenizedCode === code;
     if (highlight) {
       try {
         return (
           <div class="pre">
-            {renderTokens(this._tokens, this._makeMarkerResolver())}
+            {renderTokens(this.#tokens, this.#makeMarkerResolver())}
           </div>
         );
-      } catch (err) {
+      } catch {
         // Highlighting failed, fall back to marking only
       }
     }
     try {
-      return markOnly(code, this._makeMarkerResolver());
-    } catch (err) {
+      return markOnly(code, this.#makeMarkerResolver());
+    } catch {
       // Even marking only failed, just show the code :(
       return (
         <div>
@@ -238,8 +237,8 @@ export class CodeView extends Component {
     }
   }
 
-  _onmarkerClicked(id, type) {
-    const { onmarkerClicked } = this.props;
-    onmarkerClicked(id, type);
-  }
+  #onMarkerClicked = (id, type) => {
+    const { onMarkerClicked } = this.props;
+    onMarkerClicked(id, type);
+  };
 }

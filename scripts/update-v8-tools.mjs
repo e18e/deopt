@@ -16,9 +16,9 @@ const FILES = [
   'csvparser.mjs',
 ];
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 const destDir = path.join(
-  __dirname,
+  dirname,
   '..',
   'packages',
   'processor',

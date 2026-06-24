@@ -28,27 +28,19 @@ const initialState = {
 };
 
 class MainView extends Component {
+  #indexedGroups;
+  #initialState;
+
   constructor(props) {
     super(props);
 
     const { groups } = props;
-    this._indexedGroups = Array.from(groups);
+    this.#indexedGroups = Array.from(groups);
 
-    this._initialState = Object.assign(initialState, this._stateFromUrl());
-    this.state = Object.assign({}, this._initialState);
+    this.#initialState = Object.assign(initialState, this.#stateFromUrl());
+    this.state = Object.assign({}, this.#initialState);
 
-    this._bind();
-    window.onpopstate = this._restoreStateFromHistory;
-  }
-
-  _bind() {
-    this._onlocationSelected = this._onlocationSelected.bind(this);
-    this._onsummaryTabIdxChanged = this._onsummaryTabIdxChanged.bind(this);
-    this._onincludeAllSeveritiesChanged =
-      this._onincludeAllSeveritiesChanged.bind(this);
-    this._onFileClicked = this._onFileClicked.bind(this);
-    this._updateUrl = this._updateUrl.bind(this);
-    this._restoreStateFromHistory = this._restoreStateFromHistory.bind(this);
+    window.addEventListener('popstate', this.#restoreStateFromHistory);
   }
 
   render() {
@@ -58,16 +50,16 @@ class MainView extends Component {
       <div className="app">
         <header className="toolbar">
           <nav className="tabs">
-            {this._renderTabHeader('Files', FILES_TAB_IDX)}
-            {this._renderTabHeader('Details', DETAILS_TAB_IDX)}
+            {this.#renderTabHeader('Files', FILES_TAB_IDX)}
+            {this.#renderTabHeader('Details', DETAILS_TAB_IDX)}
           </nav>
           <ToolbarView
             className="toolbar-options"
             includeAllSeverities={includeAllSeverities}
-            onincludeAllSeveritiesChanged={this._onincludeAllSeveritiesChanged}
+            onIncludeAllSeveritiesChanged={this.#onIncludeAllSeveritiesChanged}
           />
         </header>
-        {this._renderTabs()}
+        {this.#renderTabs()}
       </div>
     );
   }
@@ -76,7 +68,7 @@ class MainView extends Component {
    * Tabs
    */
 
-  _renderTabHeader(label, idx) {
+  #renderTabHeader(label, idx) {
     const { selectedTabIdx } = this.state;
     const selected = idx === selectedTabIdx;
     const className = selected ? 'tab selected' : 'tab';
@@ -85,20 +77,20 @@ class MainView extends Component {
       <a
         className={className}
         href="#"
-        onClick={() => this._ontabHeaderClicked(idx)}
+        onClick={() => this.#onTabHeaderClicked(idx)}
       >
         {label}
       </a>
     );
   }
 
-  _renderTabs() {
+  #renderTabs() {
     const { selectedTabIdx } = this.state;
     return (
       <main className="content">
         {selectedTabIdx === FILES_TAB_IDX
-          ? this._renderFiles()
-          : this._renderFileDetails()}
+          ? this.#renderFiles()
+          : this.#renderFileDetails()}
       </main>
     );
   }
@@ -106,7 +98,7 @@ class MainView extends Component {
   /*
    * Contents
    */
-  _renderFiles() {
+  #renderFiles() {
     const { groups } = this.props;
     const { selectedFile, includeAllSeverities } = this.state;
 
@@ -116,12 +108,12 @@ class MainView extends Component {
         selectedFile={selectedFile}
         groups={groups}
         includeAllSeverities={includeAllSeverities}
-        onFileClicked={this._onFileClicked}
+        onFileClicked={this.#onFileClicked}
       />
     );
   }
 
-  _renderFileDetails() {
+  #renderFileDetails() {
     const { groups } = this.props;
     const {
       selectedFile,
@@ -147,9 +139,9 @@ class MainView extends Component {
         selectedSummaryTabIdx={selectedSummaryTabIdx}
         includeAllSeverities={includeAllSeverities}
         className="details-panel"
-        onmarkerClicked={this._onlocationSelected}
-        onsummaryClicked={this._onlocationSelected}
-        onsummaryTabIdxChanged={this._onsummaryTabIdxChanged}
+        onMarkerClicked={this.#onLocationSelected}
+        onSummaryClicked={this.#onLocationSelected}
+        onSummaryTabIdxChanged={this.#onSummaryTabIdxChanged}
       />
     );
   }
@@ -157,21 +149,21 @@ class MainView extends Component {
   /*
    * URL State
    */
-  _indexFromFile(file) {
-    for (var i = 0; i < this._indexedGroups.length; i++) {
-      const key = this._indexedGroups[i][0];
+  #indexFromFile(file) {
+    for (var i = 0; i < this.#indexedGroups.length; i++) {
+      const key = this.#indexedGroups[i][0];
       if (key === file) return i;
     }
     return -1;
   }
 
-  _fileFromIndex(idx) {
+  #fileFromIndex(idx) {
     if (idx < 0) return null;
-    if (this._indexedGroups[idx] == null) return null;
-    return this._indexedGroups[idx][0];
+    if (this.#indexedGroups[idx] == null) return null;
+    return this.#indexedGroups[idx][0];
   }
 
-  _updateUrl() {
+  #updateUrl = () => {
     const {
       selectedFile,
       selectedLocation,
@@ -181,7 +173,7 @@ class MainView extends Component {
     } = this.state;
 
     const state = {
-      selectedFileIdx: this._indexFromFile(selectedFile),
+      selectedFileIdx: this.#indexFromFile(selectedFile),
       selectedLocation,
       includeAllSeverities,
       selectedTabIdx,
@@ -189,13 +181,13 @@ class MainView extends Component {
     };
     try {
       history.pushState(state, 'deopt', urlFromState(state));
-    } catch (e) {
+    } catch {
       // some browsers like Safari block this in the name of security
       // if we opened the index file directly, i.e. the page isn't served
     }
-  }
+  };
 
-  _restoreStateFromHistory(e) {
+  #restoreStateFromHistory = () => {
     if (history.state == null) return null;
 
     let {
@@ -207,7 +199,7 @@ class MainView extends Component {
     } = history.state;
     if (selectedLocation === '') selectedLocation = null;
 
-    const selectedFile = this._fileFromIndex(selectedFileIdx);
+    const selectedFile = this.#fileFromIndex(selectedFileIdx);
     const override = {
       includeAllSeverities,
       selectedFile,
@@ -217,9 +209,9 @@ class MainView extends Component {
     };
 
     this.setState(Object.assign(this.state, override));
-  }
+  };
 
-  _stateFromUrl() {
+  #stateFromUrl() {
     const state = stateFromUrl();
     if (state == null) return null;
     const {
@@ -229,7 +221,7 @@ class MainView extends Component {
       selectedTabIdx,
       selectedSummaryTabIdx,
     } = state;
-    const selectedFile = this._fileFromIndex(selectedFileIdx);
+    const selectedFile = this.#fileFromIndex(selectedFileIdx);
     return {
       selectedFile,
       selectedLocation,
@@ -242,41 +234,41 @@ class MainView extends Component {
   /*
    * Events
    */
-  _ontabHeaderClicked(idx) {
+  #onTabHeaderClicked(idx) {
     this.setState(
       Object.assign(this.state, { selectedTabIdx: idx }),
-      this._updateUrl,
+      this.#updateUrl,
     );
   }
 
-  _onlocationSelected(id) {
+  #onLocationSelected = (id) => {
     this.setState(
       Object.assign(this.state, {
         selectedLocation: id,
         locationSeq: this.state.locationSeq + 1,
       }),
-      this._updateUrl,
+      this.#updateUrl,
     );
-  }
+  };
 
-  _onsummaryTabIdxChanged(idx) {
+  #onSummaryTabIdxChanged = (idx) => {
     this.setState(
       Object.assign(this.state, { selectedSummaryTabIdx: idx }),
-      this._updateUrl,
+      this.#updateUrl,
     );
-  }
+  };
 
-  _onincludeAllSeveritiesChanged(includeAllSeverities) {
+  #onIncludeAllSeveritiesChanged = (includeAllSeverities) => {
     this.setState(
       Object.assign(this.state, {
         includeAllSeverities,
         selectedLocation: null,
       }),
-      this._updateUrl,
+      this.#updateUrl,
     );
-  }
+  };
 
-  _onFileClicked(file) {
+  #onFileClicked = (file) => {
     this.setState(
       Object.assign(this.state, {
         selectedFile: file,
@@ -284,9 +276,9 @@ class MainView extends Component {
         // auto open details view when file is selected
         selectedTabIdx: DETAILS_TAB_IDX,
       }),
-      this._updateUrl,
+      this.#updateUrl,
     );
-  }
+  };
 }
 
 function reviveGroups(payload) {
