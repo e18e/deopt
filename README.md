@@ -17,6 +17,10 @@ npx @e18e/deopt foo.js
 npx @e18e/deopt [options] <script.js> [-- <args>]
 ```
 
+## Prior art
+
+This was originally forked from [deoptigate](https://github.com/thlorenz/deoptigate) and heavily reworked. Huge thanks to [@thlorenz](https://github.com/thlorenz) for the original work and inspiration.
+
 ## License
 
 MIT

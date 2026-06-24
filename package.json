@@ -8,6 +8,7 @@
   "description": "Investigates v8/Node.js function deoptimizations.",
   "type": "module",
   "scripts": {
+    "copy-license": "for d in packages/*/; do cp LICENSE \"$d/LICENSE\"; done",
     "update-v8-tools": "node scripts/update-v8-tools.mjs"
   },
   "repository": {
