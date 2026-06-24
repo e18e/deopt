@@ -1,21 +1,28 @@
 {
-  "name": "@e18e/deopt-monorepo",
+  "name": "@e18e/deopt-app",
   "version": "0.0.0-dev",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "description": "Investigates v8/Node.js function deoptimizations.",
   "type": "module",
+  "files": [
+    "build/",
+    "static/"
+  ],
   "scripts": {
-    "update-v8-tools": "node scripts/update-v8-tools.mjs"
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/e18e/deopt.git"
   },
   "homepage": "https://github.com/e18e/deopt",
-  "dependencies": {
+  "devDependencies": {
+    "@e18e/deopt-shared": "0.0.0-dev",
+    "@preact/preset-vite": "^2.10.5",
+    "open-props": "^1.7.23",
+    "preact": "^10.29.2",
+    "vite": "^8.1.0"
   },
   "keywords": [],
   "author": "James Garbutt (https://github.com/43081j)",

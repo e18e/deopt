@@ -1,14 +1,15 @@
 {
-  "name": "@e18e/deopt-monorepo",
+  "name": "@e18e/deopt",
   "version": "0.0.0-dev",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "description": "Investigates v8/Node.js function deoptimizations.",
   "type": "module",
+  "bin": "bin/deopt",
+  "files": [
+    "bin/",
+    "lib/"
+  ],
   "scripts": {
-    "update-v8-tools": "node scripts/update-v8-tools.mjs"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,13 @@
   },
   "homepage": "https://github.com/e18e/deopt",
   "dependencies": {
+    "@e18e/deopt-app": "0.0.0-dev",
+    "@e18e/deopt-processor": "0.0.0-dev",
+    "@e18e/deopt-shared": "0.0.0-dev",
+    "files-provider": "~0.2.0",
+    "h3": "^2.0.1-rc.22",
+    "shiki": "^4.2.0",
+    "tiny-open": "^1.3.0"
   },
   "keywords": [],
   "author": "James Garbutt (https://github.com/43081j)",

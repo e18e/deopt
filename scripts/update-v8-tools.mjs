@@ -17,7 +17,7 @@ const FILES = [
 ]
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const destDir = path.join(__dirname, '..', 'lib', 'vendor', 'v8-tools')
+const destDir = path.join(__dirname, '..', 'packages', 'processor', 'lib', 'vendor', 'v8-tools')
 
 await mkdir(destDir, { recursive: true })
 
