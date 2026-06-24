@@ -52,10 +52,10 @@ function renderTokens(lines, markerResolver) {
       const mark = content => (
         <a
           href='#'
-          id={`code-location-${marker.id}`}
           class={className}
           data-markerid={marker.id}
           data-markertype={marker.kind}
+          data-code-locations={marker.ids.join(' ')}
           style={style}>{content}</a>
       )
       if (to < from) {
@@ -93,7 +93,7 @@ export class CodeView extends Component {
   _maybeScrollIntoView() {
     const { selectedLocation } = this.props
     if (selectedLocation == null) return
-    const code = document.getElementById(`code-location-${selectedLocation}`)
+    const code = document.querySelector(`[data-code-locations~="${selectedLocation}"]`)
     if (code == null) return
     const { top, bottom } = code.getBoundingClientRect()
     const inView = top >= 0 && bottom <= window.innerHeight
@@ -106,7 +106,7 @@ export class CodeView extends Component {
     if (locationSeq === this._focusSeq) return
     this._focusSeq = locationSeq
     if (selectedLocation == null) return
-    const marker = document.getElementById(`code-location-${selectedLocation}`)
+    const marker = document.querySelector(`[data-code-locations~="${selectedLocation}"]`)
     if (marker == null) return
     const line = marker.closest('.line')
     if (line == null) return

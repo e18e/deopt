@@ -78,18 +78,20 @@ export class MarkerResolver {
   // descriptor for the highest-severity marker, used to underline the code
   // range rather than insert a symbol. Returns null when nothing is anchored.
   resolveMarker(codeLocation) {
-    let best = null
-    for (const entry of this._collect(codeLocation)) {
-      if (best == null || entry.info.severity > best.info.severity) best = entry
+    const entries = this._collect(codeLocation)
+    if (entries.length === 0) return null
+    let best = entries[0]
+    for (const entry of entries) {
+      if (entry.info.severity > best.info.severity) best = entry
     }
-    if (best == null) return null
     const { info, kind } = best
     return {
         id       : info.id
       , kind
       , column   : info.column
       , severity : info.severity
-      , selected : this._selectedLocation === info.id
+      , selected : entries.some(e => this._selectedLocation === e.info.id)
+      , ids      : entries.map(e => e.info.id)
     }
   }
 
@@ -194,10 +196,10 @@ export class MarkerResolver {
       <a
         key={`${kind}-${info.id}`}
         href='#'
-        id={`code-location-${info.id}`}
         class={className}
         data-markerid={info.id}
-        data-markertype={kind}>{symbol}</a>
+        data-markertype={kind}
+        data-code-locations={info.id}>{symbol}</a>
     )
   }
 }
