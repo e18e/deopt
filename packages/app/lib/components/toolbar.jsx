@@ -1,27 +1,20 @@
-import { Component } from 'preact';
+import * as store from '../store.js';
 
-export class ToolbarView extends Component {
-  render() {
-    const { className = '' } = this.props;
-    return <div className={className}>{this.#renderSeverityOption()}</div>;
-  }
+export function ToolbarView({ className = '' }) {
+  const onToggle = (e) => {
+    store.setIncludeAllSeverities(e.target.checked);
+  };
 
-  #renderSeverityOption() {
-    const { includeAllSeverities } = this.props;
-    return (
+  return (
+    <div className={className}>
       <label className="option">
         Low Severities
         <input
           type="checkbox"
-          defaultChecked={!!includeAllSeverities}
-          onChange={this.#onIncludeAllSeveritiesToggled}
+          checked={store.includeAllSeverities.value}
+          onChange={onToggle}
         />
       </label>
-    );
-  }
-
-  #onIncludeAllSeveritiesToggled = () => {
-    const { onIncludeAllSeveritiesChanged, includeAllSeverities } = this.props;
-    onIncludeAllSeveritiesChanged(!includeAllSeverities);
-  };
+    </div>
+  );
 }

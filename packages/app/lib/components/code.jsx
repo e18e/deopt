@@ -1,5 +1,6 @@
 import { Component } from 'preact';
 
+import * as store from '../store.js';
 import { MarkerResolver } from '../rendering/marker-resolver.jsx';
 import { markOnly } from '../rendering/mark-only.jsx';
 
@@ -89,12 +90,12 @@ export class CodeView extends Component {
     super(props);
     this.#tokens = null;
     this.#tokenizedCode = null;
-    this.#focusSeq = props.locationSeq;
+    this.#focusSeq = store.locationSeq.value;
     this.#focusAnimation = null;
   }
 
   #maybeScrollIntoView() {
-    const { selectedLocation } = this.props;
+    const selectedLocation = store.selectedLocation.value;
     if (selectedLocation == null) return;
     const code = document.querySelector(
       `[data-code-locations~="${selectedLocation}"]`,
@@ -107,7 +108,8 @@ export class CodeView extends Component {
   }
 
   #maybeFocusLine() {
-    const { selectedLocation, locationSeq } = this.props;
+    const selectedLocation = store.selectedLocation.value;
+    const locationSeq = store.locationSeq.value;
     if (locationSeq === this.#focusSeq) return;
     this.#focusSeq = locationSeq;
     if (selectedLocation == null) return;
@@ -146,16 +148,6 @@ export class CodeView extends Component {
     this.#maybeFocusLine();
   }
 
-  shouldComponentUpdate(nextProps) {
-    const props = this.props;
-    return (
-      props.code !== nextProps.code ||
-      props.selectedLocation !== nextProps.selectedLocation ||
-      props.locationSeq !== nextProps.locationSeq ||
-      props.includeAllSeverities !== nextProps.includeAllSeverities
-    );
-  }
-
   render() {
     const { className = '' } = this.props;
     return (
@@ -166,16 +158,8 @@ export class CodeView extends Component {
   }
 
   #makeMarkerResolver() {
-    const {
-      ics,
-      deopts,
-      codes,
-      icLocations,
-      deoptLocations,
-      codeLocations,
-      selectedLocation,
-      includeAllSeverities,
-    } = this.props;
+    const { ics, deopts, codes, icLocations, deoptLocations, codeLocations } =
+      store.currentGroup.value;
     return new MarkerResolver({
       deopts,
       deoptLocations,
@@ -183,13 +167,14 @@ export class CodeView extends Component {
       icLocations,
       codes,
       codeLocations,
-      selectedLocation,
-      includeAllSeverities,
+      selectedLocation: store.selectedLocation.value,
+      includeAllSeverities: store.includeAllSeverities.value,
     });
   }
 
   async #loadTokens() {
-    const { fileName, code } = this.props;
+    const fileName = store.selectedFile.value;
+    const { src: code } = store.currentGroup.value;
     if (code.length > MAX_HIGHLIGHT_LEN) return;
     if (this.#tokenizedCode === code) return;
     this.#tokenizedCode = code;
@@ -208,7 +193,7 @@ export class CodeView extends Component {
   }
 
   #renderCode() {
-    const { code } = this.props;
+    const { src: code } = store.currentGroup.value;
     const highlight =
       code.length <= MAX_HIGHLIGHT_LEN &&
       this.#tokens != null &&
@@ -238,7 +223,6 @@ export class CodeView extends Component {
   }
 
   #onMarkerClicked = (id, type) => {
-    const { onMarkerClicked } = this.props;
-    onMarkerClicked(id, type);
+    store.selectMarker(id, type);
   };
 }

@@ -23,6 +23,7 @@
   "devDependencies": {
     "@e18e/deopt-shared": "0.0.0-dev",
     "@preact/preset-vite": "^2.10.5",
+    "@preact/signals": "^2.9.2",
     "open-props": "^1.7.23",
     "preact": "^10.29.2",
     "vite": "^8.1.0"
