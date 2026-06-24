@@ -1,16 +1,15 @@
 import { Component } from 'preact';
 
 import { MIN_SEVERITY } from '@e18e/deopt-shared';
+import * as store from '../store.js';
+
+const { OPT_TAB_IDX, DEOPT_TAB_IDX, ICS_TAB_IDX } = store;
 
 const severityClassNames = ['green i', 'blue', 'red b'];
 
-const OPT_TAB_IDX = 0;
-const DEOPT_TAB_IDX = 1;
-const ICS_TAB_IDX = 2;
-
 export class SummaryView extends Component {
   #maybeScrollIntoView() {
-    const { selectedLocation } = this.props;
+    const selectedLocation = store.selectedLocation.value;
     if (selectedLocation == null) return;
     const summary = document.getElementById(
       `summary-location-${selectedLocation}`,
@@ -31,16 +30,10 @@ export class SummaryView extends Component {
   }
 
   render() {
-    const {
-      className = '',
-      ics,
-      icLocations,
-      deopts,
-      deoptLocations,
-      codes,
-      codeLocations,
-      selectedTabIdx,
-    } = this.props;
+    const { className = '' } = this.props;
+    const { ics, icLocations, deopts, deoptLocations, codes, codeLocations } =
+      store.currentGroup.value;
+    const selectedTabIdx = store.selectedSummaryTabIdx.value;
     const renderedDeopts = this.#renderDeopts(
       deopts,
       deoptLocations,
@@ -77,7 +70,7 @@ export class SummaryView extends Component {
    */
 
   #renderTabHeader(label, idx) {
-    const { selectedTabIdx } = this.props;
+    const selectedTabIdx = store.selectedSummaryTabIdx.value;
     const selected = idx === selectedTabIdx;
     const className = selected ? 'tab selected' : 'tab';
 
@@ -93,7 +86,9 @@ export class SummaryView extends Component {
   }
 
   #renderDataPoint(data, locations, renderDetails) {
-    const { selectedLocation, includeAllSeverities, relativePath } = this.props;
+    const selectedLocation = store.selectedLocation.value;
+    const includeAllSeverities = store.includeAllSeverities.value;
+    const { relativePath } = store.currentGroup.value;
     if (locations.length === 0) return <p className="summary-empty">None</p>;
     const rendered = [];
     for (const loc of locations) {
@@ -264,22 +259,10 @@ export class SummaryView extends Component {
    * Events
    */
   #onTabHeaderClicked(idx) {
-    const { onTabHeaderClicked } = this.props;
-    onTabHeaderClicked(idx);
+    store.selectSummaryTab(idx);
   }
 
   #onSummaryClicked(id) {
-    const { onSummaryClicked } = this.props;
-    onSummaryClicked(id);
-  }
-
-  static get OPT_TAB_IDX() {
-    return OPT_TAB_IDX;
-  }
-  static get DEOPT_TAB_IDX() {
-    return DEOPT_TAB_IDX;
-  }
-  static get ICS_TAB_IDX() {
-    return ICS_TAB_IDX;
+    store.selectLocation(id);
   }
 }
