@@ -1,5 +1,11 @@
 # @e18e/deopt
 
+## 0.1.2
+
+### Patch Changes
+
+- bf77e27: Fix the scrolling of left/right and lower the severity of regular warm ups.
+
 ## 0.1.1
 
 ### Patch Changes
