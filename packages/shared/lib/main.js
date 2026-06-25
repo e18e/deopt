@@ -77,6 +77,10 @@ export function tipForDiagnostic({ kind, info }) {
         return 'The optimized code expected a small integer (Smi) here but got something else, such as a floating-point number or an integer too large to fit, so it had to deoptimize. Keep this value a small integer where you can, and avoid mixing integers with doubles at this spot.';
       case 'not a Number':
         return 'The optimized code expected a number here but got a non-numeric value, such as a string, object, or undefined, so it had to deoptimize. Keep the type of this value consistent so V8 can rely on it being a number.';
+      case 'wrong call target':
+        return 'The function called here varied too much for V8 to keep the call site specialized, so it had to deoptimize. This happens when the callee changes, such as a method that resolves to different implementations or a reference that holds different functions over time. Keep this call site invoking the same function so V8 can rely on the target.';
+      case 'wrong map':
+        return 'The optimized code was specialized for objects of one shape here, but got an object with a different shape, so it had to deoptimize. Keep the objects reaching this line consistent (the same properties added in the same order) so V8 can rely on their shape.';
     }
   }
   return null;

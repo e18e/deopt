@@ -39,6 +39,9 @@ function unquote(s) {
   return s.replace(/^"/, '').replace(/"$/, '');
 }
 
+const NON_ACTIONABLE_REASON_RE =
+  /^Insufficient type feedback|^exit from OSR'd inner loop$|^prepare for on stack replacement \(OSR\)$/;
+
 export class DeoptEntry {
   constructor(fnFile, file, line, column) {
     const parts = fnFile.split(' ');
@@ -63,7 +66,9 @@ export class DeoptEntry {
     deoptReason = unquote(deoptReason);
 
     const inlined = inliningId !== -1;
-    const severity = getSeverity(bailoutType);
+    const severity = NON_ACTIONABLE_REASON_RE.test(deoptReason)
+      ? MIN_SEVERITY
+      : getSeverity(bailoutType);
 
     this.updates.push({
       timestamp,

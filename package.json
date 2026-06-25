@@ -8,6 +8,7 @@
   "description": "Investigates v8/Node.js function deoptimizations.",
   "type": "module",
   "scripts": {
+    "build": "npm run --workspaces --if-present build",
     "copy-license": "for d in packages/*/; do cp LICENSE \"$d/LICENSE\"; done",
     "lint:js": "oxlint packages scripts",
     "lint:format": "oxfmt --check packages scripts",

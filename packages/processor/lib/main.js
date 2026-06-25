@@ -4,6 +4,7 @@ import {
   nameOptimizationState,
   parseOptimizationState,
   severityOfOptimizationState,
+  optimizationTier,
 } from './log-processing/optimization-state.js';
 
 export async function processLogContent(lines, root) {
@@ -23,4 +24,5 @@ export {
   nameOptimizationState,
   parseOptimizationState,
   severityOfOptimizationState,
+  optimizationTier,
 };
