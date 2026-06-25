@@ -24,12 +24,9 @@ const LANG_BY_EXT = {
   tsx: 'tsx',
 };
 
-const appRoot = new URL(
-  './',
-  import.meta.resolve('@e18e/deopt-app/package.json'),
-);
+const appRoot = new URL('app/', import.meta.url);
 const indexHtml = new URL('static/index.html', appRoot);
-const buildDir = new URL('build/', appRoot);
+const buildDir = new URL('dist/', appRoot);
 
 function langFromFileName(fileName) {
   const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
