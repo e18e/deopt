@@ -1,50 +1,44 @@
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
+import { basename } from 'node:path';
 import { mkdir, stat } from 'node:fs/promises';
 import { styleText } from 'node:util';
 
-function determineArgs(args) {
-  const dashIndex = args.indexOf('--');
-  if (dashIndex < 0) {
-    return { argv: args, extraExecArgv: [] };
-  }
-  // For now we ignore any args before the -- as those would be for our CLI
-  // We currently have no such flags.
-  const afterDashes = args.slice(dashIndex + 1);
+// Runtimes that accept the V8 logging flags we rely on. When the command leads
+// with one of these it's treated as the executable rather than the script.
+const runtimes = new Set(['node', 'd8']);
 
-  const first = afterDashes[0];
-  if (first == null) return { execArgv: [] };
+function determineArgs(tokens) {
+  const first = tokens[0];
+  const hasRuntime = first != null && runtimes.has(basename(first));
 
-  if (first[0] === '-') {
-    throw Error(
-      `The node binary must immediately follow the double dash (--)
-  npx @e18e/deopt -- node [nodeFlags] script.js [scriptFlags]
-    `,
-    );
-  }
-  const afterDashesArgs = afterDashes.slice(1);
+  const executable = hasRuntime ? first : undefined;
+  const rest = hasRuntime ? tokens.slice(1) : tokens;
 
-  // Piece together execArgv and argv in cases as
-  // {bin} -- node --allow-natives-syntax app.js --log
-  // to be: [ --allow-natives-syntax ] and [ app.js, --log ]
-  // Not super important as ispawn concatentates them anyways, but for correctness
+  // Split runtime flags from the script and its arguments, e.g.
+  // node --allow-natives-syntax app.js --log
+  // becomes execArgv: [ --allow-natives-syntax ] and argv: [ app.js, --log ]
   const extraExecArgv = [];
   const argv = [];
   let sawApp = false;
-
-  for (const arg of afterDashesArgs) {
-    if (sawApp) argv.push(arg);
-    if (!arg.startsWith('-')) {
+  for (const arg of rest) {
+    if (sawApp) {
+      argv.push(arg);
+    } else if (arg.startsWith('-')) {
+      extraExecArgv.push(arg);
+    } else {
       sawApp = true;
       argv.push(arg);
-      continue;
     }
-    extraExecArgv.push(arg);
   }
 
-  return first === 'node'
-    ? { argv, extraExecArgv }
-    : { argv, extraExecArgv, nodeExecutable: first };
+  const result = { argv, extraExecArgv };
+  // A bare `node` uses the current process executable; an explicit path or d8
+  // is spawned as given.
+  if (executable != null && executable !== 'node') {
+    result.nodeExecutable = executable;
+  }
+  return result;
 }
 
 function runNode({ node = process.execPath, execArgv, argv }) {
@@ -101,11 +95,14 @@ export async function createLog(args, head, simpleHead) {
   if (nodeExecutable != null) spawnArgs.node = nodeExecutable;
 
   const code = await runNode(spawnArgs);
-  const terminationMsg =
-    code == null
-      ? 'process was interrupted'
-      : 'process completed with code ' + code;
-  console.log(`\n${head} ${styleText('gray', terminationMsg)}`);
+  if (code !== 0) {
+    console.error(
+      `${head} ${styleText(
+        'red',
+        `process exited with code ${code}, logfile may be incomplete`,
+      )}`,
+    );
+  }
   console.log(
     `${simpleHead} ${styleText('gray', 'logfile written to ' + logFile)}`,
   );
