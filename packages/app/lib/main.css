@@ -125,18 +125,17 @@ body {
   border-bottom-color: var(--dracula-purple);
 }
 
-.toolbar-options {
-  margin-inline-start: auto;
+.settings-panel {
   display: flex;
-  align-items: center;
-  gap: var(--size-4);
+  flex-direction: column;
+  gap: var(--size-3);
 }
 
 .option {
   display: inline-flex;
   align-items: center;
-  gap: var(--size-1);
-  font-size: var(--font-size-0);
+  gap: var(--size-2);
+  font-size: var(--font-size-1);
   color: var(--text-2);
 }
 

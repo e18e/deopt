@@ -83,11 +83,20 @@ function FileRow({ file, relativePath, summary }) {
 export function FilesView({ className = '' }) {
   const groups = store.groups.value;
   const includeAllSeverities = store.includeAllSeverities.value;
+  const hideNodeModules = store.hideNodeModules.value;
 
   const files = Array.from(groups)
-    .map(([file, info]) => ({ file, summary: info.summary }))
+    .map(([file, info]) => ({
+      file,
+      summary: info.summary,
+      relativePath: info.relativePath,
+    }))
     .filter(
       ({ summary }) => includeAllSeverities || summary.hasCriticalSeverities,
+    )
+    .filter(
+      ({ relativePath }) =>
+        !hideNodeModules || !relativePath.includes('node_modules/'),
     )
     .sort(bySeverityScoreDesc);
 

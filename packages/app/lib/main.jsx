@@ -2,7 +2,7 @@ import { render } from 'preact';
 import './main.css';
 import * as store from './store.js';
 
-import { ToolbarView } from './components/toolbar.jsx';
+import { SettingsView } from './components/settings.jsx';
 import { FilesView } from './components/files.jsx';
 import { FileDetailsView } from './components/file-details.jsx';
 
@@ -39,12 +39,14 @@ function MainView() {
         <nav className="tabs">
           <TabHeader label="Files" idx={store.FILES_TAB_IDX} />
           <TabHeader label="Details" idx={store.DETAILS_TAB_IDX} />
+          <TabHeader label="Settings" idx={store.SETTINGS_TAB_IDX} />
         </nav>
-        <ToolbarView className="toolbar-options" />
       </header>
       <main className="content">
         {selectedTabIdx === store.FILES_TAB_IDX ? (
           <FilesView className="panel" />
+        ) : selectedTabIdx === store.SETTINGS_TAB_IDX ? (
+          <SettingsView className="panel settings-panel" />
         ) : (
           <Details />
         )}
