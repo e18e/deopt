@@ -1,5 +1,11 @@
 # @e18e/deopt
 
+## 0.1.1
+
+### Patch Changes
+
+- e6800c8: Fix publishing to be public.
+
 ## 0.1.0
 
 ### Minor Changes
