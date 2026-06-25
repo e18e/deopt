@@ -16,7 +16,6 @@ export function stateFromUrl() {
     selectedFileIdx: parseNum(params.get('selectedFileIdx')),
     selectedLocation: parseNum(params.get('selectedLocation')),
     selectedTabIdx: parseNum(params.get('selectedTabIdx')),
-    selectedSummaryTabIdx: parseNum(params.get('selectedSummaryTabIdx')),
   };
   return state;
 }

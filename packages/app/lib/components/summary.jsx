@@ -1,11 +1,11 @@
 import { Component } from 'preact';
 
-import { MIN_SEVERITY } from '@e18e/deopt-shared';
+import { describeDiagnostic } from '@e18e/deopt-shared';
 import * as store from '../store.js';
 
-const { OPT_TAB_IDX, DEOPT_TAB_IDX, ICS_TAB_IDX } = store;
-
 const severityClassNames = ['green i', 'blue', 'red b'];
+
+const severityTitles = ['low', 'medium', 'high'];
 
 export class SummaryView extends Component {
   #maybeScrollIntoView() {
@@ -31,129 +31,70 @@ export class SummaryView extends Component {
 
   render() {
     const { className = '' } = this.props;
-    const { ics, icLocations, deopts, deoptLocations, codes, codeLocations } =
-      store.currentGroup.value;
-    const selectedTabIdx = store.selectedSummaryTabIdx.value;
-    const renderedDeopts = this.#renderDeopts(
-      deopts,
-      deoptLocations,
-      selectedTabIdx === DEOPT_TAB_IDX,
-    );
-    const renderedIcs = this.#renderIcs(
-      ics,
-      icLocations,
-      selectedTabIdx === ICS_TAB_IDX,
-    );
-    const renderedCodes = this.#renderCodes(
-      codes,
-      codeLocations,
-      selectedTabIdx === OPT_TAB_IDX,
-    );
-    return (
-      <div className={className}>
-        <div className="tabs">
-          {this.#renderTabHeader('Optimizations', OPT_TAB_IDX)}
-          {this.#renderTabHeader('Deoptimizations', DEOPT_TAB_IDX)}
-          {this.#renderTabHeader('Inline Caches', ICS_TAB_IDX)}
+    const diagnostics = store.currentDiagnostics.value;
+    if (diagnostics.length === 0) {
+      return (
+        <div className={className}>
+          <p className="summary-empty">None</p>
         </div>
-        <div>
-          {renderedCodes}
-          {renderedDeopts}
-          {renderedIcs}
-        </div>
-      </div>
-    );
-  }
-
-  /*
-   * Tabs
-   */
-
-  #renderTabHeader(label, idx) {
-    const selectedTabIdx = store.selectedSummaryTabIdx.value;
-    const selected = idx === selectedTabIdx;
-    const className = selected ? 'tab selected' : 'tab';
-
-    return (
-      <a
-        className={className}
-        href="#"
-        onClick={() => this.#onTabHeaderClicked(idx)}
-      >
-        {label}
-      </a>
-    );
-  }
-
-  #renderDataPoint(data, locations, renderDetails) {
-    const selectedLocation = store.selectedLocation.value;
-    const includeAllSeverities = store.includeAllSeverities.value;
-    const { relativePath } = store.currentGroup.value;
-    if (locations.length === 0) return <p className="summary-empty">None</p>;
-    const rendered = [];
-    for (const loc of locations) {
-      const info = data.get(loc);
-      if (!includeAllSeverities && info.severity <= MIN_SEVERITY) continue;
-
-      const className =
-        selectedLocation === info.id ? 'summary-card selected' : 'summary-card';
-      rendered.push(
-        <div className={className} key={info.id}>
-          {this.#summary(info, relativePath)}
-          {renderDetails(info)}
-        </div>,
       );
     }
-    return rendered;
-  }
-
-  #renderIcs(ics, icLocations, selected) {
-    if (ics == null || !selected) return null;
     return (
-      <div key="ics">
-        {this.#renderDataPoint(ics, icLocations, this.#renderIc)}
+      <div className={className}>
+        {diagnostics.map(({ kind, info }) =>
+          this.#renderDiagnostic(kind, info),
+        )}
       </div>
     );
   }
 
-  #renderDeopts(deopts, deoptLocations, selected) {
-    if (deopts == null || !selected) return null;
+  #renderDiagnostic(kind, info) {
+    const selected = store.selectedLocation.value === info.id;
+    const className = selected ? 'summary-card selected' : 'summary-card';
     return (
-      <div key="deopts">
-        {this.#renderDataPoint(deopts, deoptLocations, this.#renderDeopt)}
+      <div
+        className={className}
+        key={kind + ':' + info.id}
+        id={'summary-location-' + info.id}
+      >
+        {this.#summary(kind, info, selected)}
+        {selected ? this.#renderDetails(kind, info) : null}
       </div>
     );
   }
 
-  #renderCodes(codes, codeLocations, selected) {
-    if (codes == null || !selected) return null;
-    return (
-      <div key="optimizations">
-        {this.#renderDataPoint(codes, codeLocations, this.#renderCode)}
-      </div>
-    );
-  }
-
-  #summary(info, relativePath) {
-    const { id, functionName, line, column } = info;
-    const locationEl = <span className="summary-location">{id}</span>;
+  #summary(kind, info, selected) {
+    const { id, functionName, line, column, severity, updates } = info;
+    const count = updates.length;
     const onClicked = (e) => {
       e.preventDefault();
-      e.stopPropagation();
-      this.#onSummaryClicked(id);
+      this.#onSummaryClicked(selected ? null : id);
     };
-
-    const fullLoc = (
-      <a href="#" className="summary-link" onClick={onClicked}>
-        {functionName} at {relativePath}:{line}:{column}
+    return (
+      <a href="#" className="summary-row" onClick={onClicked}>
+        <span
+          className={`summary-severity sev-${severity}`}
+          title={severityTitles[severity - 1]}
+          aria-label={severityTitles[severity - 1]}
+        >
+          ●
+        </span>
+        <span className="summary-pos">
+          L{line}:{column}
+        </span>
+        <span className="summary-kind">
+          {describeDiagnostic({ kind, info })}
+        </span>
+        <span className="summary-link">{functionName}</span>
+        {count > 1 ? <span className="summary-count">×{count}</span> : null}
       </a>
     );
-    return (
-      <div id={'summary-location-' + id}>
-        {locationEl}
-        {fullLoc}
-      </div>
-    );
+  }
+
+  #renderDetails(kind, info) {
+    if (kind === 'deopt') return this.#renderDeopt(info);
+    if (kind === 'ic') return this.#renderIc(info);
+    return this.#renderCode(info);
   }
 
   #renderDeopt = (info) => {
@@ -258,10 +199,6 @@ export class SummaryView extends Component {
   /*
    * Events
    */
-  #onTabHeaderClicked(idx) {
-    store.selectSummaryTab(idx);
-  }
-
   #onSummaryClicked(id) {
     store.selectLocation(id);
   }
