@@ -1,4 +1,5 @@
 import { highestSeverity, lowestSeverity } from '@e18e/deopt-shared';
+import { optimizationTier } from '@e18e/deopt-processor';
 const SEVERITY_2_FACTOR = 10;
 const SEVERITY_3_FACTOR = 30;
 
@@ -25,9 +26,17 @@ export function summarizeFile({ ics, deopts, codes }) {
   for (const codeVector of codes.values()) {
     const { updates } = codeVector;
     let hs = lowestSeverity(updates);
-    // if there are lots of updates that means the function was optimized a lot
-    // which could point to an issue
-    if (updates.length > 3) hs = Math.max(hs, 3);
+    // Here we flag if optimization tiers dropped or if we're churning,
+    // i.e. re-optimizing the same code at the same level multiple times.
+    let maxTier = -1;
+    let churn = 0;
+    for (const { state } of updates) {
+      const tier = optimizationTier(state);
+      if (tier === -1) continue;
+      if (tier > maxTier) maxTier = tier;
+      else churn++;
+    }
+    if (churn > 0) hs = Math.max(hs, churn > 2 ? 3 : 2);
     codeSeverities[hs]++;
     codeVector.severity = hs;
     addLastCodeState(codeStates, updates);
