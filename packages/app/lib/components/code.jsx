@@ -24,10 +24,12 @@ function wordRange(line, markerColumn) {
   return [start + 1, end + 1];
 }
 
-function renderTokens(lines, markerResolver) {
+function renderTokens(lines, markerResolver, selectedLine) {
   const totalDigits = String(lines.length).length;
   return lines.map((tokens, i) => {
     const lineno = i + 1;
+    const linenoClassName =
+      lineno === selectedLine ? 'lineno selected' : 'lineno';
     const line = tokens.map((t) => t.content).join('');
     const parts = [];
     let column = 0;
@@ -73,7 +75,9 @@ function renderTokens(lines, markerResolver) {
     }
     return (
       <div class="line" key={lineno}>
-        <span>{String(lineno).padStart(totalDigits)}: </span>
+        <span class={linenoClassName}>
+          {String(lineno).padStart(totalDigits)}:{' '}
+        </span>
         <span>{parts}</span>
       </div>
     );
@@ -104,20 +108,16 @@ export class CodeView extends Component {
     const { top, bottom } = code.getBoundingClientRect();
     const inView = top >= 0 && bottom <= window.innerHeight;
     if (inView) return;
-    code.scrollIntoView({ behavior: 'smooth' });
+    code.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   #maybeFocusLine() {
-    const selectedLocation = store.selectedLocation.value;
     const locationSeq = store.locationSeq.value;
     if (locationSeq === this.#focusSeq) return;
     this.#focusSeq = locationSeq;
-    if (selectedLocation == null) return;
-    const marker = document.querySelector(
-      `[data-code-locations~="${selectedLocation}"]`,
-    );
-    if (marker == null) return;
-    const line = marker.closest('.line');
+    const selectedLine = store.selectedLine.value;
+    if (selectedLine == null) return;
+    const line = this.base?.querySelectorAll('.line')[selectedLine - 1];
     if (line == null) return;
     // Filth. Needed to cancel animations if you click too fast
     const color = getComputedStyle(line).getPropertyValue('--surface-4');
@@ -194,6 +194,7 @@ export class CodeView extends Component {
 
   #renderCode() {
     const { src: code } = store.currentGroup.value;
+    const selectedLine = store.selectedLine.value;
     const highlight =
       code.length <= MAX_HIGHLIGHT_LEN &&
       this.#tokens != null &&
@@ -202,7 +203,11 @@ export class CodeView extends Component {
       try {
         return (
           <div class="pre">
-            {renderTokens(this.#tokens, this.#makeMarkerResolver())}
+            {renderTokens(
+              this.#tokens,
+              this.#makeMarkerResolver(),
+              selectedLine,
+            )}
           </div>
         );
       } catch {
@@ -210,7 +215,7 @@ export class CodeView extends Component {
       }
     }
     try {
-      return markOnly(code, this.#makeMarkerResolver());
+      return markOnly(code, this.#makeMarkerResolver(), selectedLine);
     } catch {
       // Even marking only failed, just show the code :(
       return (

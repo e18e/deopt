@@ -26,6 +26,19 @@ export const currentDiagnostics = computed(() =>
   }),
 );
 
+export const selectedLine = computed(() => {
+  const id = selectedLocation.value;
+  const group = currentGroup.value;
+  if (id == null || group == null) return null;
+  for (const map of [group.deopts, group.ics, group.codes]) {
+    if (map == null) continue;
+    for (const info of map.values()) {
+      if (info.id === id) return info.line;
+    }
+  }
+  return null;
+});
+
 function indexFromFile(file) {
   const arr = indexedGroups.value;
   for (let i = 0; i < arr.length; i++) {

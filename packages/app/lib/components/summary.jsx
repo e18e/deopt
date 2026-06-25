@@ -1,6 +1,6 @@
 import { Component } from 'preact';
 
-import { describeDiagnostic } from '@e18e/deopt-shared';
+import { describeDiagnostic, tipForDiagnostic } from '@e18e/deopt-shared';
 import * as store from '../store.js';
 
 const severityClassNames = ['green i', 'blue', 'red b'];
@@ -92,9 +92,24 @@ export class SummaryView extends Component {
   }
 
   #renderDetails(kind, info) {
-    if (kind === 'deopt') return this.#renderDeopt(info);
-    if (kind === 'ic') return this.#renderIc(info);
-    return this.#renderCode(info);
+    const tip = tipForDiagnostic({ kind, info });
+    let table;
+    if (kind === 'deopt') table = this.#renderDeopt(info);
+    else if (kind === 'ic') table = this.#renderIc(info);
+    else table = this.#renderCode(info);
+    return (
+      <>
+        {tip != null ? (
+          <p className="summary-tip">
+            <span className="summary-tip-icon" aria-hidden="true">
+              ⓘ
+            </span>
+            {tip}
+          </p>
+        ) : null}
+        {table}
+      </>
+    );
   }
 
   #renderDeopt = (info) => {

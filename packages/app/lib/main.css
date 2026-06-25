@@ -133,7 +133,7 @@ body {
   width: 100%;
   background: transparent;
   border: 0;
-  font-size: var(--font-size-0);
+  font-size: var(--font-size-1);
 }
 
 .files-table td,
@@ -160,7 +160,7 @@ body {
 .subhead {
   background: var(--surface-3);
   color: var(--text-2);
-  font-size: var(--font-size-0);
+  font-size: var(--font-size-1);
   font-weight: var(--font-weight-5);
   text-align: center;
   padding: var(--size-1) var(--size-2);
@@ -268,7 +268,7 @@ body {
 
 .code-view {
   font-family: var(--font-mono);
-  font-size: var(--font-size-0);
+  font-size: var(--font-size-1);
 }
 
 .code-view .pre {
@@ -306,6 +306,17 @@ body {
   background: color-mix(in srgb, var(--dracula-purple) 30%, transparent);
   box-shadow: inset 0 0 0 var(--border-size-1) var(--dracula-purple);
   border-radius: var(--radius-1);
+}
+
+.code-view .lineno {
+  color: var(--text-2);
+}
+
+.code-view .lineno.selected {
+  color: var(--dracula-purple);
+  font-weight: var(--font-weight-7);
+  background: color-mix(in srgb, var(--dracula-purple) 22%, transparent);
+  box-shadow: none;
 }
 
 /*
@@ -377,6 +388,22 @@ body {
   margin-inline-start: auto;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+
+.summary-tip {
+  margin-block: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  border-inline-start: var(--border-size-2) solid var(--dracula-cyan);
+  border-radius: var(--radius-1);
+  background: color-mix(in srgb, var(--dracula-cyan) 12%, transparent);
+  color: var(--text-1);
+  font-size: var(--font-size-1);
+}
+
+.summary-tip-icon {
+  color: var(--dracula-cyan);
+  font-weight: var(--font-weight-7);
+  margin-inline-end: var(--size-2);
 }
 
 .summary-card table {

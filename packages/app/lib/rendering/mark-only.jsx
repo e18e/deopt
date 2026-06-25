@@ -42,7 +42,7 @@ function processLine(line, markerResolver, next, lineno) {
   return { nodes, nextLocation: next };
 }
 
-export function markOnly(code, markerResolver) {
+export function markOnly(code, markerResolver, selectedLine) {
   const lines = code.split('\n');
   const len = lines.length;
   const totalDigits = String(len).length;
@@ -58,9 +58,13 @@ export function markOnly(code, markerResolver) {
       nodes = res.nodes;
       next = res.nextLocation;
     }
+    const linenoClassName =
+      lineno + 1 === selectedLine ? 'lineno selected' : 'lineno';
     rows.push(
       <div class="line" key={lineno}>
-        <span>{String(lineno + 1).padStart(totalDigits)}: </span>
+        <span class={linenoClassName}>
+          {String(lineno + 1).padStart(totalDigits)}:{' '}
+        </span>
         <span>{nodes}</span>
       </div>,
     );
