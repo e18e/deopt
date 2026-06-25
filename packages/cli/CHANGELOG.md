@@ -1,5 +1,11 @@
 # @e18e/deopt
 
+## 0.2.0
+
+### Minor Changes
+
+- 8b25918: Rework the CLI to behave more like a CLI.
+
 ## 0.1.2
 
 ### Patch Changes
