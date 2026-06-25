@@ -1,6 +1,6 @@
 {
   "name": "@e18e/deopt",
-  "version": "0.0.0-dev",
+  "version": "0.0.0",
   "description": "Investigates v8/Node.js function deoptimizations.",
   "keywords": [],
   "homepage": "https://github.com/e18e/deopt",
@@ -27,9 +27,9 @@
     "tiny-open": "^1.3.0"
   },
   "devDependencies": {
-    "@e18e/deopt-app": "0.0.0-dev",
-    "@e18e/deopt-processor": "0.0.0-dev",
-    "@e18e/deopt-shared": "0.0.0-dev",
+    "@e18e/deopt-app": "0.0.0",
+    "@e18e/deopt-processor": "0.0.0",
+    "@e18e/deopt-shared": "0.0.0",
     "tsdown": "^0.22.3"
   },
   "engine": {
