@@ -138,8 +138,8 @@ export class CodeView extends Component {
     if (marker == null) return;
     event.preventDefault();
     event.stopPropagation();
-    const { markerid, markertype } = marker.dataset;
-    this.#onMarkerClicked(parseInt(markerid), markertype);
+    const { markerid } = marker.dataset;
+    this.#onMarkerClicked(parseInt(markerid));
   };
 
   componentDidUpdate() {
@@ -222,7 +222,7 @@ export class CodeView extends Component {
     }
   }
 
-  #onMarkerClicked = (id, type) => {
-    store.selectMarker(id, type);
+  #onMarkerClicked = (id) => {
+    store.selectMarker(id);
   };
 }

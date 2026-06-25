@@ -325,19 +325,58 @@ body {
   border-color: var(--dracula-purple);
 }
 
-.summary-location {
+.summary-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-2);
+  text-decoration: none;
+  color: var(--text-1);
+}
+
+.summary-severity {
+  font-size: var(--font-size-0);
+  line-height: 1;
+}
+
+.summary-severity.sev-1 {
+  color: var(--dracula-green);
+}
+
+.summary-severity.sev-2 {
+  color: var(--dracula-yellow);
+}
+
+.summary-severity.sev-3 {
+  color: var(--dracula-red);
+}
+
+.summary-pos {
   color: var(--dracula-cyan);
-  margin-inline-end: var(--size-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+}
+
+.summary-kind {
+  font-weight: var(--font-weight-7);
 }
 
 .summary-link {
-  color: var(--text-1);
+  color: var(--text-2);
   font-style: italic;
   text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.summary-link:hover {
+.summary-row:hover .summary-link {
   text-decoration: underline;
+}
+
+.summary-count {
+  margin-inline-start: auto;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
 }
 
 .summary-card table {

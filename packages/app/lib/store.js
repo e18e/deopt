@@ -1,18 +1,14 @@
 import { signal, computed, effect } from '@preact/signals';
+import { listDiagnostics } from '@e18e/deopt-shared';
 import { urlFromState, stateFromUrl } from './query-state.js';
 
 export const FILES_TAB_IDX = 0;
 export const DETAILS_TAB_IDX = 1;
 
-export const OPT_TAB_IDX = 0;
-export const DEOPT_TAB_IDX = 1;
-export const ICS_TAB_IDX = 2;
-
 export const groups = signal(new Map());
 export const selectedFile = signal(null);
 export const selectedLocation = signal(null);
 export const locationSeq = signal(0);
-export const selectedSummaryTabIdx = signal(OPT_TAB_IDX);
 export const includeAllSeverities = signal(false);
 export const selectedTabIdx = signal(FILES_TAB_IDX);
 
@@ -23,6 +19,12 @@ export const currentGroup = computed(() => {
   if (file == null) return null;
   return groups.value.get(file) ?? null;
 });
+
+export const currentDiagnostics = computed(() =>
+  listDiagnostics(currentGroup.value, {
+    includeAllSeverities: includeAllSeverities.value,
+  }),
+);
 
 function indexFromFile(file) {
   const arr = indexedGroups.value;
@@ -57,24 +59,13 @@ export function selectTab(idx) {
   selectedTabIdx.value = idx;
 }
 
-export function selectSummaryTab(idx) {
-  selectedSummaryTabIdx.value = idx;
-}
-
 export function setIncludeAllSeverities(value) {
   includeAllSeverities.value = value;
   selectedLocation.value = null;
 }
 
-export function selectMarker(id, type) {
-  const tabIdx =
-    type === 'code'
-      ? OPT_TAB_IDX
-      : type === 'deopt'
-        ? DEOPT_TAB_IDX
-        : ICS_TAB_IDX;
+export function selectMarker(id) {
   selectLocation(id);
-  selectedSummaryTabIdx.value = tabIdx;
 }
 
 /*
@@ -89,9 +80,6 @@ function applyState(state) {
   }
   if (state.selectedTabIdx != null) {
     selectedTabIdx.value = state.selectedTabIdx;
-  }
-  if (state.selectedSummaryTabIdx != null) {
-    selectedSummaryTabIdx.value = state.selectedSummaryTabIdx;
   }
 }
 
@@ -115,7 +103,6 @@ export function initHistorySync() {
       selectedLocation: selectedLocation.value,
       includeAllSeverities: includeAllSeverities.value,
       selectedTabIdx: selectedTabIdx.value,
-      selectedSummaryTabIdx: selectedSummaryTabIdx.value,
     };
     // popstate already reflects this state in history; don't push it back
     if (restoring) return;
