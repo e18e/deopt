@@ -59,6 +59,25 @@ body {
   padding: var(--size-3);
 }
 
+.details-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-subtitle {
+  padding: var(--size-2) var(--size-3);
+  background: var(--surface-2);
+  border-bottom: var(--border-size-1) solid var(--surface-4);
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .details-panel {
   flex: 1;
   min-height: 0;
@@ -264,6 +283,41 @@ body {
   min-height: 0;
   overflow: auto;
   padding: var(--size-3);
+}
+
+.summary-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  margin-block-end: var(--size-3);
+  font-size: var(--font-size-0);
+  color: var(--text-2);
+}
+
+.summary-hint span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-1);
+}
+
+.summary-hint-label {
+  font-weight: var(--font-weight-6);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4em;
+  padding: var(--size-1) var(--size-2);
+  background: var(--surface-3);
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  line-height: 1;
+  border: var(--border-size-1) solid var(--surface-4);
+  border-block-end-width: var(--border-size-2);
+  border-radius: var(--radius-2);
 }
 
 .code-view {

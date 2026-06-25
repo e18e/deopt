@@ -41,6 +41,14 @@ export class SummaryView extends Component {
     }
     return (
       <div className={className}>
+        <div className="summary-hint">
+          <span className="summary-hint-label">Shortcuts:</span>
+          <span>
+            <kbd className="key">j</kbd>
+            <kbd className="key">k</kbd>
+            next / previous
+          </span>
+        </div>
         {diagnostics.map(({ kind, info }) =>
           this.#renderDiagnostic(kind, info),
         )}
