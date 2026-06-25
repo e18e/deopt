@@ -4,12 +4,14 @@ import { urlFromState, stateFromUrl } from './query-state.js';
 
 export const FILES_TAB_IDX = 0;
 export const DETAILS_TAB_IDX = 1;
+export const SETTINGS_TAB_IDX = 2;
 
 export const groups = signal(new Map());
 export const selectedFile = signal(null);
 export const selectedLocation = signal(null);
 export const locationSeq = signal(0);
 export const includeAllSeverities = signal(false);
+export const hideNodeModules = signal(true);
 export const selectedTabIdx = signal(FILES_TAB_IDX);
 
 const indexedGroups = computed(() => Array.from(groups.value));
@@ -77,6 +79,10 @@ export function setIncludeAllSeverities(value) {
   selectedLocation.value = null;
 }
 
+export function setHideNodeModules(value) {
+  hideNodeModules.value = value;
+}
+
 export function selectMarker(id) {
   selectLocation(id);
 }
@@ -108,6 +114,9 @@ function applyState(state) {
   if (state.includeAllSeverities != null) {
     includeAllSeverities.value = state.includeAllSeverities;
   }
+  if (state.hideNodeModules != null) {
+    hideNodeModules.value = state.hideNodeModules;
+  }
   if (state.selectedTabIdx != null) {
     selectedTabIdx.value = state.selectedTabIdx;
   }
@@ -132,6 +141,7 @@ export function initHistorySync() {
       selectedFileIdx: indexFromFile(selectedFile.value),
       selectedLocation: selectedLocation.value,
       includeAllSeverities: includeAllSeverities.value,
+      hideNodeModules: hideNodeModules.value,
       selectedTabIdx: selectedTabIdx.value,
     };
     // popstate already reflects this state in history; don't push it back

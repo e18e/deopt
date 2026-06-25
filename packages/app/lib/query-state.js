@@ -4,7 +4,8 @@ function parseNum(s) {
   return s == null || s === '' ? null : parseInt(s);
 }
 
-function parseBool(s) {
+function parseBool(s, fallback = false) {
+  if (s === null) return fallback;
   return s === 'true';
 }
 
@@ -13,6 +14,7 @@ export function stateFromUrl() {
   const params = new URLSearchParams(location.search);
   const state = {
     includeAllSeverities: parseBool(params.get('includeAllSeverities')),
+    hideNodeModules: parseBool(params.get('hideNodeModules'), true),
     selectedFileIdx: parseNum(params.get('selectedFileIdx')),
     selectedLocation: parseNum(params.get('selectedLocation')),
     selectedTabIdx: parseNum(params.get('selectedTabIdx')),
