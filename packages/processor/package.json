@@ -1,6 +1,6 @@
 {
   "name": "@e18e/deopt-processor",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Investigates v8/Node.js function deoptimizations.",
   "keywords": [],
@@ -20,7 +20,7 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@e18e/deopt-shared": "0.0.0"
+    "@e18e/deopt-shared": "0.1.0"
   },
   "engine": {
     "node": ">=20"
