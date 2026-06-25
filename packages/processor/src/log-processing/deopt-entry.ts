@@ -1,13 +1,26 @@
-/* eslint-disable camelcase */
-
 import { MIN_SEVERITY } from '@e18e/deopt-shared';
+import type { Severity } from '@e18e/deopt-shared';
 import { normalizeFile } from './normalize-file.js';
+
+export interface DeoptStateUpdate {
+  timestamp: number;
+  bailoutType: string;
+  deoptReason: string;
+  optimizationState: number;
+  inlined: boolean;
+  severity: Severity;
+}
+
+export interface SourcePosition {
+  file: string | null;
+  line: number;
+  column: number;
+}
 
 // <../examples/adders.js:93:27> or <file:///abs/path.js:93:27> inlined at <...>
 const sourcePositionRx = /<([^>]+):(\d+):(\d+)>/;
 
-function safeToInt(x) {
-  if (x == null) return 0;
+function safeToInt(x: string): number {
   return parseInt(x);
 }
 
@@ -15,7 +28,7 @@ const SOFT = MIN_SEVERITY;
 const LAZY = MIN_SEVERITY + 1;
 const EAGER = MIN_SEVERITY + 2;
 
-function getSeverity(bailoutType) {
+function getSeverity(bailoutType: string): Severity {
   switch (bailoutType) {
     case 'soft':
       return SOFT;
@@ -34,7 +47,7 @@ function getSeverity(bailoutType) {
   }
 }
 
-function unquote(s) {
+function unquote(s: string): string {
   // for some reason Node.js double quotes the string, i.e. ""eager""
   return s.replace(/^"/, '').replace(/"$/, '');
 }
@@ -43,7 +56,13 @@ const NON_ACTIONABLE_REASON_RE =
   /^Insufficient type feedback|^exit from OSR'd inner loop$|^prepare for on stack replacement \(OSR\)$/;
 
 export class DeoptEntry {
-  constructor(fnFile, file, line, column) {
+  functionName: string;
+  file: string;
+  line: number;
+  column: number;
+  updates: DeoptStateUpdate[];
+
+  constructor(fnFile: string, file: string, line: number, column: number) {
     const parts = fnFile.split(' ');
     const functionName = parts[0];
 
@@ -56,12 +75,12 @@ export class DeoptEntry {
   }
 
   addUpdate(
-    timestamp,
-    bailoutType,
-    deoptReason,
-    optimizationState,
-    inliningId,
-  ) {
+    timestamp: number,
+    bailoutType: string,
+    deoptReason: string,
+    optimizationState: number,
+    inliningId: number,
+  ): void {
     bailoutType = unquote(bailoutType).replace(/^deopt-/, '');
     deoptReason = unquote(deoptReason);
 
@@ -90,7 +109,7 @@ export class DeoptEntry {
     };
   }
 
-  static disassembleSourcePosition(sourcePosition) {
+  static disassembleSourcePosition(sourcePosition: string): SourcePosition {
     const m = sourcePositionRx.exec(sourcePosition);
     if (m == null) return { file: null, line: 0, column: 0 };
     return {

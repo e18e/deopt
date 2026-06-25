@@ -1,4 +1,13 @@
 import * as ICState from './ic-state.js';
+import type {
+  Severity,
+  CodeUpdate,
+  Update,
+  Group,
+  Diagnostic,
+} from './types.js';
+
+export type * from './types.js';
 
 export { ICState };
 
@@ -6,34 +15,45 @@ export const MIN_SEVERITY = 1;
 
 export const severityColors = ['green', 'blue', 'dark-red'];
 
-export function highestSeverity(infos) {
+export function highestSeverity(
+  infos: ReadonlyArray<{ severity: Severity }>,
+): Severity {
   return infos.reduce(
     (highest, { severity }) => (severity > highest ? severity : highest),
     MIN_SEVERITY,
   );
 }
 
-export function lowestSeverity(infos) {
+export function lowestSeverity(
+  infos: ReadonlyArray<{ severity: Severity }>,
+): Severity {
   return infos.reduce(
     (lowest, { severity }) => (severity < lowest ? severity : lowest),
     99,
   );
 }
 
-export function listDiagnostics(group, { includeAllSeverities = false } = {}) {
-  if (group == null) return [];
-  const rows = [];
-  const collect = (data, locations, kind) => {
-    if (data == null || locations == null) return;
-    for (const loc of locations) {
-      const info = data.get(loc);
-      if (!includeAllSeverities && info.severity <= MIN_SEVERITY) continue;
-      rows.push({ kind, info });
-    }
-  };
-  collect(group.codes, group.codeLocations, 'code');
-  collect(group.deopts, group.deoptLocations, 'deopt');
-  collect(group.ics, group.icLocations, 'ic');
+export function listDiagnostics(
+  group: Group,
+  { includeAllSeverities = false } = {},
+): Diagnostic[] {
+  const rows: Diagnostic[] = [];
+  const visible = (severity: Severity) =>
+    includeAllSeverities || severity > MIN_SEVERITY;
+  for (const loc of group.codeLocations) {
+    const info = group.codes.get(loc);
+    if (info != null && visible(info.severity))
+      rows.push({ kind: 'code', info });
+  }
+  for (const loc of group.deoptLocations) {
+    const info = group.deopts.get(loc);
+    if (info != null && visible(info.severity))
+      rows.push({ kind: 'deopt', info });
+  }
+  for (const loc of group.icLocations) {
+    const info = group.ics.get(loc);
+    if (info != null && visible(info.severity)) rows.push({ kind: 'ic', info });
+  }
   rows.sort(
     (a, b) =>
       a.info.line - b.info.line ||
@@ -43,7 +63,7 @@ export function listDiagnostics(group, { includeAllSeverities = false } = {}) {
   return rows;
 }
 
-export function optimizationTier(stateName) {
+export function optimizationTier(stateName: string): number {
   switch (stateName) {
     case 'interpreted':
       return 0;
@@ -58,7 +78,7 @@ export function optimizationTier(stateName) {
   }
 }
 
-function analyzeCodeUpdates(updates) {
+function analyzeCodeUpdates(updates: CodeUpdate[]) {
   let maxTier = -1;
   let prevTier = -1;
   let churned = false;
@@ -74,7 +94,7 @@ function analyzeCodeUpdates(updates) {
   return { churned, dropped };
 }
 
-export function highestSeverityUpdate(updates) {
+export function highestSeverityUpdate<T extends Update>(updates: T[]): T {
   return updates.reduce((highest, update) =>
     update.severity > highest.severity ? update : highest,
   );
@@ -83,7 +103,7 @@ export function highestSeverityUpdate(updates) {
 // Produces a short human-readable phrase for a diagnostic, describing the most
 // severe thing that happened to it so a summary row reads as e.g.
 // "IC changed to megamorphic" rather than just naming the category.
-export function describeDiagnostic({ kind, info }) {
+export function describeDiagnostic({ kind, info }: Diagnostic): string {
   if (kind === 'ic') {
     return `IC changed to ${highestSeverityUpdate(info.updates).newStateName}`;
   }
@@ -95,7 +115,7 @@ export function describeDiagnostic({ kind, info }) {
   return `ended as ${updates[updates.length - 1].stateName}`;
 }
 
-export function tipForDiagnostic({ kind, info }) {
+export function tipForDiagnostic({ kind, info }: Diagnostic): string | null {
   if (kind === 'code') {
     const { churned, dropped } = analyzeCodeUpdates(info.updates);
     if (dropped) {

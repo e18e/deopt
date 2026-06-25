@@ -22,7 +22,7 @@ const destDir = path.join(
   '..',
   'packages',
   'processor',
-  'lib',
+  'src',
   'vendor',
   'v8-tools',
 );

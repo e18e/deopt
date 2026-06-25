@@ -1,14 +1,32 @@
 import { severityOfOptimizationState } from './optimization-state.js';
 import { normalizeFile } from './normalize-file.js';
+import type { Severity } from '@e18e/deopt-shared';
+
+export interface CodeStateUpdate {
+  timestamp: number;
+  state: number;
+  severity: Severity;
+}
 
 export class CodeEntry {
-  #functionName;
-  #file;
-  #line;
-  #column;
-  #isScript;
+  #functionName: string;
+  #file: string;
+  #line: number;
+  #column: number;
+  #isScript: boolean;
+  updates: CodeStateUpdate[];
 
-  constructor({ fnFile, line, column, isScript }) {
+  constructor({
+    fnFile,
+    line,
+    column,
+    isScript,
+  }: {
+    fnFile: string;
+    line: number;
+    column: number;
+    isScript: boolean;
+  }) {
     const parts = fnFile.split(' ');
     this.#functionName = parts[0];
     this.#file = normalizeFile(parts[1]);
@@ -19,7 +37,7 @@ export class CodeEntry {
     this.updates = [];
   }
 
-  addUpdate(timestamp, state) {
+  addUpdate(timestamp: number, state: number): void {
     const severity = severityOfOptimizationState(state);
     this.updates.push({ timestamp, state, severity });
   }

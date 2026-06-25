@@ -1,12 +1,21 @@
 import { Profile } from '../vendor/v8-tools/profile.mjs';
+import type { Severity } from '@e18e/deopt-shared';
 
 const { CodeState } = Profile;
 
-export function parseOptimizationState(s) {
+export type OptimizationStateName =
+  | 'compiled'
+  | 'interpreted'
+  | 'sparkplug'
+  | 'maglev'
+  | 'optimized'
+  | 'unknown';
+
+export function parseOptimizationState(s: string): number {
   return Profile.parseState(s);
 }
 
-export function nameOptimizationState(state) {
+export function nameOptimizationState(state: number): OptimizationStateName {
   switch (state) {
     case CodeState.COMPILED:
       return 'compiled';
@@ -25,7 +34,7 @@ export function nameOptimizationState(state) {
   }
 }
 
-export function severityOfOptimizationState(state) {
+export function severityOfOptimizationState(state: number): Severity {
   switch (state) {
     case CodeState.COMPILED:
       return 3;

@@ -1,6 +1,6 @@
-import { MIN_SEVERITY, ICState } from '@e18e/deopt-shared';
+import { MIN_SEVERITY, ICState, type Severity } from '@e18e/deopt-shared';
 
-export function parseIcState(s) {
+export function parseIcState(s: string): number {
   switch (s) {
     case 'X':
       return ICState.NO_FEEDBACK;
@@ -23,7 +23,7 @@ export function parseIcState(s) {
   }
 }
 
-export function severityIcState(state) {
+export function severityIcState(state: number): Severity {
   switch (state) {
     case ICState.NO_FEEDBACK:
       return MIN_SEVERITY;

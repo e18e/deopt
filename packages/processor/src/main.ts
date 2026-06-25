@@ -6,7 +6,10 @@ import {
   severityOfOptimizationState,
 } from './log-processing/optimization-state.js';
 
-export async function processLogContent(lines, root) {
+export async function processLogContent(
+  lines: AsyncIterable<string>,
+  root: string,
+): Promise<DeoptProcessor> {
   const deoptProcessor = new DeoptProcessor(root);
   for await (const line of lines) {
     await deoptProcessor.processLogLine(line);

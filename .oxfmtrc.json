@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
-    "packages/processor/lib/vendor/**"
+    "packages/processor/src/vendor/**"
   ],
   "printWidth": 80,
   "singleQuote": true

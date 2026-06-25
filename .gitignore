@@ -1,3 +1,5 @@
 /node_modules
 /packages/*/dist
 /packages/*/LICENSE
+/packages/processor/lib
+/packages/shared/lib
