@@ -1,7 +1,7 @@
 import {
   highestSeverity,
-  lowestSeverity,
   optimizationTier,
+  MIN_SEVERITY,
 } from '@e18e/deopt-shared';
 import { nameOptimizationState } from '@e18e/deopt-processor';
 const SEVERITY_2_FACTOR = 10;
@@ -18,31 +18,36 @@ export function summarizeFile({ ics, deopts, codes }) {
   const codeSeverities = [0, 0, 0, 0];
   const codeStates = [0, 0, 0];
   for (const icVector of ics.values()) {
-    const hs = highestSeverity(icVector.updates);
-    icVector.severity = hs;
-    icSeverities[hs]++;
+    const severity = highestSeverity(icVector.updates);
+    icVector.severity = severity;
+    icSeverities[severity]++;
   }
   for (const deoptVector of deopts.values()) {
-    const hs = highestSeverity(deoptVector.updates);
-    deoptVector.severity = hs;
-    deoptSeverities[hs]++;
+    const severity = highestSeverity(deoptVector.updates);
+    deoptVector.severity = severity;
+    deoptSeverities[severity]++;
   }
   for (const codeVector of codes.values()) {
     const { updates } = codeVector;
-    let hs = lowestSeverity(updates);
-    // Here we flag if optimization tiers dropped or if we're churning,
-    // i.e. re-optimizing the same code at the same level multiple times.
+    // A regular warm-up is expected and not actionable, so it stays at MIN_SEVERITY.
+    // Severity is raised when optimization tiers are dropped or churned.
     let maxTier = -1;
+    let prevTier = -1;
     let churn = 0;
+    let dropped = false;
     for (const { state } of updates) {
       const tier = optimizationTier(nameOptimizationState(state));
       if (tier === -1) continue;
       if (tier > maxTier) maxTier = tier;
       else churn++;
+      if (prevTier !== -1 && tier < prevTier) dropped = true;
+      prevTier = tier;
     }
-    if (churn > 0) hs = Math.max(hs, churn > 2 ? 3 : 2);
-    codeSeverities[hs]++;
-    codeVector.severity = hs;
+    let severity = MIN_SEVERITY;
+    if (dropped) severity = 3;
+    else if (churn > 0) severity = churn > 2 ? 3 : 2;
+    codeSeverities[severity]++;
+    codeVector.severity = severity;
     addLastCodeState(codeStates, updates);
   }
 

@@ -61,6 +61,7 @@ body {
 
 .details-wrap {
   flex: 1;
+  min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -281,8 +282,16 @@ body {
 .summary-view {
   flex: 1;
   min-height: 0;
-  overflow: auto;
   padding: var(--size-3);
+}
+
+.code-view {
+  overflow: auto;
+}
+
+.summary-view {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .summary-hint {
