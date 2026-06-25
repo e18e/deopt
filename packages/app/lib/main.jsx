@@ -61,7 +61,40 @@ function Details() {
       </div>
     );
   }
-  return <FileDetailsView className="details-panel" />;
+  const relativePath = store.currentGroup.value.relativePath;
+  return (
+    <div className="details-wrap">
+      <div className="file-subtitle" title={relativePath}>
+        {relativePath}
+      </div>
+      <FileDetailsView className="details-panel" />
+    </div>
+  );
+}
+
+function initKeyBindings() {
+  window.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    const target = event.target;
+    if (target instanceof HTMLElement) {
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+    }
+    if (store.selectedTabIdx.value !== store.DETAILS_TAB_IDX) return;
+    if (event.key === 'j') {
+      event.preventDefault();
+      store.selectNextDiagnostic();
+    } else if (event.key === 'k') {
+      event.preventDefault();
+      store.selectPrevDiagnostic();
+    }
+  });
 }
 
 function reviveGroups(payload) {
@@ -82,6 +115,7 @@ export async function mount() {
     const res = await fetch('/api/data');
     store.groups.value = reviveGroups(await res.json());
     store.initHistorySync();
+    initKeyBindings();
     render(<MainView />, app());
   } catch (err) {
     console.error(err);

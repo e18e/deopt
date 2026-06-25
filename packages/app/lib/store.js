@@ -81,6 +81,23 @@ export function selectMarker(id) {
   selectLocation(id);
 }
 
+function moveDiagnostic(delta) {
+  const diagnostics = currentDiagnostics.value;
+  if (diagnostics.length === 0) return;
+  const current = selectedLocation.value;
+  const idx = diagnostics.findIndex((d) => d.info.id === current);
+  const next = Math.min(Math.max(idx + delta, 0), diagnostics.length - 1);
+  selectLocation(diagnostics[next].info.id);
+}
+
+export function selectNextDiagnostic() {
+  moveDiagnostic(1);
+}
+
+export function selectPrevDiagnostic() {
+  moveDiagnostic(-1);
+}
+
 /*
  * History / URL sync
  */
