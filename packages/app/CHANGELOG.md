@@ -1,5 +1,15 @@
 # @e18e/deopt-app
 
+## 0.2.0
+
+### Minor Changes
+
+- 845c793: Add a settings page which lets you toggle node_modules and low severity diagnostic.s
+
+### Patch Changes
+
+- bf77e27: Fix the scrolling of left/right and lower the severity of regular warm ups.
+
 ## 0.1.0
 
 ### Minor Changes
