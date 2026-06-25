@@ -1,5 +1,11 @@
 # @e18e/deopt-app
 
+## 0.1.0
+
+### Minor Changes
+
+- 40c4e5c: Add keyboard shortcuts to navigate diagnostics.
+
 ## 0.0.0
 
 ### Minor Changes

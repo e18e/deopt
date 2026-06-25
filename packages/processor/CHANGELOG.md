@@ -1,5 +1,16 @@
 # @e18e/deopt-processor
 
+## 0.1.0
+
+### Minor Changes
+
+- 89aede0: Add messaging for state changes and extract shared utils.
+
+### Patch Changes
+
+- Updated dependencies [89aede0]
+  - @e18e/deopt-shared@0.1.0
+
 ## 0.0.0
 
 ### Patch Changes
