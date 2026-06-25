@@ -18,7 +18,7 @@ export async function openLog(v8log, head) {
   const { url } = await startServer({ dataFile });
 
   console.error(`
-${head}: Successfully generated deoptimization visualization  🎉 ⚡ ✨
+${head}: Successfully generated deoptimization visualization  🎉
 ${head}: Serving at ${url}
 ${head}: Opening now in your default browser (Ctrl-C to stop the server).
     `);
