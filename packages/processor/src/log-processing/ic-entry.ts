@@ -1,13 +1,30 @@
 import { parseIcState, severityIcState } from './ic-state.js';
 import { normalizeFile } from './normalize-file.js';
+import type { Severity } from '@e18e/deopt-shared';
 
-function unquote(s) {
+export interface IcStateUpdate {
+  type: string;
+  oldState: number;
+  newState: number;
+  key: string;
+  map: string;
+  optimizationState: number;
+  severity: Severity;
+}
+
+function unquote(s: string): string {
   // for some reason Node.js double quotes the file names
   return s.replace(/^"/, '').replace(/"$/, '');
 }
 
 export class IcEntry {
-  constructor(fnFile, line, column) {
+  functionName: string;
+  file: string;
+  line: number;
+  column: number;
+  updates: IcStateUpdate[];
+
+  constructor(fnFile: string, line: number, column: number) {
     fnFile = unquote(fnFile);
     const parts = fnFile.split(' ');
     const functionName = parts[0];
@@ -20,24 +37,30 @@ export class IcEntry {
     this.updates = [];
   }
 
-  addUpdate(type, oldState, newState, key, map, optimizationState) {
-    map = map.toString(16);
-    oldState = parseIcState(oldState);
-    newState = parseIcState(newState);
-    const severity = severityIcState(newState);
+  addUpdate(
+    type: string,
+    oldState: string,
+    newState: string,
+    key: string,
+    map: number,
+    optimizationState: number,
+  ): void {
+    const parsedOldState = parseIcState(oldState);
+    const parsedNewState = parseIcState(newState);
+    const severity = severityIcState(parsedNewState);
 
     this.updates.push({
       type,
-      oldState,
-      newState,
+      oldState: parsedOldState,
+      newState: parsedNewState,
       key,
-      map,
+      map: map.toString(16),
       optimizationState,
       severity,
     });
   }
 
-  filterIcStateChanges() {
+  filterIcStateChanges(): void {
     this.updates = this.updates.filter((x) => x.oldState !== x.newState);
   }
 

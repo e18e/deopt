@@ -4,19 +4,33 @@ import {
   parseVarArgs,
 } from './vendor/v8-tools/logreader.mjs';
 import { Profile } from './vendor/v8-tools/profile.mjs';
+import type { ProfileEntry } from './vendor/v8-tools/profile.mjs';
 
 import { IcEntry } from './log-processing/ic-entry.js';
 import { DeoptEntry } from './log-processing/deopt-entry.js';
 import { CodeEntry } from './log-processing/code-entry.js';
 import { parseOptimizationState } from './log-processing/optimization-state.js';
 
-function maybeNumber(s) {
-  if (s == null) return -1;
+export interface DeoptProcessorOptions {
+  silentErrors?: boolean;
+}
+
+interface FunctionInfo {
+  fnFile: string;
+  line: number;
+  column: number;
+  state: number;
+}
+
+function maybeNumber(s: string): number {
   return parseInt(s);
 }
 
-function formatName(entry) {
-  if (!entry) return '<unknown>';
+function formatName(entry: ProfileEntry): {
+  fnFile: string;
+  line: number;
+  column: number;
+} {
   const name = entry.getRawName ? entry.getRawName() : entry.getName();
   const re = /(.*):([0-9]+):([0-9]+)$/;
   const array = re.exec(name);
@@ -28,7 +42,7 @@ function formatName(entry) {
   };
 }
 
-function locationKey(file, line, column) {
+function locationKey(file: string, line: number, column: number): string {
   return `${file}:${line}:${column}`;
 }
 
@@ -46,12 +60,19 @@ const propertyICParser = [
 ];
 
 export class DeoptProcessor extends LogReader {
-  #root;
-  #silentErrors;
-  #deserializedEntriesNames;
-  #profile;
+  #root: string;
+  #silentErrors: boolean;
+  #deserializedEntriesNames: string[];
+  #profile: Profile;
 
-  constructor(root, { silentErrors = true } = {}) {
+  entriesIC: Map<string, IcEntry>;
+  entriesDeopt: Map<string, DeoptEntry>;
+  entriesCode: Map<string, CodeEntry>;
+
+  constructor(
+    root: string,
+    { silentErrors = true }: DeoptProcessorOptions = {},
+  ) {
     super();
     this.#root = root;
     this.#silentErrors = silentErrors;
@@ -135,58 +156,59 @@ export class DeoptProcessor extends LogReader {
     this.entriesCode = new Map();
   }
 
-  functionInfo(pc) {
+  functionInfo(pc: number): FunctionInfo {
     const entry = this.#profile.findEntry(pc);
-    if (entry == null) return { fnFile: '', state: -1 };
+    if (entry === null) return { fnFile: '', line: -1, column: -1, state: -1 };
     const { fnFile, line, column } = formatName(entry);
     return { fnFile, line, column, state: entry.state };
   }
 
   #processPropertyIC(
-    type,
-    pc,
-    _timestamp,
-    line,
-    column,
-    old_state,
-    new_state,
-    map,
-    propertyKey,
-    _modifier,
-    _slow_reason,
-  ) {
+    type: string,
+    pc: number,
+    _timestamp: number,
+    line: number,
+    column: number,
+    old_state: string,
+    new_state: string,
+    map: number,
+    propertyKey: string,
+    _modifier: string,
+    _slow_reason: string,
+  ): void {
     const { fnFile, state } = this.functionInfo(pc);
     const key = locationKey(fnFile, line, column);
-    if (!this.entriesIC.has(key)) {
-      const entry = new IcEntry(fnFile, line, column);
-      this.entriesIC.set(key, entry);
+    let icEntry = this.entriesIC.get(key);
+    if (icEntry === undefined) {
+      icEntry = new IcEntry(fnFile, line, column);
+      this.entriesIC.set(key, icEntry);
     }
-    const icEntry = this.entriesIC.get(key);
     icEntry.addUpdate(type, old_state, new_state, propertyKey, map, state);
   }
 
   // timestamp is in micro seconds
   // https://cs.chromium.org/chromium/src/v8/src/log.cc?l=892&rcl=8fecf0eff7357c1bee222f76c4e2f6fdd8759797
   #processCodeDeopt(
-    timestamp,
-    size,
-    code,
-    inliningId,
-    scriptOffset,
-    bailoutType,
-    sourcePositionText,
-    deoptReasonText,
-  ) {
+    timestamp: number,
+    _size: number,
+    code: number,
+    inliningId: number,
+    _scriptOffset: number,
+    bailoutType: string,
+    sourcePositionText: string,
+    deoptReasonText: string,
+  ): void {
     const { fnFile, state } = this.functionInfo(code);
     const { file, line, column } =
       DeoptEntry.disassembleSourcePosition(sourcePositionText);
+    if (file === null) return;
 
     const key = locationKey(file, line, column);
-    if (!this.entriesDeopt.has(key)) {
-      const entry = new DeoptEntry(fnFile, file, line, column);
-      this.entriesDeopt.set(key, entry);
+    let deoptEntry = this.entriesDeopt.get(key);
+    if (deoptEntry === undefined) {
+      deoptEntry = new DeoptEntry(fnFile, file, line, column);
+      this.entriesDeopt.set(key, deoptEntry);
     }
-    const deoptEntry = this.entriesDeopt.get(key);
     deoptEntry.addUpdate(
       timestamp,
       bailoutType,
@@ -196,7 +218,15 @@ export class DeoptProcessor extends LogReader {
     );
   }
 
-  #processCodeCreation(type, kind, timestamp, start, size, name, maybe_func) {
+  #processCodeCreation(
+    type: string,
+    _kind: number,
+    timestamp: number,
+    start: number,
+    size: number,
+    name: string,
+    maybe_func: string[],
+  ): void {
     name = this.#deserializedEntriesNames[start] || name;
 
     if (maybe_func.length) {
@@ -214,7 +244,7 @@ export class DeoptProcessor extends LogReader {
       const isScript = type === 'Eval' || type === 'Script';
       const isUserFunction = type === 'JS' || type === 'LazyCompile';
       if (isUserFunction || isScript) {
-        let { fnFile, line, column } = this.functionInfo(start);
+        const { fnFile, line, column } = this.functionInfo(start);
 
         // only interested in Node.js anonymous wrapper function
         // (function (exports, require, module, __filename, __dirname) {
@@ -222,13 +252,11 @@ export class DeoptProcessor extends LogReader {
         if (isScript && !isNodeWrapperFunction) return;
 
         const key = locationKey(fnFile, line, column);
-        if (!this.entriesCode.has(key)) {
-          this.entriesCode.set(
-            key,
-            new CodeEntry({ fnFile, line, column, isScript }),
-          );
+        let code = this.entriesCode.get(key);
+        if (code === undefined) {
+          code = new CodeEntry({ fnFile, line, column, isScript });
+          this.entriesCode.set(key, code);
         }
-        const code = this.entriesCode.get(key);
         code.addUpdate(timestamp, state);
       }
     } else {
@@ -236,41 +264,39 @@ export class DeoptProcessor extends LogReader {
     }
   }
 
-  #processCodeMove(from, to) {
+  #processCodeMove(from: number, to: number): void {
     this.#profile.moveCode(from, to);
   }
 
-  #processCodeDelete(start) {
+  #processCodeDelete(start: number): void {
     this.#profile.deleteCode(start);
   }
 
-  #processFunctionMove(from, to) {
+  #processFunctionMove(from: number, to: number): void {
     this.#profile.moveSharedFunctionInfo(from, to);
   }
 
-  // @override
-  printError(msg) {
+  override printError(msg: string): void {
     if (this.#silentErrors) return;
     console.trace();
     console.error(msg);
   }
 
-  async processString(string) {
-    var end = string.length;
-    var current = 0;
-    var next = 0;
-    var line;
+  async processString(content: string): Promise<void> {
+    const end = content.length;
+    let current = 0;
+    let next = 0;
     while (current < end) {
-      next = string.indexOf('\n', current);
+      next = content.indexOf('\n', current);
       if (next === -1) break;
-      line = string.substring(current, next);
+      const line = content.substring(current, next);
       current = next + 1;
       await this.processLogLine(line);
     }
   }
 
-  filterIcStateChanges() {
-    const emptyEntries = new Set();
+  filterIcStateChanges(): void {
+    const emptyEntries = new Set<string>();
     for (const [key, entry] of this.entriesIC) {
       entry.filterIcStateChanges();
       if (entry.updates.length === 0) emptyEntries.add(key);
@@ -294,7 +320,7 @@ export class DeoptProcessor extends LogReader {
     return { ics, deopts, codes, root: this.#root };
   }
 
-  toJSON(indent = 2) {
+  toJSON(indent: number = 2): string {
     return JSON.stringify(this.toObject(), null, indent);
   }
 }

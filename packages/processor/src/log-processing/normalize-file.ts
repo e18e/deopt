@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-export function normalizeFile(file) {
-  if (file == null) return file;
+export function normalizeFile(file: string): string {
   // Node.js may append :line:column to the end
   file = file.replace(/:\d+:\d+$/, '');
   // ESM source locations are reported as file:// URLs

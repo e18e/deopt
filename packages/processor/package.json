@@ -17,10 +17,16 @@
   "type": "module",
   "main": "lib/main.js",
   "scripts": {
+    "build:clean": "node -e \"require('fs').rmSync('./lib', { recursive: true, force: true })\"",
+    "build:vendor": "node ./scripts/copy-vendor.mjs",
+    "build": "npm run build:clean && tsgo && npm run build:vendor",
     "test": "node --test"
   },
   "dependencies": {
     "@e18e/deopt-shared": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   },
   "engine": {
     "node": ">=20"
