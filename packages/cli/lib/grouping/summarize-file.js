@@ -1,5 +1,9 @@
-import { highestSeverity, lowestSeverity } from '@e18e/deopt-shared';
-import { optimizationTier } from '@e18e/deopt-processor';
+import {
+  highestSeverity,
+  lowestSeverity,
+  optimizationTier,
+} from '@e18e/deopt-shared';
+import { nameOptimizationState } from '@e18e/deopt-processor';
 const SEVERITY_2_FACTOR = 10;
 const SEVERITY_3_FACTOR = 30;
 
@@ -31,7 +35,7 @@ export function summarizeFile({ ics, deopts, codes }) {
     let maxTier = -1;
     let churn = 0;
     for (const { state } of updates) {
-      const tier = optimizationTier(state);
+      const tier = optimizationTier(nameOptimizationState(state));
       if (tier === -1) continue;
       if (tier > maxTier) maxTier = tier;
       else churn++;

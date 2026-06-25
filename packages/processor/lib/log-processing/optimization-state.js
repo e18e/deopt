@@ -25,21 +25,6 @@ export function nameOptimizationState(state) {
   }
 }
 
-export function optimizationTier(state) {
-  switch (state) {
-    case CodeState.IGNITION:
-      return 0;
-    case CodeState.SPARKPLUG:
-      return 1;
-    case CodeState.MAGLEV:
-      return 2;
-    case CodeState.TURBOFAN:
-      return 3;
-    default:
-      return -1;
-  }
-}
-
 export function severityOfOptimizationState(state) {
   switch (state) {
     case CodeState.COMPILED:
