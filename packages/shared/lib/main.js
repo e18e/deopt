@@ -1,6 +1,6 @@
 import * as ICState from './ic-state.js';
 
-export * as ICState from './ic-state.js';
+export { ICState };
 
 export const MIN_SEVERITY = 1;
 
@@ -43,6 +43,37 @@ export function listDiagnostics(group, { includeAllSeverities = false } = {}) {
   return rows;
 }
 
+export function optimizationTier(stateName) {
+  switch (stateName) {
+    case 'interpreted':
+      return 0;
+    case 'sparkplug':
+      return 1;
+    case 'maglev':
+      return 2;
+    case 'optimized':
+      return 3;
+    default:
+      return -1;
+  }
+}
+
+function analyzeCodeUpdates(updates) {
+  let maxTier = -1;
+  let prevTier = -1;
+  let churned = false;
+  let dropped = false;
+  for (const { stateName } of updates) {
+    const tier = optimizationTier(stateName);
+    if (tier === -1) continue;
+    if (tier > maxTier) maxTier = tier;
+    else churned = true;
+    if (prevTier !== -1 && tier < prevTier) dropped = true;
+    prevTier = tier;
+  }
+  return { churned, dropped };
+}
+
 export function highestSeverityUpdate(updates) {
   return updates.reduce((highest, update) =>
     update.severity > highest.severity ? update : highest,
@@ -65,6 +96,15 @@ export function describeDiagnostic({ kind, info }) {
 }
 
 export function tipForDiagnostic({ kind, info }) {
+  if (kind === 'code') {
+    const { churned, dropped } = analyzeCodeUpdates(info.updates);
+    if (dropped) {
+      return 'V8 optimized this function to a higher tier but then discarded that optimized code and fell back to a lower tier (a deoptimization). This usually means the function received values whose types or object shapes changed after it was optimized. Keep the arguments and objects flowing through this function consistent so V8 can keep the optimized version.';
+    }
+    if (churned) {
+      return 'V8 re-optimized this function repeatedly without settling on a single optimized version. This churn wastes compilation work and usually points to types or object shapes that keep changing between calls. Keep the values reaching this function consistent so V8 can optimize it once and keep that code.';
+    }
+  }
   if (kind === 'ic') {
     const { newState } = highestSeverityUpdate(info.updates);
     if (newState === ICState.MEGAMORPHIC || newState === ICState.GENERIC) {
