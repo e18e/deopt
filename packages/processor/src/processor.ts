@@ -10,6 +10,11 @@ import { IcEntry } from './log-processing/ic-entry.js';
 import { DeoptEntry } from './log-processing/deopt-entry.js';
 import { CodeEntry } from './log-processing/code-entry.js';
 import { parseOptimizationState } from './log-processing/optimization-state.js';
+import type {
+  ParsedIcInfo,
+  ParsedDeoptInfo,
+  ParsedCodeInfo,
+} from '@e18e/deopt-shared';
 
 export interface DeoptProcessorOptions {
   silentErrors?: boolean;
@@ -304,23 +309,28 @@ export class DeoptProcessor extends LogReader {
     for (const key of emptyEntries) this.entriesIC.delete(key);
   }
 
-  toObject() {
-    const ics = [];
+  toParsed(): {
+    ics: ParsedIcInfo[];
+    deopts: ParsedDeoptInfo[];
+    codes: ParsedCodeInfo[];
+    root: string;
+  } {
+    const ics: ParsedIcInfo[] = [];
     for (const entry of this.entriesIC.values()) {
-      ics.push(entry.hashmap);
+      ics.push(entry.toParsed());
     }
-    const deopts = [];
+    const deopts: ParsedDeoptInfo[] = [];
     for (const entry of this.entriesDeopt.values()) {
-      deopts.push(entry.hashmap);
+      deopts.push(entry.toParsed());
     }
-    const codes = [];
+    const codes: ParsedCodeInfo[] = [];
     for (const entry of this.entriesCode.values()) {
-      codes.push(entry.hashmap);
+      codes.push(entry.toParsed());
     }
     return { ics, deopts, codes, root: this.#root };
   }
 
   toJSON(indent: number = 2): string {
-    return JSON.stringify(this.toObject(), null, indent);
+    return JSON.stringify(this.toParsed(), null, indent);
   }
 }

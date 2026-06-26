@@ -1,6 +1,6 @@
 import { ICState } from '@e18e/deopt-shared';
 
-export function nameIcState(state) {
+export function nameIcState(state: number): string {
   switch (state) {
     case ICState.NO_FEEDBACK:
       return 'no feedback';

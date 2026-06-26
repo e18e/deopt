@@ -1,16 +1,6 @@
 import { parseIcState, severityIcState } from './ic-state.js';
 import { normalizeFile } from './normalize-file.js';
-import type { Severity } from '@e18e/deopt-shared';
-
-export interface IcStateUpdate {
-  type: string;
-  oldState: number;
-  newState: number;
-  key: string;
-  map: string;
-  optimizationState: number;
-  severity: Severity;
-}
+import type { ParsedIcUpdate, ParsedIcInfo } from '@e18e/deopt-shared';
 
 function unquote(s: string): string {
   // for some reason Node.js double quotes the file names
@@ -22,7 +12,7 @@ export class IcEntry {
   file: string;
   line: number;
   column: number;
-  updates: IcStateUpdate[];
+  updates: ParsedIcUpdate[];
 
   constructor(fnFile: string, line: number, column: number) {
     fnFile = unquote(fnFile);
@@ -64,7 +54,7 @@ export class IcEntry {
     this.updates = this.updates.filter((x) => x.oldState !== x.newState);
   }
 
-  get hashmap() {
+  toParsed(): ParsedIcInfo {
     return {
       functionName: this.functionName,
       file: this.file,

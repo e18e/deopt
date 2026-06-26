@@ -1,12 +1,6 @@
 import { severityOfOptimizationState } from './optimization-state.js';
 import { normalizeFile } from './normalize-file.js';
-import type { Severity } from '@e18e/deopt-shared';
-
-export interface CodeStateUpdate {
-  timestamp: number;
-  state: number;
-  severity: Severity;
-}
+import type { ParsedCodeUpdate, ParsedCodeInfo } from '@e18e/deopt-shared';
 
 export class CodeEntry {
   #functionName: string;
@@ -14,7 +8,7 @@ export class CodeEntry {
   #line: number;
   #column: number;
   #isScript: boolean;
-  updates: CodeStateUpdate[];
+  updates: ParsedCodeUpdate[];
 
   constructor({
     fnFile,
@@ -42,7 +36,7 @@ export class CodeEntry {
     this.updates.push({ timestamp, state, severity });
   }
 
-  get hashmap() {
+  toParsed(): ParsedCodeInfo {
     return {
       functionName: this.#functionName,
       file: this.#file,

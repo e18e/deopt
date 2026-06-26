@@ -1,15 +1,10 @@
 import { MIN_SEVERITY } from '@e18e/deopt-shared';
-import type { Severity } from '@e18e/deopt-shared';
+import type {
+  Severity,
+  ParsedDeoptUpdate,
+  ParsedDeoptInfo,
+} from '@e18e/deopt-shared';
 import { normalizeFile } from './normalize-file.js';
-
-export interface DeoptStateUpdate {
-  timestamp: number;
-  bailoutType: string;
-  deoptReason: string;
-  optimizationState: number;
-  inlined: boolean;
-  severity: Severity;
-}
 
 export interface SourcePosition {
   file: string | null;
@@ -60,7 +55,7 @@ export class DeoptEntry {
   file: string;
   line: number;
   column: number;
-  updates: DeoptStateUpdate[];
+  updates: ParsedDeoptUpdate[];
 
   constructor(fnFile: string, file: string, line: number, column: number) {
     const parts = fnFile.split(' ');
@@ -99,7 +94,7 @@ export class DeoptEntry {
     });
   }
 
-  get hashmap() {
+  toParsed(): ParsedDeoptInfo {
     return {
       functionName: this.functionName,
       file: this.file,

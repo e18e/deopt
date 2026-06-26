@@ -5,8 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { groupByFileAndLocation } from '../lib/grouping/group-by-file-and-location.js';
-import { processLog } from '../lib/log.js';
+import { groupByFileAndLocation, processLog } from '../dist/main.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.join(dirname, '..');
