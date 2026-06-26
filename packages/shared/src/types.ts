@@ -12,8 +12,13 @@ export interface Location {
   column: number;
 }
 
+/**
+ * Parsed data: the shapes produced directly from the v8 log, before they are
+ * enriched into the processed (relational) shapes below.
+ */
+
 /** A single inline-cache state transition recorded for an IC location. */
-export interface IcUpdate {
+export interface ParsedIcUpdate {
   type: string;
   oldState: number;
   newState: number;
@@ -21,14 +26,10 @@ export interface IcUpdate {
   map: string;
   optimizationState: number;
   severity: Severity;
-  oldStateName: string;
-  oldStateSeverity: Severity;
-  newStateName: string;
-  newStateSeverity: Severity;
 }
 
 /** A single deoptimization event recorded for a deopt location. */
-export interface DeoptUpdate {
+export interface ParsedDeoptUpdate {
   timestamp: number;
   bailoutType: string;
   deoptReason: string;
@@ -38,40 +39,72 @@ export interface DeoptUpdate {
 }
 
 /** A single optimization-state transition recorded for a code location. */
-export interface CodeUpdate {
+export interface ParsedCodeUpdate {
   timestamp: number;
   state: number;
   severity: Severity;
-  stateName: string;
 }
 
 /** An inline-cache diagnostic grouped at a single location. */
-export interface IcInfo extends Location {
-  id: number;
-  severity: Severity;
-  updates: IcUpdate[];
+export interface ParsedIcInfo extends Location {
+  updates: ParsedIcUpdate[];
 }
 
 /** A deoptimization diagnostic grouped at a single location. */
-export interface DeoptInfo extends Location {
-  id: number;
-  severity: Severity;
-  updates: DeoptUpdate[];
+export interface ParsedDeoptInfo extends Location {
+  updates: ParsedDeoptUpdate[];
 }
 
 /** An optimization (code) diagnostic grouped at a single location. */
-export interface CodeInfo extends Location {
-  id: number;
-  severity: Severity;
+export interface ParsedCodeInfo extends Location {
   isScript: boolean;
-  updates: CodeUpdate[];
+  updates: ParsedCodeUpdate[];
 }
 
-/** Any diagnostic vector, regardless of kind. */
-export type Info = IcInfo | DeoptInfo | CodeInfo;
+/**
+ * Processed data: the parsed shapes enriched with the fields that only exist
+ * once diagnostics have been grouped and resolved (ids, per-vector severities
+ * and the display names for each state).
+ */
 
-/** Any single update entry, regardless of kind. */
-export type Update = IcUpdate | DeoptUpdate | CodeUpdate;
+export interface ProcessedIcUpdate extends ParsedIcUpdate {
+  oldStateName: string;
+  oldStateSeverity: Severity;
+  newStateName: string;
+  newStateSeverity: Severity;
+}
+
+export type ProcessedDeoptUpdate = ParsedDeoptUpdate;
+
+export interface ProcessedCodeUpdate extends ParsedCodeUpdate {
+  stateName: string;
+}
+
+export interface ProcessedIcInfo extends ParsedIcInfo {
+  id: number;
+  severity: Severity;
+  updates: ProcessedIcUpdate[];
+}
+
+export interface ProcessedDeoptInfo extends ParsedDeoptInfo {
+  id: number;
+  severity: Severity;
+}
+
+export interface ProcessedCodeInfo extends ParsedCodeInfo {
+  id: number;
+  severity: Severity;
+  updates: ProcessedCodeUpdate[];
+}
+
+/** Any processed diagnostic vector, regardless of kind. */
+export type Info = ProcessedIcInfo | ProcessedDeoptInfo | ProcessedCodeInfo;
+
+/** Any single processed update entry, regardless of kind. */
+export type Update =
+  | ProcessedIcUpdate
+  | ProcessedDeoptUpdate
+  | ProcessedCodeUpdate;
 
 /** Per-file severity rollup attached to a group. */
 export interface FileSummary {
@@ -88,9 +121,9 @@ export interface FileSummary {
  * each kind, and the precomputed per-file summary.
  */
 export interface Group {
-  ics: Map<string, IcInfo>;
-  deopts: Map<string, DeoptInfo>;
-  codes: Map<string, CodeInfo>;
+  ics: Map<string, ProcessedIcInfo>;
+  deopts: Map<string, ProcessedDeoptInfo>;
+  codes: Map<string, ProcessedCodeInfo>;
   icLocations: string[];
   deoptLocations: string[];
   codeLocations: string[];
@@ -102,6 +135,6 @@ export type DiagnosticKind = 'ic' | 'deopt' | 'code';
 
 /** A diagnostic paired with its kind, as listed for a file. */
 export type Diagnostic =
-  | { kind: 'ic'; info: IcInfo }
-  | { kind: 'deopt'; info: DeoptInfo }
-  | { kind: 'code'; info: CodeInfo };
+  | { kind: 'ic'; info: ProcessedIcInfo }
+  | { kind: 'deopt'; info: ProcessedDeoptInfo }
+  | { kind: 'code'; info: ProcessedCodeInfo };

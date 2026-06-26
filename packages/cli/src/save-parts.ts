@@ -5,7 +5,7 @@ import os from 'node:os';
 const tmpdir = os.tmpdir();
 const workDir = path.join(tmpdir, 'e18e-deopt');
 
-export function saveData(json) {
+export function saveData(json: string): string {
   fs.mkdirSync(workDir, { recursive: true });
   const dest = path.join(workDir, 'data.json');
   fs.writeFileSync(dest, json, 'utf8');

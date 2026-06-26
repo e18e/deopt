@@ -8,9 +8,21 @@ import { styleText } from 'node:util';
 // with one of these it's treated as the executable rather than the script.
 const runtimes = new Set(['node', 'd8']);
 
-function determineArgs(tokens) {
+interface DeterminedArgs {
+  argv: string[];
+  extraExecArgv: string[];
+  nodeExecutable?: string;
+}
+
+interface RunNodeOptions {
+  node?: string;
+  execArgv: string[];
+  argv: string[];
+}
+
+function determineArgs(tokens: string[]): DeterminedArgs {
   const first = tokens[0];
-  const hasRuntime = first != null && runtimes.has(basename(first));
+  const hasRuntime = first !== undefined && runtimes.has(basename(first));
 
   const executable = hasRuntime ? first : undefined;
   const rest = hasRuntime ? tokens.slice(1) : tokens;
@@ -18,8 +30,8 @@ function determineArgs(tokens) {
   // Split runtime flags from the script and its arguments, e.g.
   // node --allow-natives-syntax app.js --log
   // becomes execArgv: [ --allow-natives-syntax ] and argv: [ app.js, --log ]
-  const extraExecArgv = [];
-  const argv = [];
+  const extraExecArgv: string[] = [];
+  const argv: string[] = [];
   let sawApp = false;
   for (const arg of rest) {
     if (sawApp) {
@@ -32,19 +44,23 @@ function determineArgs(tokens) {
     }
   }
 
-  const result = { argv, extraExecArgv };
+  const result: DeterminedArgs = { argv, extraExecArgv };
   // A bare `node` uses the current process executable; an explicit path or d8
   // is spawned as given.
-  if (executable != null && executable !== 'node') {
+  if (executable !== undefined && executable !== 'node') {
     result.nodeExecutable = executable;
   }
   return result;
 }
 
-function runNode({ node = process.execPath, execArgv, argv }) {
+function runNode({
+  node = process.execPath,
+  execArgv,
+  argv,
+}: RunNodeOptions): Promise<number | null> {
   const child = spawn(node, execArgv.concat(argv), { stdio: 'inherit' });
 
-  const termination = new Promise((resolve) => {
+  const termination = new Promise<number | null>((resolve) => {
     let interrupted = false;
 
     process.once('SIGINT', () => {
@@ -59,13 +75,13 @@ function runNode({ node = process.execPath, execArgv, argv }) {
   return termination;
 }
 
-async function createDirIfMissing(dir) {
+async function createDirIfMissing(dir: string): Promise<void> {
   try {
     await mkdir(dir, { recursive: true });
   } catch (err) {
     // mkdir refuses if the path already exists as a non-directory
     const statInfo = await stat(dir).catch(() => null);
-    if (statInfo != null && !statInfo.isDirectory()) {
+    if (statInfo !== null && !statInfo.isDirectory()) {
       throw new Error(
         `Found ${dir}, but it wasn't a directory, please remove it.`,
         { cause: err },
@@ -75,7 +91,11 @@ async function createDirIfMissing(dir) {
   }
 }
 
-export async function createLog(args, head, simpleHead) {
+export async function createLog(
+  args: string[],
+  head: string,
+  simpleHead: string,
+): Promise<string> {
   const { extraExecArgv, argv, nodeExecutable } = determineArgs(args);
 
   const logDir = `${tmpdir()}/e18e-deopt`;
@@ -91,8 +111,8 @@ export async function createLog(args, head, simpleHead) {
     '--no-logfile-per-isolate',
   ].concat(extraExecArgv);
 
-  const spawnArgs = { execArgv, argv };
-  if (nodeExecutable != null) spawnArgs.node = nodeExecutable;
+  const spawnArgs: RunNodeOptions = { execArgv, argv };
+  if (nodeExecutable !== undefined) spawnArgs.node = nodeExecutable;
 
   const code = await runNode(spawnArgs);
   if (code !== 0) {

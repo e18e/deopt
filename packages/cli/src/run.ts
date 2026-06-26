@@ -33,8 +33,8 @@ const dashIndex = args.indexOf('--');
 
 // Without `--` the whole argument list is the command to run. deopt's own
 // options are only accepted before a `--` separator.
-let values = {};
-let command;
+let values: { help?: boolean } = {};
+let command: string[];
 if (dashIndex < 0) {
   command = args;
 } else {
@@ -62,6 +62,6 @@ try {
     await openLog(log, happyHead);
   }
 } catch (err) {
-  console.error(`${errorHead}: ${err}`);
+  console.error(`${errorHead}: ${String(err)}`);
   process.exitCode = 1;
 }

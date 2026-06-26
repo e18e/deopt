@@ -1,7 +1,7 @@
 import * as ICState from './ic-state.js';
 import type {
   Severity,
-  CodeUpdate,
+  ProcessedCodeUpdate,
   Update,
   Group,
   Diagnostic,
@@ -78,7 +78,7 @@ export function optimizationTier(stateName: string): number {
   }
 }
 
-function analyzeCodeUpdates(updates: CodeUpdate[]) {
+function analyzeCodeUpdates(updates: ProcessedCodeUpdate[]) {
   let maxTier = -1;
   let prevTier = -1;
   let churned = false;

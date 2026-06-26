@@ -10,17 +10,20 @@
     "type": "git",
     "url": "git://github.com/e18e/deopt.git"
   },
-  "bin": "bin/deopt",
+  "bin": {
+    "deopt": "bin/deopt"
+  },
   "files": [
     "bin/",
     "dist/"
   ],
   "type": "module",
+  "main": "dist/main.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsgo --noEmit && tsdown",
     "test": "node --test"
   },
   "dependencies": {
@@ -32,6 +35,7 @@
     "@e18e/deopt-app": "0.2.0",
     "@e18e/deopt-processor": "0.1.0",
     "@e18e/deopt-shared": "0.1.0",
+    "@types/node": "^22.0.0",
     "tsdown": "^0.22.3"
   },
   "engine": {
