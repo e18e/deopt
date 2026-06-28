@@ -115,6 +115,25 @@ export function describeDiagnostic({ kind, info }: Diagnostic): string {
   return `ended as ${updates[updates.length - 1].stateName}`;
 }
 
+// A stable, concise label identifying the kind of problem, suitable for
+// grouping diagnostics that share a cause (and the same tip). Unlike
+// `describeDiagnostic` this collapses a code vector's varied end states into
+// whether it dropped a tier or churned, so the label maps one-to-one onto the
+// available tips.
+export function issueForDiagnostic({ kind, info }: Diagnostic): string {
+  if (kind === 'ic') {
+    return `ic: ${highestSeverityUpdate(info.updates).newStateName}`;
+  }
+  if (kind === 'deopt') {
+    const { deoptReason, bailoutType } = highestSeverityUpdate(info.updates);
+    return `deopt: ${deoptReason || bailoutType}`;
+  }
+  const { churned, dropped } = analyzeCodeUpdates(info.updates);
+  if (dropped) return 'code: optimization dropped';
+  if (churned) return 'code: optimization churn';
+  return `code: ${info.updates[info.updates.length - 1].stateName}`;
+}
+
 export function tipForDiagnostic({ kind, info }: Diagnostic): string | null {
   if (kind === 'code') {
     const { churned, dropped } = analyzeCodeUpdates(info.updates);

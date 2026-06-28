@@ -2,10 +2,7 @@ import type {
   ParsedIcInfo,
   ParsedDeoptInfo,
   ParsedCodeInfo,
-  ProcessedIcInfo,
-  ProcessedDeoptInfo,
-  ProcessedCodeInfo,
-  FileSummary,
+  Group,
 } from '@e18e/deopt-shared';
 
 /** The parsed diagnostics extracted from a log, before grouping. */
@@ -31,15 +28,8 @@ export interface FileGroup extends ResolvedFile {
 }
 
 /**
- * A file's processed diagnostics keyed by location, with the sorted location
- * keys for each kind and the precomputed per-file summary.
+ * A resolved source file paired with its processed diagnostics: the shared
+ * `Group` (diagnostics keyed by location, the sorted location keys for each
+ * kind and the per-file summary) plus the file's path and source.
  */
-export interface RenderGroup extends ResolvedFile {
-  ics: Map<string, ProcessedIcInfo>;
-  deopts: Map<string, ProcessedDeoptInfo>;
-  codes: Map<string, ProcessedCodeInfo>;
-  icLocations: string[];
-  deoptLocations: string[];
-  codeLocations: string[];
-  summary?: FileSummary;
-}
+export interface RenderGroup extends Group, ResolvedFile {}

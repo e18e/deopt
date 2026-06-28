@@ -10,8 +10,34 @@ import ts from 'shiki/langs/typescript.mjs';
 import tsx from 'shiki/langs/tsx.mjs';
 import dracula from 'shiki/themes/dracula.mjs';
 
-import { buildRenderData, serializeRenderData } from './enrich-render-data.js';
-import type { FileGroup } from './types.js';
+import { groupByFileAndLocation } from './grouping/group-by-file-and-location.js';
+import type { FileGroup, RenderGroup } from './types.js';
+import type {
+  ProcessedIcInfo,
+  ProcessedDeoptInfo,
+  ProcessedCodeInfo,
+} from '@e18e/deopt-shared';
+
+/** A `RenderGroup` with its location maps flattened to entries for JSON. */
+type SerializedRenderGroup = Omit<RenderGroup, 'ics' | 'deopts' | 'codes'> & {
+  ics: Array<[string, ProcessedIcInfo]>;
+  deopts: Array<[string, ProcessedDeoptInfo]>;
+  codes: Array<[string, ProcessedCodeInfo]>;
+};
+
+function serializeRenderData(
+  groups: Map<string, RenderGroup>,
+): Array<[string, SerializedRenderGroup]> {
+  return Array.from(groups, ([file, group]) => [
+    file,
+    {
+      ...group,
+      ics: Array.from(group.ics),
+      deopts: Array.from(group.deopts),
+      codes: Array.from(group.codes),
+    },
+  ]);
+}
 
 type Highlighter = Awaited<ReturnType<typeof createHighlighterCore>>;
 type Tokens = ReturnType<Highlighter['codeToTokens']>['tokens'];
@@ -52,7 +78,7 @@ export async function startServer({ dataFile }: { dataFile: string }) {
   const parsed = JSON.parse(await fs.readFile(dataFile, 'utf8')) as Array<
     [string, FileGroup]
   >;
-  const groups = buildRenderData(new Map(parsed));
+  const groups = groupByFileAndLocation(new Map(parsed));
   const renderData = JSON.stringify(serializeRenderData(groups));
 
   const highlighter = await createHighlighterCore({

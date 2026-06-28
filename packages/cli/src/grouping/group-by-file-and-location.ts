@@ -1,4 +1,5 @@
 import { keyLocation, byLocationKey } from './location.js';
+import { summarizeFile } from './summarize-file.js';
 import { nameIcState } from '../ic-state.js';
 import { severityIcState, nameOptimizationState } from '@e18e/deopt-processor';
 import {
@@ -117,6 +118,11 @@ export function groupByFileAndLocation(
       icLocations: ics.locations,
       deoptLocations: deopts.locations,
       codeLocations: codes.locations,
+      summary: summarizeFile({
+        ics: ics.byLocation,
+        deopts: deopts.byLocation,
+        codes: codes.byLocation,
+      }),
     });
   }
 

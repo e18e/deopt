@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import type { StdioOptions } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { basename } from 'node:path';
 import { mkdir, stat } from 'node:fs/promises';
@@ -18,6 +19,9 @@ interface RunNodeOptions {
   node?: string;
   execArgv: string[];
   argv: string[];
+  // In markdown mode we redirect the child's stdout so the only stdout is the
+  // report itself.
+  redirectStdout?: boolean;
 }
 
 function determineArgs(tokens: string[]): DeterminedArgs {
@@ -57,15 +61,19 @@ function runNode({
   node = process.execPath,
   execArgv,
   argv,
+  redirectStdout = false,
 }: RunNodeOptions): Promise<number | null> {
-  const child = spawn(node, execArgv.concat(argv), { stdio: 'inherit' });
+  const stdio: StdioOptions = redirectStdout
+    ? ['inherit', process.stderr.fd, 'inherit']
+    : 'inherit';
+  const child = spawn(node, execArgv.concat(argv), { stdio });
 
   const termination = new Promise<number | null>((resolve) => {
     let interrupted = false;
 
     process.once('SIGINT', () => {
       interrupted = true;
-      console.log(styleText('gray', '\nshutting down...'));
+      process.stderr.write(styleText('gray', '\nshutting down...\n'));
       child.kill('SIGTERM');
       setTimeout(() => child.kill('SIGKILL'), 500).unref();
     });
@@ -95,6 +103,7 @@ export async function createLog(
   args: string[],
   head: string,
   simpleHead: string,
+  { md = false }: { md?: boolean } = {},
 ): Promise<string> {
   const { extraExecArgv, argv, nodeExecutable } = determineArgs(args);
 
@@ -111,7 +120,7 @@ export async function createLog(
     '--no-logfile-per-isolate',
   ].concat(extraExecArgv);
 
-  const spawnArgs: RunNodeOptions = { execArgv, argv };
+  const spawnArgs: RunNodeOptions = { execArgv, argv, redirectStdout: md };
   if (nodeExecutable !== undefined) spawnArgs.node = nodeExecutable;
 
   const code = await runNode(spawnArgs);
@@ -123,8 +132,8 @@ export async function createLog(
       )}`,
     );
   }
-  console.log(
-    `${simpleHead} ${styleText('gray', 'logfile written to ' + logFile)}`,
+  process.stderr.write(
+    `${simpleHead} ${styleText('gray', 'logfile written to ' + logFile)}\n`,
   );
   return logFile;
 }
