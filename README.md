@@ -12,13 +12,13 @@ You can learn a lot about these optimizations on the [v8 website](https://v8.dev
 
 ## Use with care :boom:
 
-If you resolve all of the diagnostics, you'll generally end up with incredibly performant code **for v8** and **this version of v8**.
+If you resolve all of the diagnostics, you'll generally end up with incredibly performant code **for this version of v8**.
 
 However, there are a few things to note:
 
 - v8 changes over time, and so do the optimizations
-- we should raise bugs in v8 for notable slow syntax rather than working around it
-- other engines (non-v8) will have different optimizations, and it is unlikely you can write code that is optimal for all of them
+- we should raise bugs in v8 for notably slow syntax rather than working around it
+- other engines (non-v8) will have different optimizations, and it is unlikely you can write code that is (super) optimal for all of them
 - different versions of v8 (and thus Node.js) may optimize code differently
 
 Many of the more common optimizations (e.g. consistent shapes of objects) seem unlikely to ever stop being optimized. These are the ones worth focusing on rather than the more niche ones.
