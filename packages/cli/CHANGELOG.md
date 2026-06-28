@@ -1,5 +1,12 @@
 # @e18e/deopt
 
+## 0.3.0
+
+### Minor Changes
+
+- 71791a9: Migrate the CLI to typescript and clean up processor/shared types.
+- 053018f: Add markdown output to the CLI.
+
 ## 0.2.0
 
 ### Minor Changes

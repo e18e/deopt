@@ -22,7 +22,7 @@
     "test": "node --test"
   },
   "devDependencies": {
-    "@e18e/deopt-shared": "0.1.0",
+    "@e18e/deopt-shared": "0.2.0",
     "@preact/preset-vite": "^2.10.5",
     "@preact/signals": "^2.9.2",
     "open-props": "^1.7.23",
