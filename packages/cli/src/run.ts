@@ -26,40 +26,48 @@ Open an existing v8 log:
 
 Options:
   -h, --help     Show this help text
+      --md       Print a concise markdown report to stdout instead of opening
+                 the visualization in a browser
 `;
 
 const args = process.argv.slice(2);
 const dashIndex = args.indexOf('--');
 
-// Without `--` the whole argument list is the command to run. deopt's own
-// options are only accepted before a `--` separator.
-let values: { help?: boolean } = {};
+// deopt's own options precede the command to run. With a `--` separator they
+// are taken from before it; otherwise they are the leading flags up to the
+// first non-flag token (the runtime, script or log file).
+let optionArgs: string[];
 let command: string[];
 if (dashIndex < 0) {
-  command = args;
+  let i = 0;
+  while (i < args.length && args[i].startsWith('-')) i++;
+  optionArgs = args.slice(0, i);
+  command = args.slice(i);
 } else {
-  ({ values } = parseArgs({
-    args: args.slice(0, dashIndex),
-    options: {
-      help: { type: 'boolean', short: 'h' },
-    },
-  }));
+  optionArgs = args.slice(0, dashIndex);
   command = args.slice(dashIndex + 1);
 }
 
-const userNeedsHelp =
-  values.help ||
-  (dashIndex < 0 &&
-    (command.length === 0 || command[0] === '--help' || command[0] === '-h'));
+const { values } = parseArgs({
+  args: optionArgs,
+  options: {
+    help: { type: 'boolean', short: 'h' },
+    md: { type: 'boolean' },
+  },
+});
+
+const userNeedsHelp = values.help || command.length === 0;
 
 try {
   if (userNeedsHelp) {
     console.log(usage);
   } else if (command.length === 1 && command[0].endsWith('.log')) {
-    await openLog(command[0], happyHead);
+    await openLog(command[0], happyHead, { md: values.md });
   } else {
-    const log = await createLog(command, happyHead, simpleHead);
-    await openLog(log, happyHead);
+    const log = await createLog(command, happyHead, simpleHead, {
+      md: values.md,
+    });
+    await openLog(log, happyHead, { md: values.md });
   }
 } catch (err) {
   console.error(`${errorHead}: ${String(err)}`);

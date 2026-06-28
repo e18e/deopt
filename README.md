@@ -14,9 +14,16 @@ You can learn a lot about these optimizations on the [v8 website](https://v8.dev
 
 If you resolve all of the diagnostics, you'll generally end up with incredibly performant code **for v8** and **this version of v8**.
 
-As new versions of v8 are released, the optimizations and deoptimizations may change. So while you may have a perfectly optimized function in Node.js 20, it may optimize differently in Node.js 22.
+However, there are a few things to note:
 
-It seems unlikely the more common optimizations would ever stop being applied, though. It is well worth doing some learning on the subject so you can make a call per diagnostic.
+- v8 changes over time, and so do the optimizations
+- we should raise bugs in v8 for notable slow syntax rather than working around it
+- other engines (non-v8) will have different optimizations, and it is unlikely you can write code that is optimal for all of them
+- different versions of v8 (and thus Node.js) may optimize code differently
+
+Many of the more common optimizations (e.g. consistent shapes of objects) seem unlikely to ever stop being optimized. These are the ones worth focusing on rather than the more niche ones.
+
+It is worth doing some reading on "crankshaftscript" to see where over-optimizing for a specific engine can go wrong.
 
 ## Install
 
@@ -64,6 +71,23 @@ npx @e18e/deopt <options> -- app.js --some-flag
 ```
 
 Run `npx @e18e/deopt --help` for the full list of options.
+
+### Markdown report
+
+Pass `--md` to print a concise markdown report to stdout instead of opening
+the browser. The diagnostics are grouped by issue, each with the affected
+locations and advice on how to address them. It works with any of the input
+forms above:
+
+```sh
+npx @e18e/deopt --md app.js
+npx @e18e/deopt --md v8.log
+npx @e18e/deopt --md -- app.js --some-flag
+```
+
+This is intended for non-interactive use, such as feeding the results to an
+AI agent. Status messages are written to stderr so stdout contains only the
+report.
 
 ## Prior art
 

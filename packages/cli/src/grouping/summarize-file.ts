@@ -1,5 +1,8 @@
-import type { ProcessedCodeUpdate, FileSummary } from '@e18e/deopt-shared';
-import type { RenderGroup } from '../types.js';
+import type {
+  ProcessedCodeUpdate,
+  FileSummary,
+  Group,
+} from '@e18e/deopt-shared';
 
 const SEVERITY_2_FACTOR = 10;
 const SEVERITY_3_FACTOR = 30;
@@ -16,7 +19,7 @@ export function summarizeFile({
   ics,
   deopts,
   codes,
-}: RenderGroup): FileSummary {
+}: Pick<Group, 'ics' | 'deopts' | 'codes'>): FileSummary {
   const icSeverities = [0, 0, 0, 0];
   const deoptSeverities = [0, 0, 0, 0];
   const codeSeverities = [0, 0, 0, 0];
