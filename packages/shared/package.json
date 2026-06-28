@@ -1,6 +1,6 @@
 {
   "name": "@e18e/deopt-shared",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Investigates v8/Node.js function deoptimizations.",
   "keywords": [],

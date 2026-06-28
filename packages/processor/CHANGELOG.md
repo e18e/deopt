@@ -1,5 +1,19 @@
 # @e18e/deopt-processor
 
+## 0.2.0
+
+### Minor Changes
+
+- ea8bb09: Migrate processor and shared library to typescript.
+- 71791a9: Migrate the CLI to typescript and clean up processor/shared types.
+
+### Patch Changes
+
+- Updated dependencies [ea8bb09]
+- Updated dependencies [71791a9]
+- Updated dependencies [053018f]
+  - @e18e/deopt-shared@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes
