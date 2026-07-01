@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
-    "oxfmt": "^0.56.0",
-    "oxlint": "^1.71.0"
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.72.0"
   }
 }

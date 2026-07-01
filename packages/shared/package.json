@@ -22,7 +22,7 @@
     "test": "node --test"
   },
   "devDependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20260624.1"
+    "@typescript/native-preview": "^7.0.0-dev.20260630.1"
   },
   "engine": {
     "node": ">=20"
