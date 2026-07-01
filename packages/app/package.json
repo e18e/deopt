@@ -26,8 +26,8 @@
     "@preact/preset-vite": "^2.10.5",
     "@preact/signals": "^2.9.2",
     "open-props": "^1.7.23",
-    "preact": "^10.29.2",
-    "vite": "^8.1.0"
+    "preact": "^10.29.3",
+    "vite": "^8.1.2"
   },
   "engine": {
     "node": ">=20"
