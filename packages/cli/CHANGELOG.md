@@ -1,5 +1,11 @@
 # @e18e/deopt
 
+## 0.3.1
+
+### Patch Changes
+
+- fe3fefb: Fix outputting of HTML via h3 being over-escaped.
+
 ## 0.3.0
 
 ### Minor Changes
