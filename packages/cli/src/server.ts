@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-import { H3, serve, html, getQuery } from 'h3';
+import { H3, serve, getQuery } from 'h3';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 import js from 'shiki/langs/javascript.mjs';
@@ -104,10 +104,7 @@ export async function startServer({ dataFile }: { dataFile: string }) {
 
   const app = new H3();
 
-  app.get(
-    '/',
-    async () => html`${await fs.readFile(fileURLToPath(indexHtml), 'utf8')}`,
-  );
+  app.get('/', () => asset(indexHtml, 'text/html; charset=utf-8'));
   app.get('/deopt.js', () =>
     asset(new URL('deopt.js', buildDir), 'text/javascript; charset=utf-8'),
   );
