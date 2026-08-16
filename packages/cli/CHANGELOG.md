@@ -1,5 +1,11 @@
 # @e18e/deopt
 
+## 0.3.2
+
+### Patch Changes
+
+- 250f339: Serve index file as an asset in h3.
+
 ## 0.3.1
 
 ### Patch Changes

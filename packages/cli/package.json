@@ -1,6 +1,6 @@
 {
   "name": "@e18e/deopt",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Investigates v8/Node.js function deoptimizations.",
   "keywords": [],
   "homepage": "https://github.com/e18e/deopt",
