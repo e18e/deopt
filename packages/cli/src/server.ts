@@ -104,8 +104,9 @@ export async function startServer({ dataFile }: { dataFile: string }) {
 
   const app = new H3();
 
-  app.get('/', async () =>
-    html(await fs.readFile(fileURLToPath(indexHtml), 'utf8')),
+  app.get(
+    '/',
+    async () => html`${await fs.readFile(fileURLToPath(indexHtml), 'utf8')}`,
   );
   app.get('/deopt.js', () =>
     asset(new URL('deopt.js', buildDir), 'text/javascript; charset=utf-8'),
