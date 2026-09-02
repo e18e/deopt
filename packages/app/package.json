@@ -24,10 +24,10 @@
   "devDependencies": {
     "@e18e/deopt-shared": "0.2.0",
     "@preact/preset-vite": "^2.10.6",
-    "@preact/signals": "^2.11.0",
+    "@preact/signals": "^2.11.1",
     "open-props": "^1.7.23",
     "preact": "^10.29.8",
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   },
   "engine": {
     "node": ">=20"
